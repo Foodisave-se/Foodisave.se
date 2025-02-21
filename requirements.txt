@@ -1,0 +1,4 @@
+SQLAlchemy
+alembic
+fastapi[all]
+psycopg2-binary # PÅ LINUX
