@@ -1,0 +1,17 @@
+#Ignore version control
+.git
+.gitignore
+
+#Ignore node_modules for a Node.js project
+node_modules
+
+#Ignore Python virtualenv
+.venv
+
+#Ignore Dockerfile
+Dockerfile
+
+#Ignore logs and build artifacts
+*.log
+*.tmp
+build/
