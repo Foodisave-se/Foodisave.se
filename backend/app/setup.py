@@ -8,8 +8,8 @@ def get_connection():
         dbname="foodisave",
         user="postgres",  # change if needed
         password="naPraPatenAxeL13.",
-        host=os.getenv("DB_HOST", "db"),  # Use the DB_HOST variable
-        port=os.getenv("DB_PORT", "5432"),  # Use the DB_PORT variable
+        host="db",  # Use the DB_HOST variable
+        port="5432",  # Use the DB_PORT variable
     )
 
 
