@@ -71,11 +71,15 @@ class Users(Base):
     reviews: Mapped["Reviews"] = relationship(
         back_populates="user"
     )
-    messages_sender: Mapped["Messages"] = relationship(
+    messages_sender: Mapped[list["Messages"]] = relationship(
+        "Messages",
+        foreign_keys="Messages.sender_user_id",
         back_populates="user_sender"
     )
-    messages_reciever: Mapped["Messages"] = relationship(
-        back_populates="user_reciever"
+    messages_receiver: Mapped[list["Messages"]] = relationship(
+        "Messages",
+        foreign_keys="Messages.receiver_user_id",
+        back_populates="user_receiver"
     )
 
     @property
@@ -175,11 +179,13 @@ class Messages(Base):
     )
     sender_user_id: Mapped[int] = mapped_column(
         ForeignKey("users.id"))
-    reciever_user_id: Mapped[int] = mapped_column(
+    receiver_user_id: Mapped[int] = mapped_column(
         ForeignKey("users.id"))
     user_sender: Mapped["Users"] = relationship(
+        "Users", foreign_keys=[sender_user_id],
         back_populates="messages_sender"
     )
-    user_reciever: Mapped["Users"] = relationship(
-        back_populates="messages_reciever"
+    user_receiver: Mapped["Users"] = relationship(
+        "Users", foreign_keys=[receiver_user_id],
+        back_populates="messages_receiver"
     )
