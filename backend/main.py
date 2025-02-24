@@ -4,8 +4,16 @@ from fastapi import Depends, FastAPI, HTTPException, Request, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.api.v1.core.models import Company
-from app.api.v1.core.schemas import CompanySchema
+from app.api.v1.core.models import (
+    Users,
+    Recipes,
+    UserRecipes,
+    Images,
+    Comments,
+    Messages,
+    Reviews
+)
+# from app.api.v1.core.schemas import
 from app.api.v1.routers import router
 from app.db_setup import get_db, init_db
 
