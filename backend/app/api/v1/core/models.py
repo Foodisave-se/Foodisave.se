@@ -56,7 +56,7 @@ class Users(Base):
     password: Mapped[str] = mapped_column(String(150))
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
-        server_default=func.now()  # Uses database server time
+        server_default=func.now() 
     )
     level: Mapped[int]
     user_recipes: Mapped["UserRecipes"] = relationship(
@@ -81,6 +81,16 @@ class Users(Base):
         foreign_keys="Messages.receiver_user_id",
         back_populates="user_receiver"
     )
+    following: Mapped[list["UserFollows"]] = relationship(
+        "UserFollows",
+        foreign_keys="[UserFollows.follower_user_id]",
+        back_populates="follower"
+    )
+    followers: Mapped[list["UserFollows"]] = relationship(
+        "UserFollows",
+        foreign_keys="[UserFollows.followee_user_id]",
+        back_populates="followee"
+    )
 
     @property
     def full_name(self) -> str:
@@ -102,7 +112,7 @@ class UserRecipes(Base):
         server_default=func.now()  # Uses database server time
     )
     user_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id"))
+        ForeignKey("users.id", ondelete="SET NULL"))
     user: Mapped["Users"] = relationship(
         back_populates="user_recipes"
     )
@@ -121,9 +131,9 @@ class Images(Base):
     __tablename__ = "images"
     link: Mapped[str] = mapped_column(String(100))
     user_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id"))
+        ForeignKey("users.id", ondelete="SET NULL"))
     user_recipes_id: Mapped[int] = mapped_column(
-        ForeignKey("user_recipes.id"))
+        ForeignKey("user_recipes.id", ondelete="SET NULL"))
     user: Mapped["Users"] = relationship(
         back_populates="images"
     )
@@ -140,9 +150,9 @@ class Comments(Base):
         server_default=func.now()  # Uses database server time
     )
     user_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id"))
+        ForeignKey("users.id", ondelete="SET NULL"))
     user_recipes_id: Mapped[int] = mapped_column(
-        ForeignKey("user_recipes.id"))
+        ForeignKey("user_recipes.id", ondelete="SET NULL"))
     user: Mapped["Users"] = relationship(
         back_populates="comments"
     )
@@ -156,12 +166,12 @@ class Reviews(Base):
     content: Mapped[str] = mapped_column(Text)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
-        server_default=func.now()  # Uses database server time
+        server_default=func.now()
     )
     user_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id"))
+        ForeignKey("users.id", ondelete="SET NULL"))
     recipes_id: Mapped[int] = mapped_column(
-        ForeignKey("recipes.id"))
+        ForeignKey("recipes.id", ondelete="SET NULL"))
     user: Mapped["Users"] = relationship(
         back_populates="reviews"
     )
@@ -178,9 +188,9 @@ class Messages(Base):
         server_default=func.now()  # Uses database server time
     )
     sender_user_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id"))
+        ForeignKey("users.id", ondelete="SET NULL"))
     receiver_user_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id"))
+        ForeignKey("users.id", ondelete="SET NULL"))
     user_sender: Mapped["Users"] = relationship(
         "Users", foreign_keys=[sender_user_id],
         back_populates="messages_sender"
@@ -189,3 +199,31 @@ class Messages(Base):
         "Users", foreign_keys=[receiver_user_id],
         back_populates="messages_receiver"
     )
+
+
+class UserFollows(Base):
+    __tablename__ = "user_follows"
+    # Primärnyckel bestående av båda kolumnerna
+    follower_user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"), primary_key=True)
+    followee_user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"), primary_key=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+
+    # Relationer: Den som följer
+    follower: Mapped["Users"] = relationship(
+        "Users",
+        foreign_keys=[follower_user_id],
+        back_populates="following"
+    )
+    # Relationer: Den som blir följd
+    followee: Mapped["Users"] = relationship(
+        "Users",
+        foreign_keys=[followee_user_id],
+        back_populates="followers"
+    )
+
+    def __repr__(self) -> str:
+        return f"<UserFollows follower={self.follower_user_id} followee={self.followee_user_id}>"

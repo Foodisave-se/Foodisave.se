@@ -3,3 +3,4 @@ alembic
 fastapi[all]
 psycopg2-binary # PÅ LINUX
 pandas
+bcrypt

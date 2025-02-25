@@ -1,7 +1,15 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
-from app.api.v1.core.models import Base
+from app.api.v1.core.models import (Base,
+                                    Users, 
+                                    UserFollows, 
+                                    UserRecipes, 
+                                    Recipes, 
+                                    Reviews, 
+                                    Messages, 
+                                    Comments,
+                                    Images)
 from app.settings import settings
 
 # echo = True to see the SQL queries
