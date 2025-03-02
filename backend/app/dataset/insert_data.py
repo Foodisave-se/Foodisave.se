@@ -13,14 +13,25 @@ db_params = {
 }
 
 # Read the CSV file
-df = pd.read_csv('app/dataset/cleaned_dataset.csv')
-
-# # Add a new column 'num_of_ingredients' to the dataset
-# df['num_of_ingredients'] = df['Ingredients'].apply(lambda x: len(x.split(',')))
+df = pd.read_csv('app/dataset/all_recipes.csv')
 
 # Connect to the PostgreSQL database
 conn = psycopg2.connect(**db_params)
 cur = conn.cursor()
+
+# Define the columns where you want to remove 'g'
+columns_to_clean = ['Carbohydrates', 'Protein', 'Fat', 'Energy']  # Replace with your actual column names
+
+# Remove the letter 'g' (both lowercase and uppercase) from the specified columns
+for column in columns_to_clean:
+    if column in df.columns:
+        # Check if the column contains string data
+        if df[column].dtype == 'object':
+            df[column] = df[column].astype(str).str.replace('g', '', regex=False)
+            df[column] = df[column].astype(str).str.replace('G', '', regex=False)
+            df[column] = df[column].astype(str).str.replace(',', '.', regex=False)
+            df[column] = df[column].astype(str).str.replace(' kcal', '', regex=False)
+            
 
 # Insert data into the table
 insert_query = """
@@ -28,32 +39,28 @@ INSERT INTO recipes (
     name, 
     descriptions, 
     ingredients, 
-    ingredients_raw, 
     steps, 
     servings, 
-    serving_size, 
     tags, 
-    calories, 
-    fat_content, 
-    saturated_fat_content, 
-    sodium_content,
-    carbohydrate_content,
-    fiber_content,
-    sugar_content,
-    protein_content,
+    cook_time,
+    energy,
+    protein,
+    carbohydrates,
+    fat,
     images
     )
-VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
 """
 
 for index, row in df.iterrows():
-    cur.execute(insert_query, (row['name'], row['description'],
-                row['ingredients'], row["ingredients_raw"], row['steps'],
-                row['servings'], row["serving_size"], row['tags'],
-                row['calories'], row["fat_content"], row['saturated_fat_content'],
-                row['sodium_content'], row["carbohydrate_content"], row['fiber_content'],
-                row['sugar_content'], row["protein_content"], row['images']
+    cur.execute(insert_query, (row['Title'], row['Description'],
+                row['Ingredients'], row['Instructions'],
+                row['Servings'], row['Category'], row['Time to cook'],
+                row['Energy'], row['Protein'], row['Carbohydrates'], row['Fat'],
+                row['Image']
                 ))
+
+cur.execute("DELETE FROM recipes WHERE LOWER(name::text) = 'nan' AND LOWER(descriptions::text) = 'nan';")
 
 # Commit the transaction
 conn.commit()
@@ -66,21 +73,20 @@ print("Data inserted successfully.")
 
 
 # DELETE FROM recipes
-# WHERE
-#     LOWER(name::text) = 'nan'
-#     OR LOWER(descriptions::text) = 'nan'
-#     OR LOWER(ingredients::text) = 'nan'
-#     OR LOWER(ingredients_raw::text) = 'nan'
-#     OR LOWER(steps::text) = 'nan'
-#     OR LOWER(servings::text) = 'nan'
-#     OR LOWER(serving_size::text) = 'nan'
-#     OR LOWER(tags::text) = 'nan'
-#     OR LOWER(images::text) = 'nan'
-#     OR LOWER(calories::text) = 'nan'
-#     OR LOWER(fat_content::text) = 'nan'
-#     OR LOWER(saturated_fat_content::text) = 'nan'
-#     OR LOWER(sodium_content::text) = 'nan'
-#     OR LOWER(carbohydrate_content::text) = 'nan'
-#     OR LOWER(fiber_content::text) = 'nan'
-#     OR LOWER(sugar_content::text) = 'nan'
-#     OR LOWER(protein_content::text) = 'nan';
+# WHERE                        
+#     LOWER(name::text) = 'nan'            
+#     AND LOWER(descriptions::text) = 'nan';
+
+
+
+# UPDATE recipes
+# SET 
+#     energy = NULLIF(energy, 'NaN'::FLOAT),
+#     protein = NULLIF(protein, 'NaN'::FLOAT),
+#     carbohydrates = NULLIF(carbohydrates, 'NaN'::FLOAT),
+#     fat = NULLIF(fat, 'NaN'::FLOAT)
+# WHERE energy::TEXT = 'NaN' 
+#    OR protein::TEXT = 'NaN' 
+#    OR carbohydrates::TEXT = 'NaN' 
+#    OR fat::TEXT = 'NaN';
+

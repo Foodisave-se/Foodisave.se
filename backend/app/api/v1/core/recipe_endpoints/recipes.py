@@ -45,7 +45,7 @@ def search_recipe(recipe_type: Annotated[SearchRecipeSchema, Depends(SearchRecip
 # randomize recipes endpoints
 @router.get("/random/recipe", status_code=200)
 def get_random_recipe(
-        recipe_type: Annotated[SearchRecipeSchema, Depends(RandomRecipeSchema)],
+        recipe_type: Annotated[RandomRecipeSchema, Depends(RandomRecipeSchema)],
         db: Session = Depends(get_db)):
 
     result = get_random_recipe_db(recipe=recipe_type, db=db)
@@ -57,13 +57,3 @@ def get_random_recipe(
         )
     return result
 
-
-# bacon
-# chicken
-# beef
-# fish
-# seafood
-# pork
-# vegiterian
-# meat
-#

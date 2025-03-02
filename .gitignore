@@ -25,4 +25,4 @@ dist-ssr
 .env
 .venv
 venv
-cleaned_dataset.csv
+all_recipes.csv

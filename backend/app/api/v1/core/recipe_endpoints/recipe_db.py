@@ -34,11 +34,11 @@ def get_recipe_db(recipe: SearchRecipeSchema, db):
     if search_term is not None:
         conditions.append(Recipes.name.ilike(f"%{search_term}%"))
 
-    if recipe.calories is not None:
-        conditions.append(Recipes.calories <= recipe.calories)
+    if recipe.carbohydrates is not None:
+        conditions.append(Recipes.carbohydrates <= recipe.carbohydrates)
 
-    if recipe.protein_content is not None:
-        conditions.append(Recipes.protein_content >= recipe.protein_content)
+    if recipe.protein is not None:
+        conditions.append(Recipes.protein >= recipe.protein)
 
     # Additional filter for recipe type based on ingredients
     if recipe.recipe_type:
@@ -46,55 +46,55 @@ def get_recipe_db(recipe: SearchRecipeSchema, db):
         if rt in ["fågel", "poultry"]:
             conditions.append(
                 or_(
-                    Recipes.ingredients.ilike("%chicken%"),
-                    Recipes.ingredients.ilike("%duck%"),
-                    Recipes.ingredients.ilike("%turkey%"),
+                    Recipes.ingredients.ilike("%kyckling%"),
+                    Recipes.ingredients.ilike("%anka%"),
+                    Recipes.ingredients.ilike("%kalkon%"),
                 )
             )
         elif rt in ["fisk", "fish"]:
             conditions.append(
                 or_(
-                    Recipes.ingredients.ilike("%fish%"),
-                    Recipes.ingredients.ilike("%seafood%"),
-                    Recipes.ingredients.ilike("%tuna%"),
-                    Recipes.ingredients.ilike("%salmon%"),
-                    Recipes.ingredients.ilike("%octopus%"),
-                    Recipes.ingredients.ilike("%shrimp%"),
-                    Recipes.ingredients.ilike("%crab%"),
-                    Recipes.ingredients.ilike("%lobster%"),
+                    Recipes.ingredients.ilike("%fisk%"),
+                    Recipes.ingredients.ilike("%skaldjur%"),
+                    Recipes.ingredients.ilike("%tonfisk%"),
+                    Recipes.ingredients.ilike("%lax%"),
+                    Recipes.ingredients.ilike("%bläckfisk%"),
+                    Recipes.ingredients.ilike("%räkor%"),
+                    Recipes.ingredients.ilike("%krabba%"),
+                    Recipes.ingredients.ilike("%hummer%"),
                 )
             )
         elif rt in ["kött", "meat"]:
             conditions.append(
                 or_(
-                    Recipes.ingredients.ilike("%beef%"),
-                    Recipes.ingredients.ilike("%pork%"),
+                    Recipes.ingredients.ilike("%nötkött%"),
+                    Recipes.ingredients.ilike("%fläsk%"),
                     Recipes.ingredients.ilike("%bacon%"),
-                    Recipes.ingredients.ilike("%meat%"),
-                    Recipes.ingredients.ilike("%lamb%"),
-
+                    Recipes.ingredients.ilike("%kött%"),
+                    Recipes.ingredients.ilike("%lamm%"),
                 )
             )
         elif rt in ["vegetarisk", "vegetarian"]:
             # If the ingredients do NOT contain any meat-related keywords, then it's vegetarian.
             conditions.append(~(
-                Recipes.ingredients.ilike("%chicken%") |
-                Recipes.ingredients.ilike("%turkey%") |
-                Recipes.ingredients.ilike("%duck%") |
-                Recipes.ingredients.ilike("%beef%") |
-                Recipes.ingredients.ilike("%pork%") |
-                Recipes.ingredients.ilike("%lamb%") |
+                Recipes.ingredients.ilike("%kyckling%") |
+                Recipes.ingredients.ilike("%kalkon%") |
+                Recipes.ingredients.ilike("%anka%") |
+                Recipes.ingredients.ilike("%nötkött%") |
+                Recipes.ingredients.ilike("%fläsk%") |
+                Recipes.ingredients.ilike("%lamm%") |
                 Recipes.ingredients.ilike("%bacon%") |
-                Recipes.ingredients.ilike("%meat%") |
-                Recipes.ingredients.ilike("%fish%") |
-                Recipes.ingredients.ilike("%seafood%") |
-                Recipes.ingredients.ilike("%tuna%") |
-                Recipes.ingredients.ilike("%salmon%") |
-                Recipes.ingredients.ilike("%octopus%") |
-                Recipes.ingredients.ilike("%shrimp%") |
-                Recipes.ingredients.ilike("%crab%") |
-                Recipes.ingredients.ilike("%lobster%")
+                Recipes.ingredients.ilike("%kött%") |
+                Recipes.ingredients.ilike("%fisk%") |
+                Recipes.ingredients.ilike("%skaldjur%") |
+                Recipes.ingredients.ilike("%tonfisk%") |
+                Recipes.ingredients.ilike("%lax%") |
+                Recipes.ingredients.ilike("%bläckfisk%") |
+                Recipes.ingredients.ilike("%räkor%") |
+                Recipes.ingredients.ilike("%krabba%") |
+                Recipes.ingredients.ilike("%hummer%")
             ))
+
 
     # Apply conditions to the query if any exist
     if conditions:
@@ -125,54 +125,52 @@ def get_random_recipe_db(recipe: RandomRecipeSchema, db):
         if rt in ["fågel", "poultry"]:
             conditions.append(
                 or_(
-                    Recipes.ingredients.ilike("%chicken%"),
-                    Recipes.ingredients.ilike("%duck%"),
-                    Recipes.ingredients.ilike("%turkey%"),
+                    Recipes.ingredients.ilike("%kyckling%"),
+                    Recipes.ingredients.ilike("%anka%"),
+                    Recipes.ingredients.ilike("%kalkon%"),
                 )
             )
         elif rt in ["fisk", "fish"]:
             conditions.append(
                 or_(
-                    Recipes.ingredients.ilike("%fish%"),
-                    Recipes.ingredients.ilike("%seafood%"),
-                    Recipes.ingredients.ilike("%tuna%"),
-                    Recipes.ingredients.ilike("%salmon%"),
-                    Recipes.ingredients.ilike("%octopus%"),
-                    Recipes.ingredients.ilike("%shrimp%"),
-                    Recipes.ingredients.ilike("%crab%"),
-                    Recipes.ingredients.ilike("%lobster%"),
+                    Recipes.ingredients.ilike("%fisk%"),
+                    Recipes.ingredients.ilike("%skaldjur%"),
+                    Recipes.ingredients.ilike("%tonfisk%"),
+                    Recipes.ingredients.ilike("%lax%"),
+                    Recipes.ingredients.ilike("%bläckfisk%"),
+                    Recipes.ingredients.ilike("%räkor%"),
+                    Recipes.ingredients.ilike("%krabba%"),
+                    Recipes.ingredients.ilike("%hummer%"),
                 )
             )
         elif rt in ["kött", "meat"]:
             conditions.append(
                 or_(
-                    Recipes.ingredients.ilike("%beef%"),
-                    Recipes.ingredients.ilike("%pork%"),
+                    Recipes.ingredients.ilike("%nötkött%"),
+                    Recipes.ingredients.ilike("%fläsk%"),
                     Recipes.ingredients.ilike("%bacon%"),
-                    Recipes.ingredients.ilike("%meat%"),
-                    Recipes.ingredients.ilike("%lamb%"),
-
+                    Recipes.ingredients.ilike("%kött%"),
+                    Recipes.ingredients.ilike("%lamm%"),
                 )
             )
         elif rt in ["vegetarisk", "vegetarian"]:
-            # If the ingredients do NOT contain any meat-related keywords, then it's vegetarian.
             conditions.append(~(
-                Recipes.ingredients.ilike("%chicken%") |
-                Recipes.ingredients.ilike("%turkey%") |
-                Recipes.ingredients.ilike("%duck%") |
-                Recipes.ingredients.ilike("%beef%") |
-                Recipes.ingredients.ilike("%pork%") |
-                Recipes.ingredients.ilike("%lamb%") |
+                Recipes.ingredients.ilike("%kyckling%") |
+                Recipes.ingredients.ilike("%kalkon%") |
+                Recipes.ingredients.ilike("%anka%") |
+                Recipes.ingredients.ilike("%nötkött%") |
+                Recipes.ingredients.ilike("%fläsk%") |
+                Recipes.ingredients.ilike("%lamm%") |
                 Recipes.ingredients.ilike("%bacon%") |
-                Recipes.ingredients.ilike("%meat%") |
-                Recipes.ingredients.ilike("%fish%") |
-                Recipes.ingredients.ilike("%seafood%") |
-                Recipes.ingredients.ilike("%tuna%") |
-                Recipes.ingredients.ilike("%salmon%") |
-                Recipes.ingredients.ilike("%octopus%") |
-                Recipes.ingredients.ilike("%shrimp%") |
-                Recipes.ingredients.ilike("%crab%") |
-                Recipes.ingredients.ilike("%lobster%")
+                Recipes.ingredients.ilike("%kött%") |
+                Recipes.ingredients.ilike("%fisk%") |
+                Recipes.ingredients.ilike("%skaldjur%") |
+                Recipes.ingredients.ilike("%tonfisk%") |
+                Recipes.ingredients.ilike("%lax%") |
+                Recipes.ingredients.ilike("%bläckfisk%") |
+                Recipes.ingredients.ilike("%räkor%") |
+                Recipes.ingredients.ilike("%krabba%") |
+                Recipes.ingredients.ilike("%hummer%")
             ))
 
         if conditions:
@@ -180,7 +178,7 @@ def get_random_recipe_db(recipe: RandomRecipeSchema, db):
 
             results = db.scalars(query_stmt).all()
 
-            result = results[randint(1, len(results))]
+            result = results[randint(0, len(results) - 1)]
 
             if not result:
                 raise HTTPException(
@@ -189,13 +187,19 @@ def get_random_recipe_db(recipe: RandomRecipeSchema, db):
                 )
             return result
 
-        if conditions == []:
-            result = db.scalars(query_stmt.where(
-                Recipes.id == randint(1, 500000))).first()
+    if conditions == []:
 
-            if not result:
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail="No recipes found"
-                )
-            return result
+        id_query = select(Recipes.id)
+        all_ids = db.scalars(id_query).all()
+
+        random_id = all_ids[randint(0, len(all_ids) - 1)]
+
+        result = db.scalars(query_stmt.where(
+            Recipes.id == random_id)).first()
+
+        if not result:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="No recipes found"
+            )
+        return result
