@@ -6,7 +6,8 @@ from typing import Optional, Annotated
 from random import randint
 from app.api.v1.core.recipe_endpoints.recipe_db import (
     get_recipe_db,
-    get_random_recipe_db
+    get_random_recipe_db,
+    get_one_recipe_db
 )
 
 from app.api.v1.core.models import (
@@ -58,4 +59,14 @@ def get_random_recipe(
             detail="No recipes found"
         )
     return result
+
+@router.get("/recipe/{recipe_id}", status_code=200)
+def get_recipe(recipe_id: int, db: Session = Depends(get_db)):
+    recipe = get_one_recipe_db(id=recipe_id, db=db)
+    if not recipe:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Recipe not found"
+        )
+    return recipe
 

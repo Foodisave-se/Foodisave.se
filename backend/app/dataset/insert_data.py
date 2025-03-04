@@ -63,7 +63,7 @@ for index, row in df.iterrows():
 cur.execute("DELETE FROM recipes WHERE LOWER(name::text) = 'nan' AND LOWER(descriptions::text) = 'nan';")
 
 # Commit the transaction
-conn.commit()
+
 
 cur.execute("""UPDATE recipes
 SET 
@@ -75,6 +75,8 @@ WHERE calories::TEXT = 'NaN'
    OR protein::TEXT = 'NaN' 
    OR carbohydrates::TEXT = 'NaN' 
    OR fat::TEXT = 'NaN';""")
+
+conn.commit()
 
 # Close the cursor and connection
 cur.close()

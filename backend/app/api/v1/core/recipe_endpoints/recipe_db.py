@@ -206,3 +206,14 @@ def get_random_recipe_db(recipe: RandomRecipeSchema, db):
                 detail="No recipes found"
             )
         return result
+
+
+def get_one_recipe_db(id: int, db):
+    query_stmt = select(Recipes).where(Recipes.id == id)
+    result = db.scalars(query_stmt).first()
+    if not result:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Recipe not found"
+        )
+    return result
