@@ -37,6 +37,9 @@ def get_recipe_db(recipe: SearchRecipeSchema, db):
     if recipe.carbohydrates is not None:
         conditions.append(Recipes.carbohydrates <= recipe.carbohydrates)
 
+    if recipe.calories is not None:
+        conditions.append(Recipes.calories <= recipe.calories)
+
     if recipe.protein is not None:
         conditions.append(Recipes.protein >= recipe.protein)
 

@@ -7,6 +7,7 @@ from pydantic import BaseModel, ConfigDict, EmailStr, Field
 class SearchRecipeSchema(BaseModel):
     query: str
     carbohydrates: int | None = None
+    calories: int | None = None
     protein: int | None = None
     recipe_type: str | None = None
 

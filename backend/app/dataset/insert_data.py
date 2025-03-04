@@ -43,7 +43,7 @@ INSERT INTO recipes (
     servings, 
     tags, 
     cook_time,
-    energy,
+    calories,
     protein,
     carbohydrates,
     fat,
@@ -65,6 +65,17 @@ cur.execute("DELETE FROM recipes WHERE LOWER(name::text) = 'nan' AND LOWER(descr
 # Commit the transaction
 conn.commit()
 
+cur.execute("""UPDATE recipes
+SET 
+    calories = NULLIF(calories, 'NaN'::FLOAT),
+    protein = NULLIF(protein, 'NaN'::FLOAT),
+    carbohydrates = NULLIF(carbohydrates, 'NaN'::FLOAT),
+    fat = NULLIF(fat, 'NaN'::FLOAT)
+WHERE calories::TEXT = 'NaN' 
+   OR protein::TEXT = 'NaN' 
+   OR carbohydrates::TEXT = 'NaN' 
+   OR fat::TEXT = 'NaN';""")
+
 # Close the cursor and connection
 cur.close()
 conn.close()
@@ -81,11 +92,11 @@ print("Data inserted successfully.")
 
 # UPDATE recipes
 # SET 
-#     energy = NULLIF(energy, 'NaN'::FLOAT),
+#     calories = NULLIF(calories, 'NaN'::FLOAT),
 #     protein = NULLIF(protein, 'NaN'::FLOAT),
 #     carbohydrates = NULLIF(carbohydrates, 'NaN'::FLOAT),
 #     fat = NULLIF(fat, 'NaN'::FLOAT)
-# WHERE energy::TEXT = 'NaN' 
+# WHERE calories::TEXT = 'NaN' 
 #    OR protein::TEXT = 'NaN' 
 #    OR carbohydrates::TEXT = 'NaN' 
 #    OR fat::TEXT = 'NaN';

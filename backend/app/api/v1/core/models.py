@@ -29,7 +29,7 @@ class Recipes(Base):
     servings: Mapped[str] = mapped_column(Text)
     tags: Mapped[str] = mapped_column(Text, nullable=True)
     cook_time: Mapped[str] = mapped_column(Text, nullable=True)
-    energy: Mapped[float] = mapped_column(Numeric, nullable=True)
+    calories: Mapped[float] = mapped_column(Numeric, nullable=True)
     protein: Mapped[float] = mapped_column(Numeric, nullable=True)
     carbohydrates: Mapped[float] = mapped_column(Numeric, nullable=True)
     fat: Mapped[float] = mapped_column(Numeric, nullable=True)

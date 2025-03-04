@@ -4,3 +4,6 @@ fastapi[all]
 psycopg2-binary # PÅ LINUX
 pandas
 bcrypt
+google-generativeai==0.4.0
+google-genai
+pillow

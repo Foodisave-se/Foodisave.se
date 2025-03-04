@@ -21,7 +21,7 @@ from app.api.v1.core.schemas import (
     UserSearchSchema
 )
 
-
+# passlib?
 def hash_password(password: str) -> str:
     # Generate a salt and hash the password
     password_bytes = password.encode('utf-8')
