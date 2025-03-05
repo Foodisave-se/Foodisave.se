@@ -7,10 +7,12 @@ from typing import Optional, Annotated
 from random import randint
 import json
 import re
+import os
 from app.settings import settings
 import google.generativeai as genai
-import base64
+
 from PIL import Image
+import uuid
 import io
 from app.db_setup import get_db
 from app.api.v1.core.recipe_endpoints.recipe_db import (
@@ -382,17 +384,21 @@ def compress_image(image_bytes, max_size=(800, 800), quality=80):
 @router.post("/suggest_recipe_from_image")
 async def suggest_recipe_from_image(file: UploadFile = File(...)):
     """
-    Tar emot en bildfil, komprimerar den om den är för stor, kombinerar en prompt med bilddata
-    och anropar Gemini API för att få receptförslag.
+    Tar emot en bildfil, sparar den i images-mappen, 
+    öppnar bilden med PIL, och anropar Gemini API för att få receptförslag.
     """
     try:
-        # Läs in originalbilden
-        original_image_bytes = await file.read()
+        # Generera ett unikt filnamn
+        file_extension = file.filename.split('.')[-1] if '.' in file.filename else 'jpg'
+        unique_filename = f"{uuid.uuid4()}.{file_extension}"
+        file_path = os.path.join(os.path.dirname(__file__), "images", unique_filename)
 
-        # Komprimera bilden
-        compressed_image_bytes = compress_image(original_image_bytes)
-        encoded_image = base64.b64encode(
-            compressed_image_bytes).decode("utf-8")
+        # Spara bilden på disk
+        with open(file_path, "wb") as buffer:
+            buffer.write(await file.read())
+
+        # Öppna bilden med PIL
+        pil_image = Image.open(file_path)
 
         # Skapa prompt-texten
         prompt_text = (
@@ -421,12 +427,15 @@ async def suggest_recipe_from_image(file: UploadFile = File(...)):
             "}"
         )
 
-        # Kombinera prompten med den base64-kodade, komprimerade bilden
-        combined_prompt = f"{prompt_text}\nBilddata: {encoded_image}"
+        
 
-        # Anropa Gemini API med det kombinerade promptet
+        # Anropa Gemini API med bilden och prompten
         model = genai.GenerativeModel("gemini-2.0-flash")
-        response = model.generate_content(combined_prompt)
+
+        print(model.count_tokens([prompt_text, pil_image]))
+        
+        response = model.generate_content([prompt_text, pil_image])
+        
 
         print("Gemini API Response for image analysis:", response)
 
@@ -451,3 +460,7 @@ async def suggest_recipe_from_image(file: UploadFile = File(...)):
         print(f"Fel vid API-förfrågan: {str(e)}")
         raise HTTPException(
             status_code=500, detail=f"Fel vid API-förfrågan: {str(e)}")
+    finally:
+        # Rensa upp bildfilen efter användning (valfritt)
+        if 'file_path' in locals() and os.path.exists(file_path):
+            os.remove(file_path)
