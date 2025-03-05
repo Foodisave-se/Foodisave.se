@@ -1,20 +1,27 @@
 import React, { useState } from "react";
 
-export default function SuggestRecipeFromImage() {
+export default function ImageRecipe() {
   const [selectedFile, setSelectedFile] = useState(null);
+  const [preview, setPreview] = useState(null);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
-  const apiUrl = "http://localhost:8000/v1/suggest_recipe_from_image"; // Kontrollera att URL:en stämmer
+  const apiUrl = "http://localhost:8000/v1/suggest_recipe_from_image";
 
-  // Hantera filval
+  // Hantera filval och skapa en förhandsvisning
   const handleFileChange = (e) => {
-    setSelectedFile(e.target.files[0]);
+    const file = e.target.files[0];
+    setSelectedFile(file);
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setPreview(url);
+    } else {
+      setPreview(null);
+    }
   };
 
-  // Funktion för att ladda upp bilden och hämta receptförslag
+  // Funktion för att ladda upp bilden
   const uploadImage = async () => {
     if (!selectedFile) return;
-
     const formData = new FormData();
     formData.append("file", selectedFile);
 
@@ -45,18 +52,25 @@ export default function SuggestRecipeFromImage() {
     >
       <div className="w-full max-w-2xl bg-white bg-opacity-90 p-8 rounded-2xl shadow-lg">
         <h1 className="text-2xl font-bold text-gray-800 text-center mb-4">
-          Föreslå recept baserat på ingrediensbild
+          Föreslå recept baserat på din bild
         </h1>
 
         {/* Filuppladdningsfält */}
         <div className="relative w-full max-w-lg mx-auto">
           <input
             type="file"
+            accept="image/*"
             onChange={handleFileChange}
             className="w-full p-3 border rounded-md"
-            accept="image/*"
           />
         </div>
+
+        {/* Förhandsvisning av vald bild */}
+        {preview && (
+          <div className="mt-4 flex justify-center">
+            <img src={preview} alt="Förhandsvisning" className="max-h-64" />
+          </div>
+        )}
 
         {/* Knapp för att ladda upp bilden */}
         <div className="mt-4 flex justify-center">
