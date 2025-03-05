@@ -33,5 +33,42 @@ class UserUpdateSchema(BaseModel):
     last_name: str | None = None
     email: EmailStr | None = None
     password: str | None = None
+
+
+class TokenSchema(BaseModel):
+    access_token: str
+    token_type: str
     
+
+class UserOutSchema(BaseModel):
+    id: int
+    email: str
+    last_name: str
+    first_name: str
+    is_superuser: bool
+    is_admin: bool
+    is_customer: bool
+    model_config = ConfigDict(from_attributes=True)
+
+class ImageDetectionResponse(BaseModel):
+    """
+    Base model representing the response body for image detection.
+
+    Attributes:
+        is_nsfw (bool): Whether the image is classified as NSFW.
+        confidence_percentage (float): Confidence level of the NSFW classification.
+    """
+
+    is_nsfw: bool
+    confidence_percentage: float
+
+class FileImageDetectionResponse(ImageDetectionResponse):
+    """
+    Model extending ImageDetectionResponse with a file attribute.
+
+    Attributes:
+        file (str): The name of the file that was processed.
+    """
+
+    file_name: str
     

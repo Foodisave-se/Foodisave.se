@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session, joinedload, selectinload
 from typing import Optional
 from random import randint
 import bcrypt
+# from app.security import hash_password
 
 from app.api.v1.core.models import (
     Users,
@@ -21,13 +22,6 @@ from app.api.v1.core.schemas import (
     UserSearchSchema
 )
 
-# passlib?
-def hash_password(password: str) -> str:
-    # Generate a salt and hash the password
-    password_bytes = password.encode('utf-8')
-    salt = bcrypt.gensalt()
-    hashed = bcrypt.hashpw(password_bytes, salt)
-    return hashed.decode('utf-8')
 
 
 def create_user_db(user: UserSchema, db):
@@ -37,7 +31,7 @@ def create_user_db(user: UserSchema, db):
         first_name=user.first_name,
         last_name=user.last_name,
         email=user.email,
-        password=hash_password(user.password),
+        # password=hash_password(user.password),
         level=user.level
     )
 

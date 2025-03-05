@@ -40,6 +40,17 @@ class Recipes(Base):
 
     def __repr__(self):
         return f"<recipes={self.name}>"
+    
+class Token(Base):
+    __tablename__ = "tokens"
+
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now() 
+    )
+    token: Mapped[str] = mapped_column(unique=True, index=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    user: Mapped["Users"] = relationship(back_populates="tokens")
 
 
 class Users(Base):
@@ -48,7 +59,11 @@ class Users(Base):
     first_name: Mapped[str] = mapped_column(String(255))
     last_name: Mapped[str] = mapped_column(String(255))
     email: Mapped[str] = mapped_column(String(150), unique=True)
-    password: Mapped[str] = mapped_column(String(150))
+    is_superuser: Mapped[bool] = mapped_column(Boolean, default=False)
+    is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
+    is_customer: Mapped[bool] = mapped_column(Boolean, default=True)
+    coins: Mapped[int] = mapped_column(Integer, default=100)
+    hashed_password: Mapped[str] = mapped_column(String(150))
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         server_default=func.now() 
@@ -101,6 +116,7 @@ class UserRecipes(Base):
     descriptions: Mapped[str] = mapped_column(Text)
     ingredients: Mapped[str] = mapped_column(Text)
     steps: Mapped[str] = mapped_column(Text)
+    is_ai: Mapped[bool] = mapped_column(Boolean, default=False)
     servings: Mapped[int]
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
@@ -124,7 +140,7 @@ class UserRecipes(Base):
 
 class Images(Base):
     __tablename__ = "images"
-    link: Mapped[str] = mapped_column(String(100))
+    link: Mapped[str] = mapped_column(String(255))
     user_id: Mapped[int] = mapped_column(
         ForeignKey("users.id", ondelete="SET NULL"))
     user_recipes_id: Mapped[int] = mapped_column(
