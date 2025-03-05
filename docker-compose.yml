@@ -24,6 +24,7 @@ services:
       - ./backend:/app
     environment:
       DATABASE_URL: postgresql://postgres:naPraPatenAxeL13.@db:5432/foodisave
+      
     command: ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --reload --port 8000"]
 
   frontend:
