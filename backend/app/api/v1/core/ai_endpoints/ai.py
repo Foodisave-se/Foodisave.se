@@ -366,21 +366,6 @@ def modify_recipes(recipe_id: int,
         raise HTTPException(
             status_code=500, detail=f"Fel vid API-förfrågan: {str(e)}")
 
-
-def compress_image(image_bytes, max_size=(800, 800), quality=80):
-    """
-    Komprimerar bilden genom att ändra storlek om den överstiger maxstorleken 
-    och spara den med reducerad kvalitet.
-    """
-    image = Image.open(io.BytesIO(image_bytes))
-    # Ändra storlek om bilden är större än max_size
-    image.thumbnail(max_size)
-    buffer = io.BytesIO()
-    # Spara som JPEG med reducerad kvalitet (du kan ändra formatet om nödvändigt)
-    image.save(buffer, format="JPEG", quality=quality)
-    return buffer.getvalue()
-
-
 @router.post("/suggest_recipe_from_image")
 async def suggest_recipe_from_image(file: UploadFile = File(...)):
     """
