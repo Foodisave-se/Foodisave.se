@@ -25,6 +25,14 @@ from app.api.v1.core.schemas import (
     UserSchema,
     UserSearchSchema,
     UserUpdateSchema,
+    UserOutSchema,
+    UserRegisterSchema
+)
+
+from app.security import (
+    get_current_user,
+    get_current_admin,
+    get_current_superuser
 )
 
 from app.db_setup import get_db
@@ -33,7 +41,7 @@ router = APIRouter()
 
 
 @router.post("/user", status_code=200)
-def create_user(user: Annotated[UserSchema, Depends(UserSchema)], db: Session = Depends(get_db)):
+def create_user(user: UserRegisterSchema, db: Session = Depends(get_db)):
     result = create_user_db(user=user, db=db)
 
     if not result:
@@ -42,6 +50,11 @@ def create_user(user: Annotated[UserSchema, Depends(UserSchema)], db: Session = 
             detail="User couldnt be created"
         )
     return result
+
+@router.get("/me", response_model=UserOutSchema)
+def read_users_me(current_user: Users = Depends(get_current_user)):
+    return current_user
+
 
 
 @router.get("/user", status_code=200)

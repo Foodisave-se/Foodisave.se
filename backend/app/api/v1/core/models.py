@@ -72,6 +72,9 @@ class Users(Base):
     user_recipes: Mapped["UserRecipes"] = relationship(
         back_populates="user"
     )
+    tokens: Mapped[list["Token"]] = relationship(
+        back_populates="user")
+
     images: Mapped["Images"] = relationship(
         back_populates="user"
     )

@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session, joinedload, selectinload
 from typing import Optional
 from random import randint
 import bcrypt
-# from app.security import hash_password
+from app.security import hash_password
 
 from app.api.v1.core.models import (
     Users,
@@ -19,20 +19,23 @@ from app.api.v1.core.models import (
 
 from app.api.v1.core.schemas import (
     UserSchema,
-    UserSearchSchema
+    UserSearchSchema,
+    UserRegisterSchema
 )
 
-
-
-def create_user_db(user: UserSchema, db):
+def create_user_db(user: UserRegisterSchema, db):
 
     user = Users(
         username=user.username,
         first_name=user.first_name,
         last_name=user.last_name,
         email=user.email,
-        # password=hash_password(user.password),
-        level=user.level
+        hashed_password=hash_password(user.password),
+        is_superuser=False,
+        is_admin=False,
+        is_customer=True,
+        coins=100,
+        level=1
     )
 
     db.add(user)

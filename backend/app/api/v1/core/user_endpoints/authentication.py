@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from app.api.v1.core.models import Token, User
+from app.api.v1.core.models import Token, Users
 from app.api.v1.core.schemas import (
     TokenSchema,
     UserOutSchema,
@@ -22,22 +22,6 @@ from sqlalchemy.orm import Session
 
 router = APIRouter(tags=["auth"], prefix="/auth")
 
-
-@router.post("/user/create", status_code=status.HTTP_201_CREATED)
-def register_user(
-    user: UserRegisterSchema, db: Session = Depends(get_db)
-) -> UserOutSchema:
-    # TODO ADD VALIDATION TO CREATION OF PASSWORD
-    hashed_password = hash_password(user.password)
-    # We exclude password from the validated pydantic model since the field/column is called hashed_password, we add that manually
-    new_user = User(
-        **user.model_dump(exclude={"password"}), hashed_password=hashed_password
-    )
-    db.add(new_user)
-    db.commit()
-    return new_user
-
-
 @router.post("/token")
 def login(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
@@ -48,7 +32,7 @@ def login(
     # Perhaps better to use .only or select the columns explicitly
     user = (
         db.execute(
-            select(User).where(User.email == form_data.username),
+            select(Users).where(Users.email == form_data.username),
         )
         .scalars()
         .first()

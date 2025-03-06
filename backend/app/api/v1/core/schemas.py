@@ -22,6 +22,10 @@ class UserSchema(BaseModel):
     last_name: str
     email: EmailStr
     password: str
+    is_superuser: bool = False
+    is_admin: bool = False
+    is_customer: bool = True
+    coins: int = 100
     level: int = 1
 
 class UserSearchSchema(BaseModel):
@@ -34,6 +38,14 @@ class UserUpdateSchema(BaseModel):
     email: EmailStr | None = None
     password: str | None = None
 
+class UserRegisterSchema(BaseModel):
+    username: str
+    email: str
+    last_name: str
+    first_name: str
+    password: str
+    model_config = ConfigDict(from_attributes=True)
+
 
 class TokenSchema(BaseModel):
     access_token: str
@@ -42,12 +54,15 @@ class TokenSchema(BaseModel):
 
 class UserOutSchema(BaseModel):
     id: int
+    username: str
     email: str
     last_name: str
     first_name: str
     is_superuser: bool
     is_admin: bool
     is_customer: bool
+    coins: int
+    level: int
     model_config = ConfigDict(from_attributes=True)
 
 class ImageDetectionResponse(BaseModel):

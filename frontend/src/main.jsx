@@ -8,6 +8,11 @@ import BliMedlem from "./pages/BliMedlem.jsx";
 import SökRecept from "./pages/SökRecept.jsx";
 import ReceptFörslag from "./pages/ReceptFörslag.jsx";
 import ImageRecipe from "./pages/ImageRecipe.jsx";
+import LoginPage from "./pages/LoginPage.jsx";
+import DashboardIndexPage from "./pages/DashboardIndexPage.jsx";
+import DashboardUserPage from "./pages/DashboardUserPage.jsx";
+import DashboardLayout from "./pages/DashboardLayout.jsx";
+import RegisterPage from "./pages/RegisterPage.jsx";
 
 const router = createBrowserRouter([
   {
@@ -39,9 +44,32 @@ const router = createBrowserRouter([
         element: <ImageRecipe />,
         errorElement: <NotFoundPage />,
       },
+      {
+        path: "login",
+        element: <LoginPage />,
+      },
+      {
+        path: "register",
+        element: <RegisterPage />,
+      },
 
     ],
   },
+  {
+    // Dashboard layout
+    path: "/dashboard",
+    element: <DashboardLayout />,
+    children: [
+    {
+      path: "", // /dashboard
+      element: <DashboardIndexPage />,
+    },
+    {
+      path: "/dashboard/users/:userId",
+      element: <DashboardUserPage />,
+    },
+  ],
+},
 ]);
 
 createRoot(document.getElementById('root')).render(
