@@ -13,6 +13,8 @@ import DashboardIndexPage from "./pages/DashboardIndexPage.jsx";
 import DashboardUserPage from "./pages/DashboardUserPage.jsx";
 import DashboardLayout from "./pages/DashboardLayout.jsx";
 import RegisterPage from "./pages/RegisterPage.jsx";
+import UserSettingsPage from "./pages/UserSettingsPage.jsx";
+import ImageFoodRecipe from "./pages/ImageFoodRecipe.jsx";
 
 const router = createBrowserRouter([
   {
@@ -52,6 +54,10 @@ const router = createBrowserRouter([
         path: "register",
         element: <RegisterPage />,
       },
+      {
+        path: "ImageFoodRecipe",
+        element: <ImageFoodRecipe />,
+      },
 
     ],
   },
@@ -67,6 +73,10 @@ const router = createBrowserRouter([
     {
       path: "/dashboard/users/:userId",
       element: <DashboardUserPage />,
+    },
+    {
+      path: "/dashboard/settings", // /dashboard
+      element: <UserSettingsPage />,
     },
   ],
 },

@@ -516,6 +516,108 @@ async def suggest_recipe_from_image(file: UploadFile = File(...)):
         if 'file_path' in locals() and os.path.exists(file_path):
             os.remove(file_path)
 
+@router.post("/suggest_recipe_from_plateimage")
+async def suggest_recipe_from_plateimage(file: UploadFile = File(...)):
+    """
+    Tar emot en bildfil, sparar den i images-mappen, 
+    öppnar bilden med PIL, och anropar Gemini API för att få receptförslag.
+    """
+
+    response, restored_file = classify_image(file=file)
+
+    print("Image classification response:", response)
+
+    # Check if the image is NSFW
+    if response.is_nsfw:
+        raise HTTPException(
+            status_code=400,
+            detail="Bilden innehåller innehåll som inte är lämpligt för arbete.",
+        )
+
+    try:
+        # Generera ett unikt filnamn
+        file_extension = restored_file.filename.split('.')[-1] if '.' in restored_file.filename else 'jpg'
+        unique_filename = f"{uuid.uuid4()}.{file_extension}"
+        file_path = os.path.join(os.path.dirname(__file__), "images", unique_filename)
+
+        # Spara bilden på disk
+        with open(file_path, "wb") as buffer:
+            buffer.write(await restored_file.read())
+
+        # Öppna bilden med PIL
+        pil_image = Image.open(file_path)
+
+        # Skapa prompt-texten
+        prompt_text = (
+            "Du är en mästerkock och ska nu följa instruktionerna nedan. "
+            "Analysera och identifiera maträtten på bilden och föreslå ett recept med instruktioerna nedan som passar till den maten du ser på tallriken. "
+            "Utöver de ingredienser du identifierar, anta att basvaror som salt, peppar, smör och olja redan finns hemma och inkludera dem i receptet om de är nödvändiga. "
+            "Skapa en detaljerad lista på ett recept som kan lagas med de ingredienser du har identifierat samt de nödvändiga basvarorna. "
+            "Ge även näringsinformation per portion: energi (kcal), protein, kolhydrater och fett. \n\n"
+            "Svar endast i JSON-format, ingen extra text. \n"
+            "Använd exakt följande JSON-struktur:\n"
+            "{\n"
+            '  "recipes": [\n'
+            "    {\n"
+            '      "title": "Titel på receptet",\n'
+            '      "description": "En kort beskrivning av rätten.",\n'
+            '      "category": "Ange kategori: Fågel, Kött, Fisk, Vegetarisk, Frukost, Bakning.",\n'
+            '      "ingredients": [\n'
+            '        "Ingrediensnamn mängd enhet"\n'
+            "      ],\n"
+            '      "instructions": [\n'
+            '        "Beskrivning",\n'
+            '        "Beskrivning",\n'
+            '        "Beskrivning"\n'
+            "      ],\n"
+            '      "cook_time": "Total tillagningstid (t.ex. 30 min)",\n'
+            '      "servings": "Antal portioner (t.ex. 4 portioner)",\n'
+            '      "energy": "Antal kcal per portion",\n'
+            '      "protein": "Gram protein per portion",\n'
+            '      "carbohydrates": "Gram kolhydrater per portion",\n'
+            '      "fat": "Gram fett per portion"\n'
+            "    }\n"
+            "  ]\n"
+            "}"
+        )
+
+        
+
+        # Anropa Gemini API med bilden och prompten
+        model = genai.GenerativeModel("gemini-2.0-flash")
+
+        print(model.count_tokens([prompt_text, pil_image]))
+        
+        response = model.generate_content([prompt_text, pil_image])
+        
+
+        print("Gemini API Response for image analysis:", response)
+
+        if response and response.text:
+            cleaned_text = response.text.strip()
+            # Ta bort eventuell markdown (```json ... ```)
+            cleaned_text = re.sub(r"^```json\n|\n```$", "", cleaned_text)
+            cleaned_text = cleaned_text.strip().rstrip(",")
+
+            try:
+                result = json.loads(cleaned_text)
+                if "recipes" not in result:
+                    raise ValueError("JSON saknar 'recipes'-nyckeln.")
+                return JSONResponse(content={"suggested_recipes": result["recipes"]})
+            except json.JSONDecodeError as e:
+                print("JSON-dekodningsfel:", e)
+                raise HTTPException(
+                    status_code=500, detail="500: Misslyckades att tolka svaret från AI som JSON")
+
+        return JSONResponse(content={"suggested_recipes": []}, status_code=200)
+    except Exception as e:
+        print(f"Fel vid API-förfrågan: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Fel vid API-förfrågan: {str(e)}")
+    finally:
+        # Rensa upp bildfilen efter användning (valfritt)
+        if 'file_path' in locals() and os.path.exists(file_path):
+            os.remove(file_path)
 
 
 def classify_image(file: UploadFile = File(None)):
