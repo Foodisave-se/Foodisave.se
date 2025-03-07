@@ -65,6 +65,34 @@ class UserOutSchema(BaseModel):
     level: int
     model_config = ConfigDict(from_attributes=True)
 
+class UserRecipeSchema(BaseModel):
+    name: str
+    descriptions: str
+    ingredients: str
+    instructions: str
+    tags: str | None = None
+    cook_time: str | None = None
+    calories: float | None = None
+    protein: float | None = None
+    carbohydrates: float | None = None
+    fat: float | None = None
+    is_ai: bool = False
+    servings: int
+    user_id: int
+
+class UserUpdateRecipeSchema(BaseModel):
+    name: str | None = None
+    descriptions: str | None = None
+    ingredients: str | None = None
+    instructions: str | None = None
+    tags: str | None = None
+    cook_time: str | None = None
+    calories: float | None = None
+    protein: float | None = None
+    carbohydrates: float | None = None
+    fat: float | None = None
+    servings: int | None = None
+
 class ImageDetectionResponse(BaseModel):
     """
     Base model representing the response body for image detection.

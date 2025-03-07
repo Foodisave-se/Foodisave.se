@@ -173,24 +173,29 @@ def modify_recipes(recipe_id: int, db: Session = Depends(get_db)):
     prompt_text = (
         f"Jag har följande recept: {recipe}. \n"
         "Skapa en detaljerad lista på **tre recept** som liknar detta recept.\n"
-        "Svar **endast i JSON-format**, ingen extra text, inget extra värde.\n\n"
-        "Struktur för JSON-utdata:\n"
+        "Ge även näringsinformation per portion: energi (kcal), protein, kolhydrater och fett. \n\n"
+        "Svar endast i JSON-format, ingen extra text. \n"
+        "Använd exakt följande JSON-struktur:\n"
         "{\n"
-        "  \"recipes\": [\n"
+        '  "recipes": [\n'
         "    {\n"
-        "      \"title\": \"Titel på receptet\",\n"
-        "      \"description\": \"En kort beskrivning av rätten.\",\n"
-        "      \"time\": \"Total tillagningstid (t.ex. 30 min)\",\n"
-        "      \"difficulty\": \"Svårighetsgrad (Enkel, Medel, Avancerad)\",\n"
-        "      \"ingredients\": [\n"
-        "        {\"name\": \"Ingrediensnamn\", \"amount\": \"Mängd\", \"unit\": \"Enhet\"}\n"
+        '      "title": "Titel på receptet",\n'
+        '      "description": "En kort beskrivning av rätten.",\n'
+        '      "category": "Ange kategori: Fågel, Kött, Fisk, Vegetarisk, Frukost, Bakning.",\n'
+        '      "ingredients": [\n'
+        '        {"name": "Ingrediensnamn", "amount": "Mängd", "unit": "Enhet"}\n'
         "      ],\n"
-        "      \"instructions\": [\n"
-        "        \"Steg 1: Beskrivning\",\n"
-        "        \"Steg 2: Beskrivning\",\n"
-        "        \"Steg 3: Beskrivning\"\n"
+        '      "instructions": [\n'
+        '        "Steg 1: Beskrivning",\n'
+        '        "Steg 2: Beskrivning",\n'
+        '        "Steg 3: Beskrivning"\n'
         "      ],\n"
-        "      \"image\": \"En genererad bild av rätten baserat på titeln och ingredienserna\"\n"
+        '      "cook_time": "Total tillagningstid (t.ex. 30 min)",\n'
+        '      "servings": "Antal portioner (t.ex. 4 portioner)",\n'
+        '      "energy": "Antal kcal per portion",\n'
+        '      "protein": "Gram protein per portion",\n'
+        '      "carbohydrates": "Gram kolhydrater per portion",\n'
+        '      "fat": "Gram fett per portion"\n'
         "    }\n"
         "  ]\n"
         "}"
@@ -253,24 +258,29 @@ def modify_recipes(recipe_id: int,
         f"Jag har följande recept: {recipe}. \n"
         f"jag behöver byta ut dessa ingredienser{', '.join(ingredient_list)} med andra ingredienser som passar.\n"
         "Skapa en detaljerad lista på **tre recept** med dem utbytta ingredienserna.\n"
-        "Svar **endast i JSON-format**, ingen extra text, inget extra värde.\n\n"
-        "Struktur för JSON-utdata:\n"
+        "Ge även näringsinformation per portion: energi (kcal), protein, kolhydrater och fett. \n\n"
+        "Svar endast i JSON-format, ingen extra text. \n"
+        "Använd exakt följande JSON-struktur:\n"
         "{\n"
-        "  \"recipes\": [\n"
+        '  "recipes": [\n'
         "    {\n"
-        "      \"title\": \"Titel på receptet\",\n"
-        "      \"description\": \"En kort beskrivning av rätten.\",\n"
-        "      \"time\": \"Total tillagningstid (t.ex. 30 min)\",\n"
-        "      \"difficulty\": \"Svårighetsgrad (Enkel, Medel, Avancerad)\",\n"
-        "      \"ingredients\": [\n"
-        "        {\"name\": \"Ingrediensnamn\", \"amount\": \"Mängd\", \"unit\": \"Enhet\"}\n"
+        '      "title": "Titel på receptet",\n'
+        '      "description": "En kort beskrivning av rätten.",\n'
+        '      "category": "Ange kategori: Fågel, Kött, Fisk, Vegetarisk, Frukost, Bakning.",\n'
+        '      "ingredients": [\n'
+        '        {"name": "Ingrediensnamn", "amount": "Mängd", "unit": "Enhet"}\n'
         "      ],\n"
-        "      \"instructions\": [\n"
-        "        \"Steg 1: Beskrivning\",\n"
-        "        \"Steg 2: Beskrivning\",\n"
-        "        \"Steg 3: Beskrivning\"\n"
+        '      "instructions": [\n'
+        '        "Steg 1: Beskrivning",\n'
+        '        "Steg 2: Beskrivning",\n'
+        '        "Steg 3: Beskrivning"\n'
         "      ],\n"
-        "      \"image\": \"En genererad bild av rätten baserat på titeln och ingredienserna\"\n"
+        '      "cook_time": "Total tillagningstid (t.ex. 30 min)",\n'
+        '      "servings": "Antal portioner (t.ex. 4 portioner)",\n'
+        '      "energy": "Antal kcal per portion",\n'
+        '      "protein": "Gram protein per portion",\n'
+        '      "carbohydrates": "Gram kolhydrater per portion",\n'
+        '      "fat": "Gram fett per portion"\n'
         "    }\n"
         "  ]\n"
         "}"
@@ -333,24 +343,29 @@ def modify_recipes(recipe_id: int,
         f"Jag har följande recept: {recipe}. \n"
         f"jag behöver lägga till dessa ingredienser{', '.join(ingredient_list)}.\n"
         "Skapa en detaljerad lista på **tre recept** med dem tillagda ingredienserna.\n"
-        "Svar **endast i JSON-format**, ingen extra text, inget extra värde.\n\n"
-        "Struktur för JSON-utdata:\n"
+        "Ge även näringsinformation per portion: energi (kcal), protein, kolhydrater och fett. \n\n"
+        "Svar endast i JSON-format, ingen extra text. \n"
+        "Använd exakt följande JSON-struktur:\n"
         "{\n"
-        "  \"recipes\": [\n"
+        '  "recipes": [\n'
         "    {\n"
-        "      \"title\": \"Titel på receptet\",\n"
-        "      \"description\": \"En kort beskrivning av rätten.\",\n"
-        "      \"time\": \"Total tillagningstid (t.ex. 30 min)\",\n"
-        "      \"difficulty\": \"Svårighetsgrad (Enkel, Medel, Avancerad)\",\n"
-        "      \"ingredients\": [\n"
-        "        {\"name\": \"Ingrediensnamn\", \"amount\": \"Mängd\", \"unit\": \"Enhet\"}\n"
+        '      "title": "Titel på receptet",\n'
+        '      "description": "En kort beskrivning av rätten.",\n'
+        '      "category": "Ange kategori: Fågel, Kött, Fisk, Vegetarisk, Frukost, Bakning.",\n'
+        '      "ingredients": [\n'
+        '        {"name": "Ingrediensnamn", "amount": "Mängd", "unit": "Enhet"}\n'
         "      ],\n"
-        "      \"instructions\": [\n"
-        "        \"Steg 1: Beskrivning\",\n"
-        "        \"Steg 2: Beskrivning\",\n"
-        "        \"Steg 3: Beskrivning\"\n"
+        '      "instructions": [\n'
+        '        "Steg 1: Beskrivning",\n'
+        '        "Steg 2: Beskrivning",\n'
+        '        "Steg 3: Beskrivning"\n'
         "      ],\n"
-        "      \"image\": \"En genererad bild av rätten baserat på titeln och ingredienserna\"\n"
+        '      "cook_time": "Total tillagningstid (t.ex. 30 min)",\n'
+        '      "servings": "Antal portioner (t.ex. 4 portioner)",\n'
+        '      "energy": "Antal kcal per portion",\n'
+        '      "protein": "Gram protein per portion",\n'
+        '      "carbohydrates": "Gram kolhydrater per portion",\n'
+        '      "fat": "Gram fett per portion"\n'
         "    }\n"
         "  ]\n"
         "}"
@@ -431,26 +446,33 @@ async def suggest_recipe_from_image(file: UploadFile = File(...)):
 
         # Skapa prompt-texten
         prompt_text = (
-            "Analysera bilden nedan med ingredienser. Identifiera de ingredienser som syns i bilden"
-            "och skapa en detaljerad lista med förslag på ett recept som kan lagas med endast dessa ingredienser som du identifierat i bilden. "
-            "Svar endast i JSON-format, ingen extra text. "
-            "Struktur för JSON-utdata:\n"
+            "Du är en mästerkock och ska nu följa instruktionerna nedan. "
+            "Analysera bilden med ingredienser och identifiera de ingredienser som syns i bilden. "
+            "Utöver de ingredienser du identifierar, anta att basvaror som salt, peppar, smör och olja redan finns hemma och inkludera dem i receptet om de är nödvändiga. "
+            "Skapa en detaljerad lista på ett recept som kan lagas med de ingredienser du har identifierat samt de nödvändiga basvarorna. "
+            "Ge även näringsinformation per portion: energi (kcal), protein, kolhydrater och fett. \n\n"
+            "Svar endast i JSON-format, ingen extra text. \n"
+            "Använd exakt följande JSON-struktur:\n"
             "{\n"
             '  "recipes": [\n'
             "    {\n"
             '      "title": "Titel på receptet",\n'
             '      "description": "En kort beskrivning av rätten.",\n'
-            '      "time": "Total tillagningstid (t.ex. 30 min)",\n'
-            '      "difficulty": "Svårighetsgrad (Enkel, Medel, Avancerad)",\n'
+            '      "category": "Ange kategori: Fågel, Kött, Fisk, Vegetarisk, Frukost, Bakning.",\n'
             '      "ingredients": [\n'
-            '        {"name": "Ingrediensnamn", "amount": "Mängd", "unit": "Enhet"}\n'
+            '        "Ingrediensnamn mängd enhet"\n'
             "      ],\n"
             '      "instructions": [\n'
-            '        "Steg 1: Beskrivning",\n'
-            '        "Steg 2: Beskrivning",\n'
-            '        "Steg 3: Beskrivning"\n'
+            '        "Beskrivning",\n'
+            '        "Beskrivning",\n'
+            '        "Beskrivning"\n'
             "      ],\n"
-            '      "image": "En genererad bild av rätten baserat på titeln och ingredienserna"\n'
+            '      "cook_time": "Total tillagningstid (t.ex. 30 min)",\n'
+            '      "servings": "Antal portioner (t.ex. 4 portioner)",\n'
+            '      "energy": "Antal kcal per portion",\n'
+            '      "protein": "Gram protein per portion",\n'
+            '      "carbohydrates": "Gram kolhydrater per portion",\n'
+            '      "fat": "Gram fett per portion"\n'
             "    }\n"
             "  ]\n"
             "}"

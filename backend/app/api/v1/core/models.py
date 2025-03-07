@@ -118,7 +118,13 @@ class UserRecipes(Base):
     name: Mapped[str] = mapped_column(String(100))
     descriptions: Mapped[str] = mapped_column(Text)
     ingredients: Mapped[str] = mapped_column(Text)
-    steps: Mapped[str] = mapped_column(Text)
+    instructions: Mapped[str] = mapped_column(Text)
+    tags: Mapped[str] = mapped_column(Text, nullable=True)
+    cook_time: Mapped[str] = mapped_column(Text, nullable=True)
+    calories: Mapped[float] = mapped_column(Numeric, nullable=True)
+    protein: Mapped[float] = mapped_column(Numeric, nullable=True)
+    carbohydrates: Mapped[float] = mapped_column(Numeric, nullable=True)
+    fat: Mapped[float] = mapped_column(Numeric, nullable=True)
     is_ai: Mapped[bool] = mapped_column(Boolean, default=False)
     servings: Mapped[int]
     created_at: Mapped[datetime] = mapped_column(

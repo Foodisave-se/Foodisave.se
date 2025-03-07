@@ -45,7 +45,6 @@ def search_recipe(recipe_type: SearchRecipeSchema = Depends(),
     return result
 
 
-# randomize recipes endpoints
 @router.get("/random/recipe", status_code=200)
 def get_random_recipe(
         recipe_type: RandomRecipeSchema = Depends(),
