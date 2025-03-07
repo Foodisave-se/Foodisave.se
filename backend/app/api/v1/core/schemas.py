@@ -118,3 +118,7 @@ class FileImageDetectionResponse(ImageDetectionResponse):
 class PasswordChangeSchema(BaseModel):
     current_password: str
     new_password: str
+
+class ChatRequest(BaseModel):
+    context: str
+    message: str

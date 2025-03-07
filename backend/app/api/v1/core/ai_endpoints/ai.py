@@ -47,6 +47,7 @@ from app.api.v1.core.schemas import (
     SearchRecipeSchema,
     RandomRecipeSchema,
     FileImageDetectionResponse,
+    ChatRequest,
 )
 
 from app.db_setup import get_db
@@ -684,3 +685,33 @@ def classify_image(file: UploadFile = File(None)):
         raise HTTPException(
             status_code=500, detail=f"Unexpected error processing image: {str(e)}"
         ) from e
+    
+@router.post("/chat", response_model=dict)
+async def chat_with_context(request: ChatRequest):
+    """
+    Tar emot en JSON-body med 'context' (exempelvis en HTML-sida eller text från den aktuella sidan)
+    och 'message' (användarens fråga). Dessa kombineras till en prompt som skickas till Gemini‑API:t,
+    och svaret returneras som ren text.
+    
+    Exempel på request-body:
+    {
+      "context": "<html>... innehållet på sidan ...</html>",
+      "message": "Hur lagar jag detta recept?"
+    }
+    """
+    prompt_text = (
+        "Du är en hjälpsam och kreativ kockassistent. "
+        "Använd följande kontext från användarens webbsida som bakgrundsinformation:\n"
+        f"{request.context}\n\n"
+        "Användarens fråga: " + request.message + "\n\n"
+        "Svara tydligt och koncist på användarens fråga, ENDAST i ren text."
+    )
+
+    try:
+        model = genai.GenerativeModel("gemini-2.0-flash")
+        response = model.generate_content(prompt_text)
+        if response and response.text:
+            return JSONResponse(content={"response": response.text.strip()})
+        return JSONResponse(content={"response": "Inget svar mottaget."})
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
