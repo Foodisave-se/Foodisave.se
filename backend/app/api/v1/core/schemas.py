@@ -87,3 +87,6 @@ class FileImageDetectionResponse(ImageDetectionResponse):
 
     file_name: str
     
+class PasswordChangeSchema(BaseModel):
+    current_password: str
+    new_password: str
