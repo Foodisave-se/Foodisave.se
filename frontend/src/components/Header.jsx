@@ -125,7 +125,7 @@ export default function Header() {
               <button 
                 id="menu-burger"
                 onClick={toggleMenu}
-                className="relative flex items-center justify-center h-10 w-10 sm:h-12 sm:w-12 shadow-lg bg-white text-gray-800 hover:bg-green-300 rounded-full cursor-pointer transition-transform duration-300 hover:scale-95"
+                className="relative flex items-center justify-center h-10 w-10 sm:h-12 sm:w-12 shadow-lg bg-black text-white rounded-full cursor-pointer transition-transform duration-300 hover:scale-95"
               >
                 {isMenuOpen ? (
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="h-5 w-5 sm:h-6 sm:w-6">
