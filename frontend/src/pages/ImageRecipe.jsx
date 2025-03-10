@@ -47,12 +47,11 @@ export default function ImageRecipe() {
 
   return (
     <div
-      className="flex flex-col items-center justify-center min-h-screen bg-cover bg-center p-6"
-      style={{ backgroundImage: `url('/background_upload.jpg')` }}
+      className="flex flex-col items-center justify-center min-h-screen bg-cover bg-center p-6 pt-24"
     >
-      <div className="w-full max-w-2xl bg-white bg-opacity-90 p-8 rounded-2xl shadow-lg">
+      <div className="w-full max-w-2xl bg-opacity-90 p-8 rounded-2xl">
         <h1 className="text-2xl font-bold text-gray-800 text-center mb-4">
-          Föreslå recept baserat på din bild
+          Föreslår recept baserat på ingredienserna i bilden
         </h1>
 
         {/* Filuppladdningsfält */}
@@ -76,7 +75,7 @@ export default function ImageRecipe() {
         <div className="mt-4 flex justify-center">
           <button
             onClick={uploadImage}
-            className="bg-green-300 text-white p-2 rounded-full hover:bg-green-400 transition cursor-pointer"
+            className="bg-black text-white p-2 rounded-full hover:bg-[#888383] transition cursor-pointer"
           >
             Ladda upp bild
           </button>
@@ -84,7 +83,7 @@ export default function ImageRecipe() {
 
         {/* Visar receptförslag */}
         {result && (
-          <div className="mt-6 p-4 bg-gray-50 rounded-lg shadow-md">
+          <div className="mt-6 p-4 rounded-lg shadow-md">
             <h2 className="text-xl font-semibold text-gray-900">Receptförslag</h2>
             <pre className="text-gray-700 mt-2">
               {JSON.stringify(result, null, 2)}

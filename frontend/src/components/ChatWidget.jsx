@@ -45,8 +45,8 @@ export default function ChatWidget() {
     <div className="fixed bottom-4 right-4 z-50">
       {isOpen ? (
         <div className="w-80 h-96 bg-white rounded-lg shadow-lg flex flex-col">
-          <div className="bg-blue-600 text-white p-3 flex justify-between items-center rounded-t-lg">
-            <span className="font-bold">Chatt</span>
+          <div className="bg-black text-white p-3 flex justify-between items-center rounded-t-lg">
+            <span className="font-bold">Hej! Chatta med mig!</span>
             <button onClick={toggleChat} className="text-xl leading-none focus:outline-none">
               &minus;
             </button>
@@ -71,7 +71,7 @@ export default function ChatWidget() {
             />
             <button
               onClick={handleSendMessage}
-              className="mt-2 w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 transition"
+              className="mt-2 w-full bg-black text-white p-2 rounded hover:bg-[#888383] transition"
             >
               Skicka
             </button>
@@ -80,7 +80,7 @@ export default function ChatWidget() {
       ) : (
         <button
         onClick={toggleChat}
-        className="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-lg hover:bg-blue-700 focus:outline-none cursor-pointer"
+        className="w-14 h-14 rounded-full bg-black text-white flex items-center justify-center shadow-lg hover:bg-[#888383] transition focus:outline-none cursor-pointer"
         >
         <svg
             xmlns="http://www.w3.org/2000/svg"
