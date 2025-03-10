@@ -34,7 +34,12 @@ class Recipes(Base):
     carbohydrates: Mapped[float] = mapped_column(Numeric, nullable=True)
     fat: Mapped[float] = mapped_column(Numeric, nullable=True)
     images: Mapped[str] = mapped_column(Text, nullable=True)
+
     reviews: Mapped["Reviews"] = relationship(
+        back_populates="recipes"
+    )
+    recipe_saved: Mapped[list["SavedRecipes"]] = relationship(
+        "SavedRecipes",
         back_populates="recipes"
     )
 
@@ -104,6 +109,14 @@ class Users(Base):
         foreign_keys="[UserFollows.followee_user_id]",
         back_populates="followee"
     )
+    user_saving_user_recipes: Mapped[list["SavedUserRecipes"]] = relationship(
+        "SavedUserRecipes",
+        back_populates="user"
+    )
+    user_saving_recipes: Mapped[list["SavedRecipes"]] = relationship(
+        "SavedRecipes",
+        back_populates="user"
+    )
 
     @property
     def full_name(self) -> str:
@@ -142,6 +155,12 @@ class UserRecipes(Base):
     comments: Mapped["Comments"] = relationship(
         back_populates="user_recipes"
     )
+    user_recipe_saved: Mapped[list["SavedUserRecipes"]] = relationship(
+        "SavedUserRecipes",
+        back_populates="user_recipes"
+    )
+    
+    
 
     def __repr__(self):
         return f"<recipes={self.name}>"
@@ -247,3 +266,58 @@ class UserFollows(Base):
 
     def __repr__(self) -> str:
         return f"<UserFollows follower={self.follower_user_id} followee={self.followee_user_id}>"
+
+
+class SavedUserRecipes(Base):
+    __tablename__ = "saved_user_recipes"
+    # Primärnyckel bestående av båda kolumnerna
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), primary_key=True)
+    user_recipe_id: Mapped[int] = mapped_column(
+        ForeignKey("user_recipes.id", ondelete="CASCADE"), primary_key=True)
+    saved_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+
+    
+    user: Mapped["Users"] = relationship(
+        "Users",
+        foreign_keys=[user_id],
+        back_populates="user_saving_user_recipes"
+    )
+    
+    user_recipes: Mapped["UserRecipes"] = relationship(
+        "UserRecipes",
+        foreign_keys=[user_recipe_id],
+        back_populates="user_recipe_saved"
+    )
+
+    def __repr__(self) -> str:
+        return f"<SavedUserRecipes user={self.user_id} recipe={self.user_recipe_id}>"
+    
+class SavedRecipes(Base):
+    __tablename__ = "saved_recipes"
+    # Primärnyckel bestående av båda kolumnerna
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), primary_key=True)
+    recipe_id: Mapped[int] = mapped_column(
+        ForeignKey("recipes.id", ondelete="CASCADE"), primary_key=True)
+    saved_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+
+    
+    user: Mapped["Users"] = relationship(
+        "Users",
+        foreign_keys=[user_id],
+        back_populates="user_saving_recipes"
+    )
+    
+    recipes: Mapped["Recipes"] = relationship(
+        "Recipes",
+        foreign_keys=[recipe_id],
+        back_populates="recipe_saved"
+    )
+
+    def __repr__(self) -> str:
+        return f"<SavedRecipes user={self.user_id} recipe={self.recipe_id}>"

@@ -3,12 +3,8 @@ import React from "react";
 export default function HomePage() {
   return (
     <div
-      className="flex flex-col items-center justify-center min-h-screen bg-cover bg-center"
-      style={{
-        backgroundImage: `url('/background_foodisave.jpg')`,
-      }}
-    >
-      <div className="w-full max-w-2xl text-center bg-white bg-opacity-80 p-20 rounded-2xl shadow-lg">
+      className="flex flex-col items-center justify-center min-h-screen bg-cover bg-center">
+      <div className="w-full max-w-2xl text-center bg-opacity-80 p-20 rounded-2xl shadow-lg">
         <h1 className="text-2xl font-bold text-gray-800 drop-shadow-md mb-4">
           Lägg till dina livsmedel & sök på recept
         </h1>

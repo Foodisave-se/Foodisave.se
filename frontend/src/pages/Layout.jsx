@@ -8,7 +8,7 @@ import Header from "../components/Header";
 function Layout() {
   return (
     <div
-      className="flex flex-col min-h-screen bg-cover bg-center"
+      className="flex flex-col min-h-screen bg-cover bg-center bg-gray-300 poppins-regular"
       style={{ backgroundImage: `url('/background_foodisave.jpg')` }}
     >
       <Header />

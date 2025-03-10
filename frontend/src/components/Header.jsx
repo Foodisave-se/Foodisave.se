@@ -1,94 +1,134 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import logo from "/foodisavelogo.png";
 
 export default function Header() {
-  
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
-  
-  const handleOutsideClick = (event) => {
-    if (
-      !event.target.closest("#menuButton") &&
-      !event.target.closest("#sideMenu")
-    ) {
-      setIsMenuOpen(false);
-    }
-  };
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
-  document.addEventListener("click", handleOutsideClick);
-  
+  // Hantera klick utanför menyn
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (
+        !event.target.closest("#menu-burger") &&
+        !event.target.closest("#sideMenu")
+      ) {
+        setIsMenuOpen(false);
+      }
+    };
+    document.addEventListener("click", handleOutsideClick);
+    return () => document.removeEventListener("click", handleOutsideClick);
+  }, []);
+
   return (
-    <header className="bg-gradient-to-b from-green-100 to-white border border-gray-100 w-full">
-      <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between py-2">
-          {/* Vänster sida */}
-          <div className="flex items-center space-x-6">
-            {/* Menyknapp */}
-            <button 
-              id="menuButton"
-              onClick={toggleMenu} 
-              className="relative flex items-center justify-center h-10 w-10 sm:h-12 sm:w-12 shadow-lg bg-white text-gray-800 hover:bg-green-300 rounded-full cursor-pointer hover:scale-95 transition-all duration-300">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="h-5 w-5 sm:h-6 sm:w-6">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-              </svg>
-            </button>
-            <div 
-              id="sideMenu"
-              className={`fixed rounded-lg top-20 left-0 w-1/4 sm:w-1/5 h-auto w-auto bg-green-200 shadow-lg transform transition-transform duration-300 ${isMenuOpen ? "translate-x-0" : "-translate-x-full hidden"
-              }`}
-            >
-              <div
-                className="p-6 relative">
-                {/* Stängknapp */}
-                <button
-                  onClick={toggleMenu}
-                  className="absolute top-4 right-4 text-xl hover:text-2xl font-bold text-gray-700 cursor-pointer"
-                >
-                  x
-                </button>
-                <ul className="space-y-4 text-lg text-green-900">
-                  <li><Link to="/blimedlem" onClick={toggleMenu} className="hover:underline">Bli medlem</Link></li>
-                  <li><Link to="/receptforslag" onClick={toggleMenu} className="hover:underline">Förslag på Recept</Link></li>
-                  <li><Link to="/sokrecept" onClick={toggleMenu} className="hover:underline">Sök på Recept</Link></li>
-                  <li><Link to="/blimedlem" onClick={toggleMenu} className="hover:underline">Vad är FoodiSave</Link></li>
-                  <li><Link to="/blimedlem" onClick={toggleMenu} className="hover:underline">Kontakta oss</Link></li>
-                </ul>
-
+    <>
+      {/* Huvud-headern */}
+      <header className="fixed top-0 left-0 w-full z-50 bg-transparent h-20">
+        <div id="header-container" className="relative mx-auto max-w-7xl px-4 py-2">
+          <div className="flex items-center justify-between h-20">
+            {/* Logo */}
+            <div className="flex items-center">
+              <div className="text-m sm:text-l md:text-xl font-bold">
+                <div className={`flex items-center gap-1 transition-colors duration-300 ${isMenuOpen ? "text-white" : "text-black"}`}>
+                  <Link to="/"><img src={logo} alt="foodisave logo" className="w-8 h-8 ml-2" /></Link>
+                  <Link to="/">foodisave</Link>
+                </div>
               </div>
-
             </div>
 
-            {/* Logotyp */}
-            <div className="text-m sm:text-l md:text-xl font-bold text-gray-800 hover:text-green-300 hover:scale-95 transition-all duration-300">
-              <Link to="/" className="hover:underline">FoodiSave.se</Link>
-            </div>
-          </div>
-
-          {/* Höger sida (knapparna) */}
-          <div className="flex items-center space-x-4">
-            {/* Sök-knapp */}
-            <div className="relative flex items-center justify-center h-10 w-10 sm:h-12 sm:w-12 shadow-lg bg-white text-gray-800 hover:bg-green-300 rounded-full hover:scale-95 transition-all duration-300">
-              <Link to="/search">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="h-5 w-5 sm:h-6 sm:w-6">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 15.75l-2.489-2.489m0 0a3.375 3.375 0 1 0-4.773-4.773 3.375 3.375 0 0 0 4.774 4.774ZM21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                </svg>
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex items-center justify-center space-x-6">
+              <Link to="/blimedlem" className="text-black transition duration-300 hover:bg-black hover:text-white px-4 py-2 rounded-full">
+                Vad är foodisave
+              </Link>
+              <Link to="/sokrecept" className="text-black transition duration-300 hover:bg-black hover:text-white px-4 py-2 rounded-full">
+                Sök på Recept
+              </Link>
+              <Link to="/omoss" className="text-black transition duration-300 hover:bg-black hover:text-white px-4 py-2 rounded-full">
+                Recept Roulette
               </Link>
             </div>
 
-            {/* Användar-knapp */}
-            <button className="relative flex items-center justify-center h-10 w-10 sm:h-12 sm:w-12 shadow-lg bg-white text-gray-800 hover:bg-green-300 rounded-full hover:scale-95 transition-all duration-300">
-              <Link to="/blimedlem">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="h-5 w-5 sm:h-6 sm:w-6">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                </svg>
+            <div className="hidden md:flex items-center justify-center space-x-6">
+              <Link to="/blimedlem" className="text-black transition duration-300 hover:bg-black hover:text-white px-4 py-2 rounded-full border-">
+                Logga In
               </Link>
-            </button>
+
+              <Link to="/blimedlem" className="relative inline-flex items-center bg-black text-white rounded-full px-6 py-2 group overflow-hidden transition-all duration-300 ease-in-out hover:w-38 w-auto">
+                <span className="mr-2">Bli Medlem</span>
+                <span className="absolute right-0 inline-flex items-center justify-center w-8 h-8 bg-green-300 text-black rounded-full transform translate-x-[120%] group-hover:translate-x-0 transition-transform duration-300 mr-1">
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                  </svg>
+                </span>
+              </Link>
+            </div>
+
+            {/* Mobilmeny-knapp */}
+            <div className="md:hidden flex items-center">
+              <button 
+                id="menu-burger"
+                onClick={toggleMenu}
+                className="relative flex items-center justify-center h-10 w-10 sm:h-12 sm:w-12 shadow-lg bg-white text-gray-800 hover:bg-green-300 rounded-full cursor-pointer transition-transform duration-300 hover:scale-95"
+              >
+                {isMenuOpen ? ( // Ändrar ikon till X vid öppning
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="h-5 w-5 sm:h-6 sm:w-6">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                ) : (
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="h-5 w-5 sm:h-6 sm:w-6">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                  </svg>
+                )}
+              </button>
+            </div>
           </div>
         </div>
+      </header>
+
+      {/* Overlay + Mobile Menu */}
+      <div className={`fixed inset-0 z-40 transition-opacity duration-300 ${isMenuOpen ? "opacity-100 visible" : "opacity-0 invisible"}`}>
+        {/* Overlay som täcker hela skärmen UTOM headern */}
+        <div className="absolute inset-0 bg-black bg-opacity-90"></div>
+
+        {/* Själva menyn */}
+        <div id="sideMenu" className={`absolute inset-x-0 top-20 mx-auto w-4/5 sm:w-1/2 rounded-lg shadow-lg text-center p-6 transition-transform duration-300 ${isMenuOpen ? "translate-y-0" : "-translate-y-full"}`}>
+          {/* Stängningsknapp */}
+          <button onClick={toggleMenu} className="absolute top-4 right-4 text-xl font-bold text-gray-700 cursor-pointer">
+            
+          </button>
+
+          {/* Menyalternativ */}
+          <ul className="space-y-8 text-3xl font-bold text-white">
+            <li>
+              <Link to="/about" onClick={toggleMenu} className="hover:underline">
+                Vad är foodisave
+              </Link>
+            </li>
+            <li>
+              <Link to="/search" onClick={toggleMenu} className="hover:underline">
+                Sök på Recept
+              </Link>
+            </li>
+            <li>
+              <Link to="/random" onClick={toggleMenu} className="hover:underline">
+                Recept Roulette
+              </Link>
+            </li>
+            <li>
+              <Link to="/login" onClick={toggleMenu} className="hover:underline">
+                Logga In
+              </Link>
+            </li>
+            <li>
+              <Link to="/signup" onClick={toggleMenu} className="hover:underline">
+                Bli Medlem
+              </Link>
+            </li>
+          </ul>
+        </div>
       </div>
-    </header>
+    </>
   );
 }

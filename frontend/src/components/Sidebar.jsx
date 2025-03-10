@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import authStore from "../store/authStore";
-import Logo from "/short_logo_transparent.webp";
 
 export default function Sidebar() {
   const logout = authStore((state) => state.logout);
@@ -26,15 +25,7 @@ export default function Sidebar() {
     <div className="flex flex-col w-64 h-screen overflow-auto">
       <div className="flex flex-col px-6 overflow-y-auto bg-white border-r border-gray-200 shadow-lg grow gap-y-5">
         <div className="flex items-center my-2">
-          <Link to="/">
-            <img
-              src={Logo}
-              width={70}
-              height={50}
-              responsive="true"
-              alt="Logo white"
-            />
-          </Link>
+          
         </div>
         <nav className="flex flex-col flex-1">
           <ul role="list" className="flex flex-col flex-1 gap-y-7">
