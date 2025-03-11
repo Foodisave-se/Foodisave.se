@@ -63,27 +63,27 @@ export default function Header() {
             <div className="hidden md:flex items-center justify-center space-x-6">
               <Link 
                 to="/about" 
-                className="curtain-link relative inline-block overflow-hidden px-4 py-2 rounded-full bg-transparent">
-                <span className="normal-text block rounded-full transition-transform duration-200 ease-in-out">
+                className="curtain-link relative inline-block overflow-hidden px-4 py-2 rounded-lg bg-transparent">
+                <span className="normal-text block rounded-lg transition-transform duration-200 ease-in-out">
                   Vad är foodisave
                 </span>
-                <span className="hover-text absolute inset-0 flex items-center justify-center bg-black text-white w-full h-full rounded-full transition-transform duration-500 ease-in-out">
+                <span className="hover-text absolute inset-0 flex items-center justify-center bg-black text-white w-full h-full rounded-lg transition-transform duration-500 ease-in-out">
                   Vad är foodisave
                 </span>
               </Link>
               <Link 
                 to="/search" 
-                className="curtain-link relative inline-block overflow-hidden px-4 py-2 rounded-full bg-transparent">
+                className="curtain-link relative inline-block overflow-hidden px-4 py-2 rounded-lg bg-transparent">
                 <span className="normal-text block transition-transform duration-200 ease-in-out">
-                  Sök på Recept
+                  Recept
                 </span>
                 <span className="hover-text absolute inset-0 flex items-center justify-center bg-black text-white w-full h-full transition-transform duration-500 ease-in-out">
-                  Sök på Recept
+                  Recept
                 </span>
               </Link>
               <Link 
                 to="/random" 
-                className="curtain-link relative inline-block overflow-hidden px-4 py-2 rounded-full bg-transparent">
+                className="curtain-link relative inline-block overflow-hidden px-4 py-2 rounded-lg bg-transparent">
                 <span className="normal-text block transition-transform duration-200 ease-in-out">
                   Recept Roulette
                 </span>
@@ -95,7 +95,7 @@ export default function Header() {
             <div className="hidden md:flex items-center justify-center space-x-6">
             <Link 
                 to="/login" 
-                className="curtain-link relative inline-block overflow-hidden px-4 py-2 rounded-full bg-transparent">
+                className="curtain-link relative inline-block overflow-hidden px-4 py-2 rounded-lg bg-transparent">
                 <span className="normal-text block transition-transform duration-200 ease-in-out">
                   Logga In
                 </span>
@@ -106,12 +106,12 @@ export default function Header() {
               <div className="min-w-[180px]">
               <Link 
                 to="/register" 
-                className="relative inline-flex items-center bg-black text-white rounded-full px-6 py-2 group overflow-hidden transition-all duration-300 ease-in-out hover:w-38"
+                className="relative inline-flex items-center bg-black text-white rounded-lg px-6 py-2 group overflow-hidden transition-all duration-300 ease-in-out hover:w-38"
               >
                 <span className="mr-2 transition-transform duration-300 ease-in-out group-hover:-translate-x-2">
                   Bli Medlem
                 </span>
-                <span className="absolute right-0 inline-flex items-center justify-center w-8 h-8 bg-green-300 text-black rounded-full transform translate-x-[120%] group-hover:translate-x-0 transition-transform duration-300 mr-1">
+                <span className="absolute right-0 inline-flex items-center justify-center w-8 h-8 bg-green-300 text-black rounded-lg transform translate-x-[120%] group-hover:translate-x-0 transition-transform duration-300 mr-1">
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                   </svg>
@@ -125,7 +125,7 @@ export default function Header() {
               <button 
                 id="menu-burger"
                 onClick={toggleMenu}
-                className="relative flex items-center justify-center h-10 w-10 sm:h-12 sm:w-12 shadow-lg bg-black text-white rounded-full cursor-pointer transition-transform duration-300 hover:scale-95"
+                className="relative flex items-center justify-center h-10 w-10 sm:h-12 sm:w-12 shadow-lg bg-black text-white rounded-lg cursor-pointer transition-transform duration-300 hover:scale-95"
               >
                 {isMenuOpen ? (
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="h-5 w-5 sm:h-6 sm:w-6">
@@ -163,7 +163,7 @@ export default function Header() {
               </li>
               <li>
                 <Link to="/search" onClick={toggleMenu} className="hover:underline">
-                  Sök på Recept
+                  Recept
                 </Link>
               </li>
               <li>

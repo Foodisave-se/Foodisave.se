@@ -5,7 +5,7 @@ import HomePage from "./pages/Home.jsx";
 import Layout from "./pages/Layout.jsx";
 import NotFoundPage from "./pages/NotFoundPage.jsx";
 import BliMedlem from "./pages/BliMedlem.jsx";
-import SökRecept from "./pages/SökRecept.jsx";
+import SearchRecipeWords from "./pages/SearchRecipeWords.jsx";
 import ReceptFörslag from "./pages/ReceptFörslag.jsx";
 import ImageRecipe from "./pages/ImageRecipe.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
@@ -15,6 +15,7 @@ import DashboardLayout from "./pages/DashboardLayout.jsx";
 import RegisterPage from "./pages/RegisterPage.jsx";
 import UserSettingsPage from "./pages/UserSettingsPage.jsx";
 import ImageFoodRecipe from "./pages/ImageFoodRecipe.jsx";
+import DetailedRecipe from "./pages/DetailedRecipe.jsx";
 
 const router = createBrowserRouter([
   {
@@ -32,8 +33,13 @@ const router = createBrowserRouter([
         errorElement: <NotFoundPage />,
       },
       {
-        path: "/sokrecept",
-        element: <SökRecept />,
+        path: "/search",
+        element: <SearchRecipeWords />,
+        errorElement: <NotFoundPage />,
+      },
+      {
+        path: "/recipe/:id",
+        element: <DetailedRecipe />,
         errorElement: <NotFoundPage />,
       },
       {
