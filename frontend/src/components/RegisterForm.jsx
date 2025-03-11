@@ -136,16 +136,16 @@ export default function RegisterForm() {
 
   return (
     <>
-      <div className="flex flex-col justify-center flex-1 min-h-full px-6 py-12 lg:px-8">
-        <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="px-4 py-8 bg-white shadow sm:rounded-lg sm:px-10">
+      <div className="flex flex-col justify-center flex-1 min-h-full px-4 py-4 lg:px-8">
+        <div className="mt-1 sm:mx-auto sm:w-full sm:max-w-md">
+          <div className="px-4 py-8 bg-[#c8c8c8] sm:rounded-lg sm:px-10">
             <form className="space-y-6" onSubmit={submitRegister}>
               <div>
                 <label
                   htmlFor="username"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  Username
+                  Användarnamn
                 </label>
                 <div className="mt-1">
                   <input
@@ -154,7 +154,7 @@ export default function RegisterForm() {
                     type="username"
                     autoComplete="username"
                     required
-                    className="block w-full px-3 py-2 placeholder-gray-400 border border-gray-300 rounded-md shadow-sm appearance-none focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    className="block w-full px-3 py-2 placeholder-white border rounded-md shadow-sm appearance-none focus:outline-none focus:ring-[#888383] focus:border-[#888383] sm:text-sm"
                     value={userName}
                     onChange={(e) => setUserName(e.target.value)}
                     onBlur={validateUserName}
@@ -172,7 +172,7 @@ export default function RegisterForm() {
                   htmlFor="email"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  Email address
+                  E-postadress
                 </label>
                 <div className="mt-1">
                   <input
@@ -181,7 +181,7 @@ export default function RegisterForm() {
                     type="email"
                     autoComplete="email"
                     required
-                    className="block w-full px-3 py-2 placeholder-gray-400 border border-gray-300 rounded-md shadow-sm appearance-none focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    className="block w-full px-3 py-2 placeholder-white border rounded-md shadow-sm appearance-none focus:outline-none focus:ring-[#888383] focus:border-[#888383] sm:text-sm"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     onBlur={validateEmail}
@@ -199,7 +199,7 @@ export default function RegisterForm() {
                   htmlFor="first_name"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  First Name
+                  Namn
                 </label>
                 <div className="mt-1">
                   <input
@@ -208,7 +208,7 @@ export default function RegisterForm() {
                     type="text"
                     autoComplete="given-name"
                     required
-                    className="block w-full px-3 py-2 placeholder-gray-400 border border-gray-300 rounded-md shadow-sm appearance-none focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    className="block w-full px-3 py-2 placeholder-white border rounded-md shadow-sm appearance-none focus:outline-none focus:ring-[#888383] focus:border-[#888383] sm:text-sm"
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
                     onBlur={validateFirstName}
@@ -226,7 +226,7 @@ export default function RegisterForm() {
                   htmlFor="last_name"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  Last Name
+                  Efternamn
                 </label>
                 <div className="mt-1">
                   <input
@@ -235,7 +235,7 @@ export default function RegisterForm() {
                     type="text"
                     autoComplete="family-name"
                     required
-                    className="block w-full px-3 py-2 placeholder-gray-400 border border-gray-300 rounded-md shadow-sm appearance-none focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    className="block w-full px-3 py-2 placeholder-white border rounded-md shadow-sm appearance-none focus:outline-none focus:ring-[#888383] focus:border-[#888383] sm:text-sm"
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
                     onBlur={validateLastName}
@@ -253,7 +253,7 @@ export default function RegisterForm() {
                   htmlFor="password"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  Password
+                  Lösenord
                 </label>
                 <div className="mt-1">
                   <input
@@ -262,7 +262,7 @@ export default function RegisterForm() {
                     type="password"
                     autoComplete="current-password"
                     required
-                    className="block w-full px-3 py-2 placeholder-gray-400 border border-gray-300 rounded-md shadow-sm appearance-none focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    className="block w-full px-3 py-2 placeholder-white border rounded-md shadow-sm appearance-none focus:outline-none focus:ring-[#888383] focus:border-[#888383] sm:text-sm"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     onBlur={validatePassword}
@@ -280,15 +280,15 @@ export default function RegisterForm() {
                   id="terms"
                   name="terms"
                   type="checkbox"
-                  className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                  className="w-4 h-4 text-[#888383] border rounded focus:ring-[#888383]"
                   checked={terms}
                   onChange={(e) => setTerms(e.target.checked)}
                 />
                 <label
                   htmlFor="terms"
-                  className="block ml-2 text-sm text-gray-900"
+                  className="block ml-2 text-sm text-gray-900 pl-2"
                 >
-                  I agree to the terms and conditions
+                  Jag accepterar foodisave:s användarvillkor och personuppgiftspolicy
                 </label>
               </div>
               {termsError && (
@@ -298,9 +298,9 @@ export default function RegisterForm() {
               <div>
                 <button
                   type="submit"
-                  className="flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  className="flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-black border border-transparent rounded-md shadow-sm hover:bg-[#888383] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#888383]"
                 >
-                  Register
+                  Bli Medlem
                 </button>
               </div>
             </form>

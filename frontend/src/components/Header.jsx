@@ -105,7 +105,7 @@ export default function Header() {
               </Link>
               <div className="min-w-[180px]">
               <Link 
-                to="/signup" 
+                to="/register" 
                 className="relative inline-flex items-center bg-black text-white rounded-full px-6 py-2 group overflow-hidden transition-all duration-300 ease-in-out hover:w-38"
               >
                 <span className="mr-2 transition-transform duration-300 ease-in-out group-hover:-translate-x-2">
@@ -177,7 +177,7 @@ export default function Header() {
                 </Link>
               </li>
               <li>
-                <Link to="/signup" onClick={toggleMenu} className="hover:underline">
+                <Link to="/register" onClick={toggleMenu} className="hover:underline">
                   Bli Medlem
                 </Link>
               </li>

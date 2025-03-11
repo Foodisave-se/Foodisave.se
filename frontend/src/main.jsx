@@ -47,15 +47,15 @@ const router = createBrowserRouter([
         errorElement: <NotFoundPage />,
       },
       {
-        path: "login",
+        path: "/login",
         element: <LoginPage />,
       },
       {
-        path: "register",
+        path: "/register",
         element: <RegisterPage />,
       },
       {
-        path: "ImageFoodRecipe",
+        path: "/ImageFoodRecipe",
         element: <ImageFoodRecipe />,
       },
 
