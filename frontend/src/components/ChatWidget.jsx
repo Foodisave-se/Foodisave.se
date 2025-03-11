@@ -41,6 +41,14 @@ export default function ChatWidget() {
     }
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault(); // Förhindrar att en ny rad skapas i fältet
+      handleSendMessage();
+    }
+  };
+  
+
   return (
     <div className="fixed bottom-4 right-4 z-50">
       {isOpen ? (
@@ -66,12 +74,13 @@ export default function ChatWidget() {
               type="text"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
+              onKeyDown={(e) => handleKeyDown(e)}
               placeholder="Skriv ditt meddelande..."
               className="w-full p-2 border rounded focus:outline-none"
             />
             <button
               onClick={handleSendMessage}
-              className="mt-2 w-full bg-black text-white p-2 rounded hover:bg-[#888383] transition"
+              className="mt-2 w-full bg-black text-white p-2 rounded hover:bg-[#888383] transition cursor-pointer"
             >
               Skicka
             </button>

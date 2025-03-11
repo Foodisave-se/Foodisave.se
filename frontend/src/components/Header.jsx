@@ -94,7 +94,7 @@ export default function Header() {
             </div>
             <div className="hidden md:flex items-center justify-center space-x-6">
             <Link 
-                to="/loggin" 
+                to="/login" 
                 className="curtain-link relative inline-block overflow-hidden px-4 py-2 rounded-full bg-transparent">
                 <span className="normal-text block transition-transform duration-200 ease-in-out">
                   Logga In
