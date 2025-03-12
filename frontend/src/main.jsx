@@ -16,6 +16,7 @@ import RegisterPage from "./pages/RegisterPage.jsx";
 import UserSettingsPage from "./pages/UserSettingsPage.jsx";
 import ImageFoodRecipe from "./pages/ImageFoodRecipe.jsx";
 import DetailedRecipe from "./pages/DetailedRecipe.jsx";
+import RecipeRoulette from "./pages/RecipeRoulette.jsx";
 
 const router = createBrowserRouter([
   {
@@ -43,13 +44,13 @@ const router = createBrowserRouter([
         errorElement: <NotFoundPage />,
       },
       {
-        path: "/receptforslag",
-        element: <ReceptFörslag />,
+        path: "/random",
+        element: <RecipeRoulette />,
         errorElement: <NotFoundPage />,
       },
       {
-        path: "/imagerecipe",
-        element: <ImageRecipe />,
+        path: "/receptforslag",
+        element: <ReceptFörslag />,
         errorElement: <NotFoundPage />,
       },
       {
@@ -83,6 +84,11 @@ const router = createBrowserRouter([
     {
       path: "/dashboard/settings", // /dashboard
       element: <UserSettingsPage />,
+    },
+    {
+      path: "/dashboard/imagerecipe",
+      element: <ImageRecipe />,
+      errorElement: <NotFoundPage />,
     },
   ],
 },

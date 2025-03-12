@@ -81,5 +81,102 @@
   .curtain-link:hover .normal-text {
     transform: translateY(-100%) !important;
   }
+
+  .range-black {
+    /* Storlek och utseende */
+    --track-height: 4px;
+    --thumb-size: 16px;
+    accent-color: black; /* För moderna webbläsare som stöder accent-color */
+  }
   
+  /* ===== WebKit (Chrome, Safari, Opera) ===== */
+  .range-black::-webkit-slider-runnable-track {
+    background-color: #000;  /* spår i svart */
+    height: var(--track-height);
+    border-radius: 2px;
+  }
+  .range-black::-webkit-slider-thumb {
+    appearance: none;
+    background-color: #000;  /* knappen i svart */
+    width: var(--thumb-size);
+    height: var(--thumb-size);
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    /* centrerar knappen på spåret */
+    margin-top: calc((var(--track-height) - var(--thumb-size)) / 2);
+  }
+  
+  /* (Valfritt) Sätt fill-lower och fill-upper till svart för de webkit-baserade
+     webbläsare som använder dessa pseudo-element (ibland i vertical-läge) */
+  .range-black::-webkit-slider-thumb:focus,
+  .range-black::-webkit-slider-thumb:active {
+    outline: none; /* tar bort blå highlight */
+  }
+  .range-black::-webkit-slider-runnable-track:focus {
+    outline: none; /* tar bort blå highlight runt spåret */
+  }
+  .range-black::-webkit-slider-fill-lower {
+    background-color: #000; /* vänstra/fyllda delen */
+  }
+  .range-black::-webkit-slider-fill-upper {
+    background-color: #000; /* högra delen */
+  }
+  
+  /* ===== Mozilla (Firefox) ===== */
+  .range-black::-moz-range-track {
+    background-color: #000; /* spåret */
+    height: var(--track-height);
+    border-radius: 2px;
+  }
+  .range-black::-moz-range-thumb {
+    background-color: #000; /* knappen */
+    width: var(--thumb-size);
+    height: var(--thumb-size);
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    margin: 0; /* justera om knappen inte är centrerad */
+  }
+  /* Fyllda delen av spåret i Firefox */
+  .range-black::-moz-range-progress {
+    background-color: #000;
+    height: var(--track-height);
+  }
+  
+  /* ===== Edge/IE (ms) ===== */
+  .range-black::-ms-track {
+    background-color: #000;
+    height: var(--track-height);
+    border-radius: 2px;
+    color: transparent; /* döljer standardspår */
+  }
+  .range-black::-ms-thumb {
+    background-color: #000;
+    width: var(--thumb-size);
+    height: var(--thumb-size);
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    margin-top: 0;
+  }
+  .range-black::-ms-fill-lower {
+    background-color: #000; /* vänstra/fyllda delen */
+  }
+  .range-black::-ms-fill-upper {
+    background-color: #000; /* högra delen */
+  }
+  
+  @keyframes rotate {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  .animate-rotate {
+    animation: rotate 0.5s linear infinite;
+  }
   

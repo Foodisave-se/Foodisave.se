@@ -75,6 +75,7 @@ def get_recipe_db(recipe: SearchRecipeSchema, db):
                     Recipes.ingredients.ilike("%bacon%"),
                     Recipes.ingredients.ilike("%kött%"),
                     Recipes.ingredients.ilike("%lamm%"),
+                    Recipes.ingredients.ilike("%biff%"),
                 )
             )
         elif rt in ["vegetarisk", "vegetarian"]:
@@ -86,6 +87,7 @@ def get_recipe_db(recipe: SearchRecipeSchema, db):
                 Recipes.ingredients.ilike("%nötkött%") |
                 Recipes.ingredients.ilike("%fläsk%") |
                 Recipes.ingredients.ilike("%lamm%") |
+                Recipes.ingredients.ilike("%biff%") |
                 Recipes.ingredients.ilike("%bacon%") |
                 Recipes.ingredients.ilike("%kött%") |
                 Recipes.ingredients.ilike("%fisk%") |
@@ -177,35 +179,49 @@ def get_random_recipe_db(recipe: RandomRecipeSchema, db):
             ))
 
         if conditions:
+
+            list_recipes = []
+            count = 0
+            
             query_stmt = query_stmt.where(and_(*conditions))
 
             results = db.scalars(query_stmt).all()
 
-            result = results[randint(0, len(results) - 1)]
+            while count <= 10:  
+            
+                list_recipes.append(results[randint(0, len(results) - 1)])
+                count += 1
 
-            if not result:
+            if not list_recipes:
                 raise HTTPException(
                     status_code=status.HTTP_404_NOT_FOUND,
                     detail="No recipes found"
                 )
-            return result
+            return list_recipes
 
     if conditions == []:
+
+        list_recipes = []
+        count = 0
 
         id_query = select(Recipes.id)
         all_ids = db.scalars(id_query).all()
 
-        random_id = all_ids[randint(0, len(all_ids) - 1)]
+        while count <= 10:
+            random_id = all_ids[randint(0, len(all_ids) - 1)]
 
-        result = db.scalars(query_stmt.where(
-            Recipes.id == random_id)).first()
+            result = db.scalars(query_stmt.where(
+                Recipes.id == random_id)).first()
+            list_recipes.append(result)
+            count += 1
+        
 
-        if not result:
+        if not list_recipes:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="No recipes found"
             )
-        return result
+        return list_recipes
 
 
 def get_one_recipe_db(id: int, db):

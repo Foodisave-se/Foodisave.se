@@ -35,7 +35,6 @@ function Layout() {
 
   return (
     <div className="flex flex-col min-h-screen bg-cover bg-center bg-[#c8c8c8] poppins-regular"
-      style={{ backgroundImage: `url('/background_foodisave.jpg')` }}
     >
       <Header />
 

@@ -55,7 +55,7 @@ export default function ChatWidget() {
         <div className="w-80 h-96 bg-white rounded-lg shadow-lg flex flex-col">
           <div className="bg-black text-white p-3 flex justify-between items-center rounded-t-lg">
             <span className="font-bold">Hej! Chatta med mig!</span>
-            <button onClick={toggleChat} className="text-xl leading-none focus:outline-none">
+            <button onClick={toggleChat} className="text-xl leading-none focus:outline-none cursor-pointer">
               &minus;
             </button>
           </div>

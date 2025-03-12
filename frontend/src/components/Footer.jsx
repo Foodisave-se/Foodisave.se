@@ -6,23 +6,23 @@ export default function Footer() {
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-xl text-black font-bold">Company Name</h2>
+            <h2 className="text-xl text-black font-bold">foodisave.se</h2>
             <p className="text-black mt-2">
-              © 2023 Company Name. All rights reserved.
+              © 2025 foodisave. All rights reserved.
             </p>
           </div>
           <div className="flex space-x-6">
             <a href="#" className="hover:text-gray-400 text-black">
-              About
+              Om
             </a>
             <a href="#" className="hover:text-gray-400 text-black">
               Services
             </a>
             <a href="#" className="hover:text-gray-400 text-black">
-              Contact
+              Kontakt
             </a>
             <a href="#" className="hover:text-gray-400 text-black">
-              Privacy Policy
+              Policy
             </a>
           </div>
         </div>

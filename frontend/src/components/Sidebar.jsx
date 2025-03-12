@@ -23,7 +23,7 @@ export default function Sidebar() {
 
   return (
     <div className="flex flex-col w-64 h-screen overflow-auto">
-      <div className="flex flex-col px-6 overflow-y-auto bg-white border-r border-gray-200 shadow-lg grow gap-y-5">
+      <div className="flex flex-col px-6 overflow-y-auto border-r border-gray-200 shadow-lg grow gap-y-5">
         <div className="flex items-center my-2">
           
         </div>
@@ -35,14 +35,14 @@ export default function Sidebar() {
               </Link>
             </li>
             <li>
-              {userData?.is_superuser && (
-                <Link to="/dashboard/courses" className="underline">
-                  Courses
+              {userData?.is_customer && (
+                <Link to="/dashboard/imagerecipe" className="underline">
+                  Recept via Bild
                 </Link>
               )}
             </li>
             <li>
-              {userData?.is_superuser && (
+              {userData?.is_customer && (
                 <Link to="/dashboard/users" className="underline">
                   Users
                 </Link>
