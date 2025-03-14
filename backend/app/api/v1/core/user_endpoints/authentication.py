@@ -49,6 +49,13 @@ def login(
             detail="Passwords do not match",
             headers={"WWW-Authenticate": "Bearer"},
         )
+    # Kontrollera om användaren är aktiverad
+    if not user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Account not activated. Please check your email and activate your account.",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
     access_token = create_database_token(user_id=user.id, db=db)
     return {"access_token": access_token.token, "token_type": "bearer"}
 

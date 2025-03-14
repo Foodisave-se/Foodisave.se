@@ -291,6 +291,11 @@ export default function Header() {
                 </Link>
               </li>
               <li>
+                <Link to="/imagerecipe" onClick={toggleMenu} className="hover:underline">
+                  Recept via Bild
+                </Link>
+              </li>
+              <li>
                 <Link to="/login" onClick={toggleMenu} className="hover:underline">
                   Logga In
                 </Link>

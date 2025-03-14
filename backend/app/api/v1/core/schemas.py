@@ -27,6 +27,7 @@ class UserSchema(BaseModel):
     is_customer: bool = True
     coins: int = 100
     level: int = 1
+    is_active: bool = False
 
 class UserSearchSchema(BaseModel):
     username: str
@@ -50,6 +51,22 @@ class UserRegisterSchema(BaseModel):
 class TokenSchema(BaseModel):
     access_token: str
     token_type: str
+
+class PasswordResetRequestSchema(BaseModel):
+    email: EmailStr = Field(..., description="Email address for password reset")
+    model_config = ConfigDict(json_schema_extra={"example": {"email": "user@example.com"}})
+
+
+class PasswordResetConfirmSchema(BaseModel):
+    token: str = Field(..., description="Password reset token received via email")
+    new_password: str = Field(..., min_length=8, description="New password")
+    model_config = ConfigDict(json_schema_extra={"example": {"token": "randomsecuretoken", "new_password": "NewSecurePassword123"}})
+
+
+class ActivationConfirmSchema(BaseModel):
+    token: str = Field(..., description="Activation token received via email")
+    model_config = ConfigDict(json_schema_extra={"example": {"token": "activationsecuretoken"}})
+
     
 
 class UserOutSchema(BaseModel):

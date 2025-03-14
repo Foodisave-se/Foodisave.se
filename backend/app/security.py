@@ -96,13 +96,17 @@ def verify_token_access(token_str: str, db: Session) -> Token:
 def get_current_user(
     token: Annotated[str, Depends(oauth2_scheme)], db: Session = Depends(get_db)
 ):
-    """
-    oauth2_scheme automatically extracts the token from the authentication header
-    Below, we get the current user based on that token
-    """
     token = verify_token_access(token_str=token, db=db)
     user = token.user
+    # Kontrollera att kontot är aktiverat
+    if not user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Account not activated. Please activate your account before proceeding.",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
     return user
+
 
 
 def get_current_admin(

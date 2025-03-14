@@ -17,88 +17,44 @@ import UserSettingsPage from "./pages/UserSettingsPage.jsx";
 import ImageFoodRecipe from "./pages/ImageFoodRecipe.jsx";
 import DetailedRecipe from "./pages/DetailedRecipe.jsx";
 import RecipeRoulette from "./pages/RecipeRoulette.jsx";
+// Nya imports för password reset och aktivering
+import PasswordResetRequestPage from "./pages/PasswordResetRequestPage.jsx";
+import ResetPasswordPage from "./pages/ResetPasswordPage.jsx";
+import ActivateAccountPage from "./pages/ActivateAccountPage.jsx";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Layout />,
     children: [
-      {
-        path: "/",
-        element: <HomePage />,
-        errorElement: <NotFoundPage />,
-      },
-      {
-        path: "/blimedlem",
-        element: <BliMedlem />,
-        errorElement: <NotFoundPage />,
-      },
-      {
-        path: "/search",
-        element: <SearchRecipeWords />,
-        errorElement: <NotFoundPage />,
-      },
-      {
-        path: "/detailedrecipe",
-        element: <DetailedRecipe />,
-        errorElement: <NotFoundPage />,
-      },
-      {
-        path: "/random",
-        element: <RecipeRoulette />,
-        errorElement: <NotFoundPage />,
-      },
-      {
-        path: "/receptforslag",
-        element: <ReceptFörslag />,
-        errorElement: <NotFoundPage />,
-      },
-      {
-        path: "/login",
-        element: <LoginPage />,
-      },
-      {
-        path: "/register",
-        element: <RegisterPage />,
-      },
-      {
-        path: "/ImageFoodRecipe",
-        element: <ImageFoodRecipe />,
-      },
-      {
-        path: "/imagerecipe",
-        element: <ImageRecipe />,
-        errorElement: <NotFoundPage />,
-      },
-
+      { path: "/", element: <HomePage />, errorElement: <NotFoundPage /> },
+      { path: "/blimedlem", element: <BliMedlem />, errorElement: <NotFoundPage /> },
+      { path: "/search", element: <SearchRecipeWords />, errorElement: <NotFoundPage /> },
+      { path: "/detailedrecipe", element: <DetailedRecipe />, errorElement: <NotFoundPage /> },
+      { path: "/random", element: <RecipeRoulette />, errorElement: <NotFoundPage /> },
+      { path: "/receptforslag", element: <ReceptFörslag />, errorElement: <NotFoundPage /> },
+      { path: "/login", element: <LoginPage /> },
+      { path: "/register", element: <RegisterPage /> },
+      { path: "/ImageFoodRecipe", element: <ImageFoodRecipe /> },
+      { path: "/imagerecipe", element: <ImageRecipe />, errorElement: <NotFoundPage /> },
+      // Nya routes
+      { path: "/passwordreset", element: <PasswordResetRequestPage />, errorElement: <NotFoundPage /> },
+      { path: "/reset-password", element: <ResetPasswordPage />, errorElement: <NotFoundPage /> },
+      { path: "/activate-account", element: <ActivateAccountPage />, errorElement: <NotFoundPage /> },
     ],
   },
   {
-    // Dashboard layout
     path: "/dashboard",
     element: <DashboardLayout />,
     children: [
-    {
-      path: "", // /dashboard
-      element: <DashboardIndexPage />,
-    },
-    {
-      path: "/dashboard/users/:userId",
-      element: <DashboardUserPage />,
-    },
-    {
-      path: "/dashboard/settings", // /dashboard
-      element: <UserSettingsPage />,
-    },
-    {
-      path: "/dashboard/imagerecipe",
-      element: <ImageRecipe />,
-      errorElement: <NotFoundPage />,
-    },
-  ],
-},
+      { path: "", element: <DashboardIndexPage /> },
+      { path: "/dashboard/users/:userId", element: <DashboardUserPage /> },
+      { path: "/dashboard/settings", element: <UserSettingsPage /> },
+      { path: "/dashboard/imagerecipe", element: <ImageRecipe />, errorElement: <NotFoundPage /> },
+    ],
+  },
 ]);
 
-createRoot(document.getElementById('root')).render(
+createRoot(document.getElementById("root")).render(
   <RouterProvider router={router} />
 );

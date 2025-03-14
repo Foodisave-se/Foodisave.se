@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 from typing import List
 
@@ -117,6 +117,10 @@ class Users(Base):
         "SavedRecipes",
         back_populates="user"
     )
+    is_active: Mapped[bool] = mapped_column(Boolean, default=False)
+    # Relationer till våra token-tabeller
+    reset_tokens: Mapped[list["PasswordResetToken"]] = relationship("PasswordResetToken", back_populates="user")
+    activation_tokens: Mapped[list["ActivationToken"]] = relationship("ActivationToken", back_populates="user")
 
     @property
     def full_name(self) -> str:
@@ -321,3 +325,20 @@ class SavedRecipes(Base):
 
     def __repr__(self) -> str:
         return f"<SavedRecipes user={self.user_id} recipe={self.recipe_id}>"
+    
+class PasswordResetToken(Base):
+    __tablename__ = "password_reset_tokens"
+    created: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    token: Mapped[str] = mapped_column(String(255), unique=True, index=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    user: Mapped["Users"] = relationship("Users", back_populates="reset_tokens")
+    used: Mapped[bool] = mapped_column(Boolean, default=False)
+
+
+class ActivationToken(Base):
+    __tablename__ = "activation_tokens"
+    created: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    token: Mapped[str] = mapped_column(String(255), unique=True, index=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    user: Mapped["Users"] = relationship("Users", back_populates="activation_tokens")
+    used: Mapped[bool] = mapped_column(Boolean, default=False)

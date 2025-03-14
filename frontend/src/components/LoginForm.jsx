@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import authStore from "../store/authStore";
 
@@ -14,7 +15,7 @@ export default function LoginForm() {
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
-  const [serverError, setServerError] = useState(""); // New state for server-side errors
+  const [serverError, setServerError] = useState(""); // Ny state för serverfel
 
   function validateEmail() {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -42,13 +43,13 @@ export default function LoginForm() {
 
   async function submitLogin(e) {
     e.preventDefault();
-    setServerError(""); // Reset server error before each login attempt
+    setServerError(""); // Återställ serverfelet innan inloggningsförsöket
     const isEmailValid = validateEmail();
     const isPasswordValid = validatePassword();
 
     if (isEmailValid && isPasswordValid) {
       const formData = new FormData();
-      formData.append("username", email); // Use 'username' or 'email' as needed by your backend
+      formData.append("username", email);
       formData.append("password", password);
 
       try {
@@ -59,18 +60,15 @@ export default function LoginForm() {
 
         if (response.status === 200) {
           const data = await response.json();
-          setToken(data.access_token); // Save the token in the global state
+          setToken(data.access_token);
           navigate("/dashboard");
-          // Handle successful login, e.g., storing the access token
           console.log(data);
         } else if (response.status === 400 || response.status === 401) {
           const data = await response.json();
-          setServerError(data.detail); // Set server error based on the response
+          setServerError(data.detail);
         } else {
           console.log("Login Failed");
-          setServerError(
-            "An unexpected error occurred. Please try again later."
-          );
+          setServerError("An unexpected error occurred. Please try again later.");
         }
       } catch (error) {}
     } else {
@@ -102,7 +100,6 @@ export default function LoginForm() {
                 <p className="mt-2 text-sm text-red-600">{emailError}</p>
               )}
             </div>
-
             <div>
               <label
                 htmlFor="password"
@@ -121,12 +118,16 @@ export default function LoginForm() {
               {passwordError && (
                 <p className="mt-2 text-sm text-red-600">{passwordError}</p>
               )}
+              <Link to="/passwordreset">
+                <p className="mt-1 text-gray-900 underline text-md">
+                  Glömt ditt lösenord?
+                </p>
+              </Link>
             </div>
             <div className="my-2">
               {serverError && (
                 <p className="mt-2 text-sm text-red-600">{serverError}</p>
-              )}{" "}
-              {/* Display server-side errors */}
+              )}
             </div>
             <div>
               <button
