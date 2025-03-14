@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import UploadPicture from "../components/UploadPicture";
+import RecipeCard from "../components/RecipeCard";
 
 export default function ImageRecipe() {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -7,9 +9,8 @@ export default function ImageRecipe() {
   const [error, setError] = useState(null);
   const apiUrl = "http://localhost:8000/v1/suggest_recipe_from_image";
 
-  // Hantera filval och skapa en förhandsvisning
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
+  // Callback från UploadPicture: spara filen och skapa en förhandsvisning
+  const handleFileSelected = (file) => {
     setSelectedFile(file);
     if (file) {
       const url = URL.createObjectURL(file);
@@ -19,7 +20,7 @@ export default function ImageRecipe() {
     }
   };
 
-  // Funktion för att ladda upp bilden
+  // Funktion för att ladda upp bilden till backend
   const uploadImage = async () => {
     if (!selectedFile) return;
     const formData = new FormData();
@@ -45,59 +46,65 @@ export default function ImageRecipe() {
     }
   };
 
+  // Om vi har ett API-svar, mappa det till ett receptobjekt som RecipeCard förstår
+  let recipeToDisplay = null;
+  if (result && result.recipes && result.recipes.length > 0) {
+    const recipeFromApi = result.recipes[0];
+    recipeToDisplay = {
+      ...recipeFromApi,
+      name: recipeFromApi.title, // Mappa titeln från API:t till RecipeCard's name
+      images: preview,           // Använd den uppladdade bilden (preview)
+    };
+  }
+
   return (
-    <div
-      className="flex flex-col items-center justify-center min-h-screen bg-cover bg-center p-6 pt-24"
-    >
-      <div className="w-full max-w-2xl bg-opacity-90 p-8 rounded-2xl">
-        <h1 className="text-2xl font-bold text-gray-800 text-center mb-4">
-          Föreslår recept baserat på ingredienserna i bilden
-        </h1>
+    <div className="w-full max-w-7xl mx-auto px-4 pt-24">
+      <div className="mt-10">
+        <div className="sm:mx-auto sm:w-full sm:max-w-md">
+          <h2 className="text-3xl font-bold text-center text-black">
+            Recept via Bild
+          </h2>
+          <div className="px-4 py-8 sm:rounded-lg sm:px-10">
+            {/* Använd UploadPicture-komponenten istället för ett vanligt input-fält */}
+            <div className="relative flex items-center">
+              <UploadPicture onFileSelected={handleFileSelected} />
+            </div>
 
-        {/* Filuppladdningsfält */}
-        <div className="relative w-full max-w-lg mx-auto">
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleFileChange}
-            className="w-full p-3 border rounded-md"
-          />
+            {/* Knapp för att ladda upp bilden */}
+            <div className="mt-4 flex justify-center">
+              <button
+                onClick={uploadImage}
+                className="w-full bg-black text-white px-4 py-2 rounded-md hover:bg-[#888383] transition cursor-pointer"
+              >
+                Ladda upp bild
+              </button>
+            </div>
+
+            {/* Förhandsvisning av vald bild */}
+            {/* Visa förhandsvisning av vald bild bara om vi INTE har något recept än */}
+            {!recipeToDisplay && preview && (
+              <div className="mt-4 flex justify-center">
+                <img src={preview} alt="Förhandsvisning" className="max-h-64" />
+              </div>
+            )}
+
+
+            {/* Om vi har ett recept, visa det som ett RecipeCard */}
+            {recipeToDisplay && (
+              <div className="mt-6">
+                <RecipeCard recipe={recipeToDisplay} />
+              </div>
+            )}
+
+            {/* Visar eventuella fel */}
+            {error && (
+              <div className="mt-6 p-4 bg-red-100 rounded-lg shadow-md">
+                <h2 className="text-xl font-semibold text-red-900">Fel</h2>
+                <p className="text-red-700 mt-2">{error}</p>
+              </div>
+            )}
+          </div>
         </div>
-
-        {/* Förhandsvisning av vald bild */}
-        {preview && (
-          <div className="mt-4 flex justify-center">
-            <img src={preview} alt="Förhandsvisning" className="max-h-64" />
-          </div>
-        )}
-
-        {/* Knapp för att ladda upp bilden */}
-        <div className="mt-4 flex justify-center">
-          <button
-            onClick={uploadImage}
-            className="bg-black text-white p-2 rounded-full hover:bg-[#888383] transition cursor-pointer"
-          >
-            Ladda upp bild
-          </button>
-        </div>
-
-        {/* Visar receptförslag */}
-        {result && (
-          <div className="mt-6 p-4 rounded-lg shadow-md">
-            <h2 className="text-xl font-semibold text-gray-900">Receptförslag</h2>
-            <pre className="text-gray-700 mt-2">
-              {JSON.stringify(result, null, 2)}
-            </pre>
-          </div>
-        )}
-
-        {/* Visar eventuella fel */}
-        {error && (
-          <div className="mt-6 p-4 bg-red-100 rounded-lg shadow-md">
-            <h2 className="text-xl font-semibold text-red-900">Fel</h2>
-            <p className="text-red-700 mt-2">{error}</p>
-          </div>
-        )}
       </div>
     </div>
   );

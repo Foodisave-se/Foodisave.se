@@ -1,75 +1,130 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate, useSearchParams } from "react-router-dom";
+import React from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export default function DetailedRecipe() {
-  const { id } = useParams();
-  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const [recipe, setRecipe] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const apiUrl = "http://localhost:8000/v1";
+  const location = useLocation();
 
-  useEffect(() => {
-    const fetchRecipeDetails = async () => {
-      try {
-        const response = await fetch(`${apiUrl}/recipe/${id}`);
-        if (!response.ok) {
-          throw new Error("Kunde inte hämta receptdetaljer");
-        }
-        const data = await response.json();
-        setRecipe(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+  // Hämta ut receptet från "state"
+  const { recipe } = location.state || {};
 
-    fetchRecipeDetails();
-  }, [id]);
+  if (!recipe) {
+    return (
+      <div className="pt-24">
+        <p className="text-center text-red-500 mt-4">Inget recept hittades.</p>
+      </div>
+    );
+  }
 
-  if (loading) return <p className="text-center text-gray-500 mt-4">Laddar recept...</p>;
-  if (error) return <p className="text-center text-red-500 mt-4">{error}</p>;
+  // Anta att AI-svaret har fält som 'instructions' (array) och 'ingredients' (array)
+  // Om det skiljer sig åt, anpassa nedan
+  const {
+    name,
+    images,
+    description,
+    category,
+    ingredients,
+    instructions,
+    cook_time,
+    servings,
+    energy,
+    protein,
+    carbohydrates,
+    fat,
+  } = recipe;
 
   return (
-    <div className="w-full max-w-5xl mx-auto px-4 pt-24">
-      <div className="bg-white shadow-lg rounded-lg p-6">
-        {/* Tillbaka-knapp */}
-        <button
-          onClick={() => {
-            if (window.history.state && window.history.state.idx > 0) {
-              navigate(-1); // Gå tillbaka i webbläsarhistoriken
-            } else {
-              navigate(`/search?${searchParams.toString()}`); // Om ingen historik finns, gå till söksidan
-            }
-          }}
-          className="flex items-center bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition mb-4 cursor-pointer"
-        >
-          <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-          </svg>
-          Tillbaka
-        </button>
+    <div className="pt-24 container max-w-7xl mx-auto px-4">
+      {/* Tillbaka-knapp */}
+      <button
+        onClick={() => navigate(-1)}
+        className="mb-6 flex items-center bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition"
+      >
+        <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+        </svg>
+        Tillbaka
+      </button>
 
-        <h1 className="text-3xl font-bold text-black">{recipe.name}</h1>
-        <img src={recipe.images} alt={recipe.name} className="w-xl h-64 object-cover rounded-lg mt-4" />
-        
-        <div className="flex flex-col md:flex-row mt-6">
-          {/* Ingredienser */}
-          <div className="w-full md:w-1/2 p-4">
-            <h2 className="text-xl font-semibold mb-3">Ingredienser</h2>
-            <ul className="list-disc list-inside text-gray-600">
-              {recipe.ingredients.split("|").map((ingredient, index) => (
-                <li key={index}>{ingredient}</li>
-              ))}
-            </ul>
+      {/* Översta sektionen: Titel, info till vänster & bild till höger */}
+      <div className="flex flex-col md:flex-row gap-8">
+        {/* Vänstra kolumnen (Titel + info) */}
+        <div className="flex-1 order-2 md:order-1">
+          <h1 className="text-4xl font-bold mb-3 text-black">{name}</h1>
+          <p className="text-gray-600 mb-4">{description || "Ingen beskrivning"}</p>
+
+          {/* Kort info-rad: portioner, tid, kategori */}
+          <div className="flex items-center gap-3 text-sm text-gray-700">
+            <span>{servings || "Okänd"} portioner</span>
+            <span>|</span>
+            <span>{cook_time || "Okänd tid"}</span>
+            <span>|</span>
+            <span>{category || "Okänd kategori"}</span>
           </div>
 
-          {/* Instruktioner */}
-          <div className="w-full md:w-1/2 p-4">
-            <h2 className="text-xl font-semibold mb-3">Gör så här</h2>
-            <p className="text-gray-600 whitespace-pre-line">{recipe.steps}</p>
+          {/* Näringsinformation */}
+          <div className="mt-4 flex flex-wrap gap-4 text-sm text-gray-600">
+            <div>Energi: {energy || "?"} kcal</div>
+            <div>Protein: {protein || "?"} g</div>
+            <div>Kolhydrater: {carbohydrates || "?"} g</div>
+            <div>Fett: {fat || "?"} g</div>
+          </div>
+        </div>
+
+        {/* Högra kolumnen (Bild) */}
+        <div className="md:w-1/2 order-1 md:order-2">
+          {images && (
+            <img
+              src={images}
+              alt={name}
+              className="w-full h-auto rounded-lg object-cover"
+            />
+          )}
+        </div>
+      </div>
+
+      {/* Andra sektionen: Ingredienser till vänster, Instruktioner till höger */}
+      <div className="flex flex-col md:flex-row gap-8 mt-10">
+        {/* Vänstra kolumnen: Ingredienser */}
+        <div className="md:w-1/3">
+          <h2 className="text-2xl font-semibold mb-3 text-black">Ingredienser</h2>
+          {Array.isArray(ingredients) ? (
+            <ul className="list-disc list-inside text-gray-800">
+              {ingredients.map((ing, i) => (
+                <li key={i} className="mb-1">
+                  {ing}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-gray-800">{ingredients}</p>
+          )}
+        </div>
+
+        {/* Högra kolumnen: Instruktioner */}
+        <div className="md:w-2/3">
+          <h2 className="text-2xl font-semibold mb-3 text-black">Gör så här</h2>
+          {Array.isArray(instructions) ? (
+            <ol className="list-decimal list-inside text-gray-800 space-y-2">
+              {instructions.map((step, i) => (
+                <li key={i}>{step}</li>
+              ))}
+            </ol>
+          ) : (
+            <p className="text-gray-800">{instructions}</p>
+          )}
+
+          {/* Exempel: “Klart!”-sektion med betyg */}
+          <div className="mt-8">
+            <h3 className="text-xl font-semibold mb-2 text-black">Klart!</h3>
+            <p className="text-gray-700">Hur blev resultatet? Sätt betyg!</p>
+            <div className="flex items-center gap-1 mt-2">
+              {/* Här kan du lägga stjärnor eller annat */}
+              <svg className="w-6 h-6 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 15l-5.878 3.09 1.122-6.54L.49 6.91l6.557-.95L10 .5l2.952 5.46 6.557.95-4.754 4.64 1.122 6.54z" />
+              </svg>
+              {/* ... fler stjärnor */}
+            </div>
           </div>
         </div>
       </div>

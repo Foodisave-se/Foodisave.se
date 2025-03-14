@@ -39,7 +39,7 @@ const router = createBrowserRouter([
         errorElement: <NotFoundPage />,
       },
       {
-        path: "/recipe/:id",
+        path: "/detailedrecipe",
         element: <DetailedRecipe />,
         errorElement: <NotFoundPage />,
       },
@@ -64,6 +64,11 @@ const router = createBrowserRouter([
       {
         path: "/ImageFoodRecipe",
         element: <ImageFoodRecipe />,
+      },
+      {
+        path: "/imagerecipe",
+        element: <ImageRecipe />,
+        errorElement: <NotFoundPage />,
       },
 
     ],
