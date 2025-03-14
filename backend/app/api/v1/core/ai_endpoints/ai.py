@@ -142,7 +142,7 @@ def modify_recipes(recipe_id: int, portions: int, db: Session = Depends(get_db))
                 if "recipes" not in recipes:
                     raise ValueError("JSON saknar 'recipes'-nyckeln.")
 
-                return JSONResponse(content={"suggested_recipes": recipes["recipes"]})
+                return JSONResponse(content={"recipes": recipes["recipes"]})
             except json.JSONDecodeError as e:
                 print(" JSON-dekodningsfel:", e)
                 raise HTTPException(
@@ -152,7 +152,7 @@ def modify_recipes(recipe_id: int, portions: int, db: Session = Depends(get_db))
                 raise HTTPException(
                     status_code=500, detail=f"500: JSON-formatfel - {str(e)}")
 
-        return JSONResponse(content={"suggested_recipes": []}, status_code=200)
+        return JSONResponse(content={"recipes": []}, status_code=200)
 
     except Exception as e:
         print(f" Fel vid API-förfrågan: {str(e)}")
@@ -226,7 +226,7 @@ def modify_recipes(recipe_id: int, db: Session = Depends(get_db)):
                 if "recipes" not in recipes:
                     raise ValueError("JSON saknar 'recipes'-nyckeln.")
 
-                return JSONResponse(content={"suggested_recipes": recipes["recipes"]})
+                return JSONResponse(content={"recipes": recipes["recipes"]})
             except json.JSONDecodeError as e:
                 print(" JSON-dekodningsfel:", e)
                 raise HTTPException(
@@ -236,7 +236,7 @@ def modify_recipes(recipe_id: int, db: Session = Depends(get_db)):
                 raise HTTPException(
                     status_code=500, detail=f"500: JSON-formatfel - {str(e)}")
 
-        return JSONResponse(content={"suggested_recipes": []}, status_code=200)
+        return JSONResponse(content={"recipes": []}, status_code=200)
 
     except Exception as e:
         print(f" Fel vid API-förfrågan: {str(e)}")
@@ -311,7 +311,7 @@ def modify_recipes(recipe_id: int,
                 if "recipes" not in recipes:
                     raise ValueError("JSON saknar 'recipes'-nyckeln.")
 
-                return JSONResponse(content={"suggested_recipes": recipes["recipes"]})
+                return JSONResponse(content={"recipes": recipes["recipes"]})
             except json.JSONDecodeError as e:
                 print(" JSON-dekodningsfel:", e)
                 raise HTTPException(
@@ -321,7 +321,7 @@ def modify_recipes(recipe_id: int,
                 raise HTTPException(
                     status_code=500, detail=f"500: JSON-formatfel - {str(e)}")
 
-        return JSONResponse(content={"suggested_recipes": []}, status_code=200)
+        return JSONResponse(content={"recipes": []}, status_code=200)
 
     except Exception as e:
         print(f" Fel vid API-förfrågan: {str(e)}")
@@ -396,7 +396,7 @@ def modify_recipes(recipe_id: int,
                 if "recipes" not in recipes:
                     raise ValueError("JSON saknar 'recipes'-nyckeln.")
 
-                return JSONResponse(content={"suggested_recipes": recipes["recipes"]})
+                return JSONResponse(content={"recipes": recipes["recipes"]})
             except json.JSONDecodeError as e:
                 print(" JSON-dekodningsfel:", e)
                 raise HTTPException(
@@ -406,7 +406,7 @@ def modify_recipes(recipe_id: int,
                 raise HTTPException(
                     status_code=500, detail=f"500: JSON-formatfel - {str(e)}")
 
-        return JSONResponse(content={"suggested_recipes": []}, status_code=200)
+        return JSONResponse(content={"recipes": []}, status_code=200)
 
     except Exception as e:
         print(f" Fel vid API-förfrågan: {str(e)}")
@@ -501,13 +501,13 @@ async def suggest_recipe_from_image(file: UploadFile = File(...)):
                 result = json.loads(cleaned_text)
                 if "recipes" not in result:
                     raise ValueError("JSON saknar 'recipes'-nyckeln.")
-                return JSONResponse(content={"suggested_recipes": result["recipes"]})
+                return JSONResponse(content={"recipes": result["recipes"]})
             except json.JSONDecodeError as e:
                 print("JSON-dekodningsfel:", e)
                 raise HTTPException(
                     status_code=500, detail="500: Misslyckades att tolka svaret från AI som JSON")
 
-        return JSONResponse(content={"suggested_recipes": []}, status_code=200)
+        return JSONResponse(content={"recipes": []}, status_code=200)
     except Exception as e:
         print(f"Fel vid API-förfrågan: {str(e)}")
         raise HTTPException(
@@ -604,13 +604,13 @@ async def suggest_recipe_from_plateimage(file: UploadFile = File(...)):
                 result = json.loads(cleaned_text)
                 if "recipes" not in result:
                     raise ValueError("JSON saknar 'recipes'-nyckeln.")
-                return JSONResponse(content={"suggested_recipes": result["recipes"]})
+                return JSONResponse(content={"recipes": result["recipes"]})
             except json.JSONDecodeError as e:
                 print("JSON-dekodningsfel:", e)
                 raise HTTPException(
                     status_code=500, detail="500: Misslyckades att tolka svaret från AI som JSON")
 
-        return JSONResponse(content={"suggested_recipes": []}, status_code=200)
+        return JSONResponse(content={"recipes": []}, status_code=200)
     except Exception as e:
         print(f"Fel vid API-förfrågan: {str(e)}")
         raise HTTPException(
