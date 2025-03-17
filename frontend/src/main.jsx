@@ -41,6 +41,7 @@ const router = createBrowserRouter([
       { path: "/passwordreset", element: <PasswordResetRequestPage />, errorElement: <NotFoundPage /> },
       { path: "/reset-password", element: <ResetPasswordPage />, errorElement: <NotFoundPage /> },
       { path: "/activate-account", element: <ActivateAccountPage />, errorElement: <NotFoundPage /> },
+      { path: "/settings", element: <UserSettingsPage /> },
     ],
   },
   {

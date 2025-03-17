@@ -20,7 +20,7 @@ export default function ImageRecipe() {
     }
   };
 
-  // Funktion för att ladda upp bilden till backend
+  // Funktion för att ladda upp bilden till backend (anropas från ImageRecipe-sidan)
   const uploadImage = async () => {
     if (!selectedFile) return;
     const formData = new FormData();
@@ -65,12 +65,12 @@ export default function ImageRecipe() {
             Recept via Bild
           </h2>
           <div className="px-4 py-8 sm:rounded-lg sm:px-10">
-            {/* Använd UploadPicture-komponenten istället för ett vanligt input-fält */}
+            {/* Använd UploadPicture-komponenten */}
             <div className="relative flex items-center">
               <UploadPicture onFileSelected={handleFileSelected} />
             </div>
 
-            {/* Knapp för att ladda upp bilden */}
+            {/* Knapp för att ladda upp bilden – den används endast om användaren klickar direkt i input-fältet */}
             <div className="mt-4 flex justify-center">
               <button
                 onClick={uploadImage}
@@ -81,13 +81,11 @@ export default function ImageRecipe() {
             </div>
 
             {/* Förhandsvisning av vald bild */}
-            {/* Visa förhandsvisning av vald bild bara om vi INTE har något recept än */}
             {!recipeToDisplay && preview && (
               <div className="mt-4 flex justify-center">
                 <img src={preview} alt="Förhandsvisning" className="max-h-64" />
               </div>
             )}
-
 
             {/* Om vi har ett recept, visa det som ett RecipeCard */}
             {recipeToDisplay && (

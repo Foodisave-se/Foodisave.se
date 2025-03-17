@@ -79,7 +79,7 @@ export default function SearchRecipeWords() {
               <input
                 type="text"
                 placeholder="Sök på recept eller ingredienser..."
-                className="flex-1 block px-3 py-2 placeholder-black border border-black rounded-md appearance-none focus:outline-none focus:ring-[#888383] focus:border-[#888383] sm:text-sm"
+                className="flex-1 block px-3 py-2 placeholder-black border border-black rounded-md appearance-none focus:outline-none bg-white sm:text-sm"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSearch()}

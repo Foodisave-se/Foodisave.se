@@ -154,7 +154,7 @@ export default function RegisterForm() {
                     type="username"
                     autoComplete="username"
                     required
-                    className="block w-full px-3 py-2 placeholder-white border rounded-md shadow-sm appearance-none focus:outline-none focus:ring-[#888383] focus:border-[#888383] sm:text-sm"
+                    className="block w-full px-3 py-2 placeholder-white border rounded-md shadow-sm appearance-none focus:outline-none bg-white sm:text-sm"
                     value={userName}
                     onChange={(e) => setUserName(e.target.value)}
                     onBlur={validateUserName}
@@ -181,7 +181,7 @@ export default function RegisterForm() {
                     type="email"
                     autoComplete="email"
                     required
-                    className="block w-full px-3 py-2 placeholder-white border rounded-md shadow-sm appearance-none focus:outline-none focus:ring-[#888383] focus:border-[#888383] sm:text-sm"
+                    className="block w-full px-3 py-2 placeholder-white border rounded-md shadow-sm appearance-none focus:outline-none bg-white sm:text-sm"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     onBlur={validateEmail}
@@ -208,7 +208,7 @@ export default function RegisterForm() {
                     type="text"
                     autoComplete="given-name"
                     required
-                    className="block w-full px-3 py-2 placeholder-white border rounded-md shadow-sm appearance-none focus:outline-none focus:ring-[#888383] focus:border-[#888383] sm:text-sm"
+                    className="block w-full px-3 py-2 placeholder-white border rounded-md shadow-sm appearance-none focus:outline-none bg-white sm:text-sm"
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
                     onBlur={validateFirstName}
@@ -235,7 +235,7 @@ export default function RegisterForm() {
                     type="text"
                     autoComplete="family-name"
                     required
-                    className="block w-full px-3 py-2 placeholder-white border rounded-md shadow-sm appearance-none focus:outline-none focus:ring-[#888383] focus:border-[#888383] sm:text-sm"
+                    className="block w-full px-3 py-2 placeholder-white border rounded-md shadow-sm appearance-none focus:outline-none bg-white sm:text-sm"
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
                     onBlur={validateLastName}
@@ -262,7 +262,7 @@ export default function RegisterForm() {
                     type="password"
                     autoComplete="current-password"
                     required
-                    className="block w-full px-3 py-2 placeholder-white border rounded-md shadow-sm appearance-none focus:outline-none focus:ring-[#888383] focus:border-[#888383] sm:text-sm"
+                    className="block w-full px-3 py-2 placeholder-white border rounded-md shadow-sm appearance-none focus:outline-none bg-white sm:text-sm"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     onBlur={validatePassword}

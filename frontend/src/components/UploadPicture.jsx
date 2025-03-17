@@ -1,8 +1,10 @@
 import React, { useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function UploadPicture({ onFileSelected }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownTimeoutRef = useRef(null);
+  const navigate = useNavigate();
 
   // Referenser till fil-input för "Ladda upp" respektive "Ta bild"
   const uploadFileRef = useRef(null);
@@ -26,6 +28,14 @@ export default function UploadPicture({ onFileSelected }) {
   // Toggle för dropdown – fungerar även för mobiler (click)
   const toggleDropdown = () => {
     setIsDropdownOpen((prev) => !prev);
+  };
+
+  // Kontrollera om användaren är inloggad (vi kollar på "token" och "userData")
+  const isLoggedIn = () => {
+    const token = localStorage.getItem("token");
+    const userData = localStorage.getItem("userData");
+    console.log("Token:", token, "UserData:", userData);
+    return token && token !== "null" && userData && userData !== "null";
   };
 
   // Öppnar filväljaren för "Ladda upp bild"
@@ -72,9 +82,7 @@ export default function UploadPicture({ onFileSelected }) {
       onMouseEnter={handleDropdownMouseEnter}
       onMouseLeave={handleDropdownMouseLeave}
     >
-      {/* Rad med fil-input i samma stil som i ImageRecipe, + dropdown-knapp till höger */}
       <div className="relative flex items-center">
-        {/* Stort input-fält: klickbart för att välja bild */}
         <input
           type="file"
           placeholder="Välj bild..."
@@ -92,13 +100,10 @@ export default function UploadPicture({ onFileSelected }) {
             rounded-md 
             appearance-none 
             focus:outline-none 
-            focus:ring-[#888383] 
-            focus:border-[#888383] 
+            bg-white
             sm:text-sm
           "
         />
-
-        {/* Svart knapp med pil-ikon (dropdown) */}
         <button
           type="button"
           onClick={toggleDropdown}
@@ -127,11 +132,8 @@ export default function UploadPicture({ onFileSelected }) {
           </svg>
         </button>
       </div>
-
-      {/* Dropdown-meny (om isDropdownOpen = true) */}
       {isDropdownOpen && (
-        <div
-          className="
+        <div className="
             absolute
             top-full
             right-0
@@ -142,11 +144,8 @@ export default function UploadPicture({ onFileSelected }) {
             z-40
             transform
             animate-slide-up
-          "
-        >
-          {/* Liten svart pil ovanför dropdownen */}
-          <div
-            className="
+          ">
+          <div className="
               w-0
               h-0
               border-l-4
@@ -157,14 +156,19 @@ export default function UploadPicture({ onFileSelected }) {
               border-r-transparent
               mb-[-1px]
               ml-32
-            "
-          />
-          {/* Själva dropdown-rutan */}
+            "/>
           <div className="bg-black min-w-max rounded-md shadow-lg">
-            {/* Ladda upp bild (dropdown-knapp) */}
+            {/* Dropdown-knapp för "Ladda upp bild" */}
             <button
               type="button"
-              onClick={handleUploadClick}
+              onClick={() => {
+                if (!isLoggedIn()) {
+                  // Om användaren inte är inloggad, skicka med redirect-parametern
+                  navigate("/login");
+                } else {
+                  handleUploadClick();
+                }
+              }}
               className="
                 flex 
                 items-center 
@@ -177,7 +181,6 @@ export default function UploadPicture({ onFileSelected }) {
                 rounded-md
               "
             >
-              {/* Ikon för "Ladda upp bild" */}
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
@@ -190,10 +193,12 @@ export default function UploadPicture({ onFileSelected }) {
                   clipRule="evenodd"
                 />
               </svg>
-              <span className="ml-2 text-white cursor-pointer">Ladda upp bild</span>
+              <span className="ml-2 text-white cursor-pointer">
+                Ladda upp bild
+              </span>
             </button>
 
-            {/* Dold fil-input för "Ladda upp bild" (dropdown) */}
+            {/* Dold fil-input för "Ladda upp bild" */}
             <input
               type="file"
               accept="image/*"
@@ -202,10 +207,16 @@ export default function UploadPicture({ onFileSelected }) {
               onChange={handleUploadFileChange}
             />
 
-            {/* Ta bild (dropdown-knapp) */}
+            {/* Dropdown-knapp för "Ta bild" */}
             <button
               type="button"
-              onClick={handleTakePhotoClick}
+              onClick={() => {
+                if (!isLoggedIn()) {
+                  navigate("/login?redirect=/imagerecipe");
+                } else {
+                  handleTakePhotoClick();
+                }
+              }}
               className="
                 flex 
                 items-center 
@@ -218,7 +229,6 @@ export default function UploadPicture({ onFileSelected }) {
                 rounded-md
               "
             >
-              {/* Ikon för "Ta bild" */}
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
@@ -232,7 +242,9 @@ export default function UploadPicture({ onFileSelected }) {
                   clipRule="evenodd"
                 />
               </svg>
-              <span className="ml-2 text-white cursor-pointer">Ta bild</span>
+              <span className="ml-2 text-white cursor-pointer">
+                Ta bild
+              </span>
             </button>
 
             {/* Dold fil-input för "Ta bild" (kamera) */}

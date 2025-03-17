@@ -13,7 +13,7 @@ db_params = {
 }
 
 # Read the CSV file
-df = pd.read_csv('app/dataset/all_recipes.csv')
+df = pd.read_csv('app/dataset/merged_recipes.csv')
 
 # Connect to the PostgreSQL database
 conn = psycopg2.connect(**db_params)
@@ -47,9 +47,12 @@ INSERT INTO recipes (
     protein,
     carbohydrates,
     fat,
-    images
+    images,
+    rating,
+    ratings_count,
+    recipe_url
     )
-VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
 """
 
 for index, row in df.iterrows():
@@ -57,7 +60,7 @@ for index, row in df.iterrows():
                 row['Ingredients'], row['Instructions'],
                 row['Servings'], row['Category'], row['Time to cook'],
                 row['Energy'], row['Protein'], row['Carbohydrates'], row['Fat'],
-                row['Image']
+                row['Image'], row['Rating'], row['Ratings count'], row['Recipe URL']
                 ))
 
 cur.execute("DELETE FROM recipes WHERE LOWER(name::text) = 'nan' AND LOWER(descriptions::text) = 'nan';")

@@ -34,7 +34,10 @@ class Recipes(Base):
     carbohydrates: Mapped[float] = mapped_column(Numeric, nullable=True)
     fat: Mapped[float] = mapped_column(Numeric, nullable=True)
     images: Mapped[str] = mapped_column(Text, nullable=True)
-
+    ratings_count: Mapped[float] = mapped_column(Numeric, nullable=True)
+    rating: Mapped[float] = mapped_column(Numeric, nullable=True)
+    recipe_url: Mapped[str] = mapped_column(Text, nullable=True)
+    
     reviews: Mapped["Reviews"] = relationship(
         back_populates="recipes"
     )
