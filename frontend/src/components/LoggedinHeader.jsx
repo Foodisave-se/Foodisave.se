@@ -246,7 +246,7 @@ export default function LoggedinHeader() {
             {/* Innehåll i sidbaren */}
             <div className="mt-10 flex flex-col space-y-4">
               <Link
-                to="/myrecipes"
+                to="/savedrecipes"
                 onClick={() => setIsSidebarOpen(false)}
                 className="text-black hover:underline"
               >
@@ -302,14 +302,22 @@ export default function LoggedinHeader() {
                 </Link>
               </li>
               <li>
+                <Link to="/myrecipes" onClick={toggleMenu} className="hover:underline">
+                  Mina Recept
+                </Link>
+              </li>
+              <li>
                 <Link to="/settings" onClick={toggleMenu} className="hover:underline">
                   Inställningar
                 </Link>
               </li>
               <li>
-                <Link to="/myrecipes" onClick={toggleMenu} className="hover:underline">
-                  Mina Recept
-                </Link>
+              <button
+                onClick={handleLogout}
+                className="space-y-8 text-3xl font-bold text-white"
+              >
+                Logga ut
+              </button>
               </li>
             </ul>
           </div>

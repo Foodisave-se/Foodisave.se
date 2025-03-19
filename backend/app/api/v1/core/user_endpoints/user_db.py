@@ -20,13 +20,13 @@ from app.api.v1.core.models import (
 from app.api.v1.core.schemas import (
     UserSchema,
     UserSearchSchema,
-    UserRegisterSchema
+    UserRegisterSchema,
+    UserUpdateSchema
 )
 
 def create_user_db(user: UserRegisterSchema, db):
 
     user = Users(
-        username=user.username,
         first_name=user.first_name,
         last_name=user.last_name,
         email=user.email,
@@ -34,7 +34,7 @@ def create_user_db(user: UserRegisterSchema, db):
         is_superuser=False,
         is_admin=False,
         is_customer=True,
-        coins=100,
+        credits=100,
         level=1
     )
 
@@ -66,24 +66,3 @@ def delete_user_db(user_id: int, db):
     db.commit()
     return True
 
-
-def update_user_db(user_id: int, user: UserSchema, db):
-
-    update_user = db.scalar(select(Users).where(Users.id == user_id))
-    if not update_user:
-        return False
-
-    if user.username is not None:
-        update_user.username = user.username
-    if user.first_name is not None:
-        update_user.first_name = user.first_name
-    if user.last_name is not None:
-        update_user.last_name = user.last_name
-    if user.email is not None:
-        update_user.email = user.email
-    if user.password is not None:
-        update_user.password = hash_password(user.password)
-
-    db.commit()
-    db.refresh(update_user)
-    return user

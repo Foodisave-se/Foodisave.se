@@ -20,10 +20,10 @@ export default function LoginForm() {
   function validateEmail() {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!email) {
-      setEmailError("Email is required");
+      setEmailError("E-postadress krävs för inloggning");
       return false;
     } else if (!regex.test(email)) {
-      setEmailError("It must be a correct email");
+      setEmailError("Det måste vara en riktig E-postadress");
       return false;
     } else {
       setEmailError("");
@@ -33,7 +33,7 @@ export default function LoginForm() {
 
   function validatePassword() {
     if (!password) {
-      setPasswordError("Password is required");
+      setPasswordError("Lösenord krävs för inloggning");
       return false;
     } else {
       setPasswordError("");
@@ -86,11 +86,11 @@ export default function LoginForm() {
           const data = await response.json();
           setServerError(data.detail);
         } else {
-          setServerError("An unexpected error occurred. Please try again later.");
+          setServerError("Ett oväntat fel uppstod. Vänligen försök igen senare.");
         }
       } catch (error) {
         console.error("Error:", error);
-        setServerError("An unexpected error occurred. Please try again later.");
+        setServerError("Ett oväntat fel uppstod. Vänligen försök igen senare.");
       }
     } else {
       console.log("Validation errors");

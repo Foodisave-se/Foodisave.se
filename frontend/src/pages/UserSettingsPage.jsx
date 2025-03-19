@@ -56,14 +56,14 @@ function UserSettingsPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.detail || "Failed to update profile");
+        throw new Error(data.detail || "Misslyckades uppdatera profil!");
       }
 
       // Update local state with new data
       setUserData(data);
       setProfileMessage({
         type: "success",
-        text: "Profile updated successfully!",
+        text: "Profilen lyckades uppdateras!",
       });
     } catch (error) {
       console.error("Error updating profile:", error);
@@ -82,7 +82,7 @@ function UserSettingsPage() {
 
     // Validate passwords
     if (newPassword !== confirmPassword) {
-      setPasswordMessage({ type: "error", text: "New passwords do not match" });
+      setPasswordMessage({ type: "error", text: "Lösenorden matchar inte" });
       return;
     }
 
@@ -105,7 +105,7 @@ function UserSettingsPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.detail || "Failed to change password");
+        throw new Error(data.detail || "Misslyckades att uppdatera lösenordet");
       }
 
       // Reset form
@@ -191,8 +191,8 @@ function UserSettingsPage() {
               <div
                 className={`p-4 mb-6 rounded-md ${
                   profileMessage.type === "success"
-                    ? "bg-green-300 text-black"
-                    : "bg-red-300 text-black"
+                    ? "text-green-700"
+                    : "text-red-700"
                 }`}
               >
                 {profileMessage.text}
@@ -270,8 +270,8 @@ function UserSettingsPage() {
               <div
                 className={`p-4 mb-6 rounded-md ${
                   passwordMessage.type === "success"
-                    ? "bg-green-300 text-black"
-                    : "bg-green-300 text-red-700"
+                    ? "text-green-700"
+                    : "text-red-700"
                 }`}
               >
                 {passwordMessage.text}

@@ -4,7 +4,6 @@ import "./index.css";
 import HomePage from "./pages/Home.jsx";
 import Layout from "./pages/Layout.jsx";
 import NotFoundPage from "./pages/NotFoundPage.jsx";
-import BliMedlem from "./pages/BliMedlem.jsx";
 import SearchRecipeWords from "./pages/SearchRecipeWords.jsx";
 import ReceptFörslag from "./pages/ReceptFörslag.jsx";
 import ImageRecipe from "./pages/ImageRecipe.jsx";
@@ -21,6 +20,7 @@ import RecipeRoulette from "./pages/RecipeRoulette.jsx";
 import PasswordResetRequestPage from "./pages/PasswordResetRequestPage.jsx";
 import ResetPasswordPage from "./pages/ResetPasswordPage.jsx";
 import ActivateAccountPage from "./pages/ActivateAccountPage.jsx";
+import SavedRecipesPage from "./pages/SavedRecipesPage.jsx";
 
 const router = createBrowserRouter([
   {
@@ -28,7 +28,6 @@ const router = createBrowserRouter([
     element: <Layout />,
     children: [
       { path: "/", element: <HomePage />, errorElement: <NotFoundPage /> },
-      { path: "/blimedlem", element: <BliMedlem />, errorElement: <NotFoundPage /> },
       { path: "/search", element: <SearchRecipeWords />, errorElement: <NotFoundPage /> },
       { path: "/detailedrecipe", element: <DetailedRecipe />, errorElement: <NotFoundPage /> },
       { path: "/random", element: <RecipeRoulette />, errorElement: <NotFoundPage /> },
@@ -42,6 +41,7 @@ const router = createBrowserRouter([
       { path: "/reset-password", element: <ResetPasswordPage />, errorElement: <NotFoundPage /> },
       { path: "/activate-account", element: <ActivateAccountPage />, errorElement: <NotFoundPage /> },
       { path: "/settings", element: <UserSettingsPage /> },
+      { path: "/savedrecipes", element: <SavedRecipesPage /> },
     ],
   },
   {

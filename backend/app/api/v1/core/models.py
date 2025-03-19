@@ -63,14 +63,13 @@ class Token(Base):
 
 class Users(Base):
     __tablename__ = "users"
-    username: Mapped[str] = mapped_column(String(100), unique=True)
     first_name: Mapped[str] = mapped_column(String(255))
     last_name: Mapped[str] = mapped_column(String(255))
     email: Mapped[str] = mapped_column(String(150), unique=True)
     is_superuser: Mapped[bool] = mapped_column(Boolean, default=False)
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
     is_customer: Mapped[bool] = mapped_column(Boolean, default=True)
-    coins: Mapped[int] = mapped_column(Integer, default=100)
+    credits: Mapped[int] = mapped_column(Integer, default=100)
     hashed_password: Mapped[str] = mapped_column(String(150))
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),

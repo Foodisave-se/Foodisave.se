@@ -17,16 +17,16 @@ const ResetPasswordForm = () => {
 
   useEffect(() => {
     if (!token) {
-      setServerError("Invalid password reset link. Please request a new one.");
+      setServerError("Ogiltig länk för återställning av lösenord. Vänligen begär en ny.");
     }
   }, [token]);
 
   const validatePassword = () => {
     if (!password) {
-      setPasswordError("Password is required");
+      setPasswordError("Lösenord Krävs");
       return false;
     } else if (password.length < 8) {
-      setPasswordError("Password must be at least 8 characters long");
+      setPasswordError("Lösenordet måste innehålla minst 8 tecken");
       return false;
     } else {
       setPasswordError("");
@@ -36,10 +36,10 @@ const ResetPasswordForm = () => {
 
   const validateConfirmPassword = () => {
     if (!confirmPassword) {
-      setConfirmPasswordError("Please confirm your password");
+      setConfirmPasswordError("Bekräfta ditt Lösenord");
       return false;
     } else if (password !== confirmPassword) {
-      setConfirmPasswordError("Passwords do not match");
+      setConfirmPasswordError("Lösenorden matchar inte");
       return false;
     } else {
       setConfirmPasswordError("");
@@ -67,7 +67,7 @@ const ResetPasswordForm = () => {
         body: JSON.stringify({ token, new_password: password }),
       });
       if (response.ok) {
-        setSuccess("Your password has been reset successfully.");
+        setSuccess("Ändring av ditt Lösenord har genomförts");
         setPassword("");
         setConfirmPassword("");
         setTimeout(() => {
@@ -76,12 +76,12 @@ const ResetPasswordForm = () => {
       } else {
         const errorData = await response.json();
         setServerError(
-          errorData.detail || "Failed to reset password. The link may have expired or been used."
+          errorData.detail || "Misslyckades återställa ditt Lösenord. Länken du har kan vara förbrukad."
         );
       }
     } catch (error) {
       console.error("Error:", error);
-      setServerError("An unexpected error occurred. Please try again later.");
+      setServerError("Ett oväntat fel inträffade. Vänligen försök igen");
     } finally {
       setIsSubmitting(false);
     }
@@ -90,18 +90,18 @@ const ResetPasswordForm = () => {
   return (
     <div className="flex flex-col justify-center">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="px-4 py-8 bg-white shadow sm:rounded-lg sm:px-10">
+        <div className="px-4 py-8 sm:rounded-lg sm:px-10">
           {!token ? (
-            <div className="p-4 rounded-md bg-red-50">
+            <div className="p-4 rounded-md bg-white">
               <div className="flex">
                 <div className="ml-3">
-                  <h3 className="text-sm font-medium text-red-800">Invalid Reset Link</h3>
+                  <h3 className="text-sm font-medium text-red-800">Ogiltig återställningslänk</h3>
                   <div className="mt-2 text-sm text-red-700">
-                    <p>This password reset link is invalid or has expired.</p>
+                    <p>Denna länk för att återställa ditt lösenord är ogiltig eller har gått ut.</p>
                   </div>
                   <div className="mt-4">
                     <Link to="/passwordreset" className="text-sm font-medium text-indigo-600 hover:text-indigo-500">
-                      Request a new password reset link
+                    Begär en ny länk för att återställa ditt lösenord.
                     </Link>
                   </div>
                 </div>
@@ -111,14 +111,14 @@ const ResetPasswordForm = () => {
             <div className="p-4 rounded-md bg-green-50">
               <div className="flex">
                 <div className="ml-3">
-                  <h3 className="text-sm font-medium text-green-800">Success!</h3>
+                  <h3 className="text-sm font-medium text-green-800">Lyckades!</h3>
                   <div className="mt-2 text-sm text-green-700">
                     <p>{success}</p>
-                    <p>You will be redirected to the login page shortly.</p>
+                    <p>Du kommer att omdirigeras till inloggningssidan inom kort.</p>
                   </div>
                   <div className="mt-4">
                     <Link to="/login" className="text-sm font-medium text-indigo-600 hover:text-indigo-500">
-                      Go to login
+                      Tryck för att Logga in
                     </Link>
                   </div>
                 </div>
@@ -128,7 +128,7 @@ const ResetPasswordForm = () => {
             <form onSubmit={handleSubmit} className="space-y-6" noValidate>
               <div>
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                  New Password
+                  Nytt Lösenord
                 </label>
                 <input
                   type="password"
@@ -143,7 +143,7 @@ const ResetPasswordForm = () => {
               </div>
               <div>
                 <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-                  Confirm New Password
+                  Bekräfta Nytt Lösenord
                 </label>
                 <input
                   type="password"
@@ -165,7 +165,7 @@ const ResetPasswordForm = () => {
                   className="flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? "Resetting..." : "Reset Password"}
+                  {isSubmitting ? "Återställer..." : "Återställer Lösenord"}
                 </button>
               </div>
             </form>

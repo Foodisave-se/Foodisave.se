@@ -13,7 +13,7 @@ const ActivationForm = () => {
 
   useEffect(() => {
     if (!token) {
-      setServerError("Invalid activation link.");
+      setServerError("Ogiltig aktiveringslänk.");
     }
   }, [token]);
 
@@ -29,17 +29,17 @@ const ActivationForm = () => {
         body: JSON.stringify({ token })
       });
       if (response.ok) {
-        setSuccess("Your account has been activated successfully.");
+        setSuccess("Lyckades aktivera ditt konto. Välkommen till foodisave");
         setTimeout(() => {
           navigate("/login");
         }, 3000);
       } else {
         const errorData = await response.json();
-        setServerError(errorData.detail || "Activation failed.");
+        setServerError(errorData.detail || "Misslyckad aktivering");
       }
     } catch (error) {
       console.error("Activation error:", error);
-      setServerError("An unexpected error occurred.");
+      setServerError("Ett oväntat fel inträffade");
     } finally {
       setIsSubmitting(false);
     }
@@ -52,10 +52,10 @@ const ActivationForm = () => {
       {!success && !serverError && (
         <button
           onClick={handleActivate}
-          className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+          className="flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-black rounded-md shadow-sm hover:bg-[#888383] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#888383] cursor-pointer"
           disabled={isSubmitting}
         >
-          {isSubmitting ? "Activating..." : "Activate Account"}
+          {isSubmitting ? "Aktiverar..." : "Aktivera konto"}
         </button>
       )}
     </div>

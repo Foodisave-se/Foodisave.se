@@ -142,33 +142,6 @@ export default function RegisterForm() {
             <form className="space-y-6" onSubmit={submitRegister}>
               <div>
                 <label
-                  htmlFor="username"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Användarnamn
-                </label>
-                <div className="mt-1">
-                  <input
-                    id="username"
-                    name="username"
-                    type="username"
-                    autoComplete="username"
-                    required
-                    className="block w-full px-3 py-2 placeholder-white border rounded-md shadow-sm appearance-none focus:outline-none bg-white sm:text-sm"
-                    value={userName}
-                    onChange={(e) => setUserName(e.target.value)}
-                    onBlur={validateUserName}
-                  />
-                  {emailError.map((error, index) => (
-                    <p key={index} className="mt-2 text-sm text-red-600">
-                      {error}
-                    </p>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <label
                   htmlFor="email"
                   className="block text-sm font-medium text-gray-700"
                 >

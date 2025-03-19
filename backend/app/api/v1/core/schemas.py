@@ -1,5 +1,6 @@
 from datetime import datetime
 from enum import Enum
+from typing import List
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
@@ -11,13 +12,16 @@ class SearchRecipeSchema(BaseModel):
     protein: int | None = None
     recipe_type: str | None = None
 
+class SavedRecipeSchema(BaseModel):
+    user_id: int
+    recipe_id: int
+
 
 class RandomRecipeSchema(BaseModel):
     recipe_type: str | None = None
 
 
 class UserSchema(BaseModel):
-    username: str
     first_name: str
     last_name: str
     email: EmailStr
@@ -25,7 +29,7 @@ class UserSchema(BaseModel):
     is_superuser: bool = False
     is_admin: bool = False
     is_customer: bool = True
-    coins: int = 100
+    credits: int = 100
     level: int = 1
     is_active: bool = False
 
@@ -33,14 +37,10 @@ class UserSearchSchema(BaseModel):
     username: str
 
 class UserUpdateSchema(BaseModel):
-    username: str | None = None
     first_name: str | None = None
     last_name: str | None = None
-    email: EmailStr | None = None
-    password: str | None = None
 
 class UserRegisterSchema(BaseModel):
-    username: str
     email: str
     last_name: str
     first_name: str
@@ -71,14 +71,13 @@ class ActivationConfirmSchema(BaseModel):
 
 class UserOutSchema(BaseModel):
     id: int
-    username: str
     email: str
     last_name: str
     first_name: str
     is_superuser: bool
     is_admin: bool
     is_customer: bool
-    coins: int
+    credits: int
     level: int
     model_config = ConfigDict(from_attributes=True)
 
@@ -109,6 +108,28 @@ class UserUpdateRecipeSchema(BaseModel):
     carbohydrates: float | None = None
     fat: float | None = None
     servings: int | None = None
+
+class RecipeOutSchema(BaseModel):
+    id: int
+    name: str
+    descriptions: str
+    ingredients: str
+    steps: str
+    servings: str
+    tags: str = None
+    cook_time: str = None
+    calories: float = None
+    protein: float = None
+    carbohydrates: float = None
+    fat: float = None
+    rating: float = None
+    images: str = None
+    recipe_url: str = None
+    
+    model_config = ConfigDict(from_attributes=True)
+
+class SavedRecipesResponse(BaseModel):
+    recipes: List[RecipeOutSchema]
 
 class ImageDetectionResponse(BaseModel):
     """

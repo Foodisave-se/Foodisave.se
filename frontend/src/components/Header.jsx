@@ -286,7 +286,7 @@ export default function Header() {
                     </Link>
                   </li>
                   <li>
-                    <Link to="/register" onClick={toggleMenu} className="hover:underline">
+                    <Link to="/login" onClick={toggleMenu} className="hover:underline">
                       Mina Recept
                     </Link>
                   </li>

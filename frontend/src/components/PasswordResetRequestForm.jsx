@@ -11,10 +11,10 @@ const PasswordResetRequestForm = () => {
   const validateEmail = () => {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!email) {
-      setEmailError("Email is required");
+      setEmailError("E-postadress krävs");
       return false;
     } else if (!regex.test(email)) {
-      setEmailError("It must be a correct email");
+      setEmailError("Det måste vara en riktig E-postadress");
       return false;
     } else {
       setEmailError("");
@@ -40,15 +40,15 @@ const PasswordResetRequestForm = () => {
         body: JSON.stringify({ email }),
       });
       if (response.ok) {
-        setSuccess("Password reset link has been sent to your email");
+        setSuccess("En länk för att återställa ditt lösenord har skickats till din E-post.");
         setEmail("");
       } else {
         const errorData = await response.json();
-        setServerError(errorData.detail || "Failed to send reset link. Please try again.");
+        setServerError(errorData.detail || "Misslyckades med att skicka återställningslänken. Vänligen försök igen.");
       }
     } catch (error) {
       console.error("Error:", error);
-      setServerError("An unexpected error occurred. Please try again later.");
+      setServerError("Ett oväntat fel uppstod. Vänligen försök igen senare");
     } finally {
       setIsSubmitting(false);
     }
@@ -57,11 +57,11 @@ const PasswordResetRequestForm = () => {
   return (
     <div className="flex flex-col justify-center">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="px-4 py-8 bg-white shadow sm:rounded-lg sm:px-10">
+        <div className="px-4 py-8 sm:rounded-lg sm:px-10">
           <form onSubmit={handleSubmit} className="space-y-6" noValidate>
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Email
+                E-postadress
               </label>
               <input
                 type="email"
@@ -69,7 +69,7 @@ const PasswordResetRequestForm = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 onBlur={validateEmail}
-                className="block w-full px-3 py-2 placeholder-gray-400 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                className="block w-full px-3 py-2 border border-black rounded-md focus:outline-none bg-white sm:text-sm"
                 disabled={isSubmitting}
               />
               {emailError && <p className="mt-2 text-sm text-red-600">{emailError}</p>}
@@ -81,10 +81,10 @@ const PasswordResetRequestForm = () => {
             <div>
               <button
                 type="submit"
-                className="flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                className="flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-black rounded-md shadow-sm hover:bg-[#888383] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#888383] cursor-pointer"
                 disabled={isSubmitting}
               >
-                {isSubmitting ? "Sending..." : "Send Reset Link"}
+                {isSubmitting ? "Skickar..." : "Skicka återställningslänk"}
               </button>
             </div>
           </form>

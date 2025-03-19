@@ -20,7 +20,7 @@ def generate_password_reset_token(user_id: int, db: Session) -> str:
 def send_password_reset_email(email: str, token: str):
     reset_url = f"{settings.FRONTEND_BASE_URL}/reset-password?token={token}"
     message = {
-        "From": "noreply@yourdomain.com",  # Uppdatera med din avsändaradress
+        "From": "kendal.bal@foodisave.se",  # Uppdatera med din avsändaradress
         "To": email,
         "Subject": "Password Reset Request",
         "HtmlBody": f"""
@@ -78,7 +78,7 @@ def generate_activation_token(user_id: int, db: Session) -> str:
 def send_activation_email(email: str, token: str):
     activation_url = f"{settings.FRONTEND_BASE_URL}/activate-account?token={token}"
     message = {
-        "From": "noreply@yourdomain.com",  # Uppdatera med din avsändaradress
+        "From": "kendal.bal@foodisave.se",  # Uppdatera med din avsändaradress
         "To": email,
         "Subject": "Account Activation",
         "HtmlBody": f"""

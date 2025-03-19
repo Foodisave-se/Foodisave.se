@@ -4,6 +4,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, joinedload, selectinload
 from typing import Optional
 from random import randint
+from app.security import get_current_user
 
 from app.api.v1.core.models import (
     Users,
@@ -12,12 +13,15 @@ from app.api.v1.core.models import (
     Images,
     Comments,
     Messages,
-    Reviews
+    Reviews,
+    SavedRecipes
 )
 
 from app.api.v1.core.schemas import (
     SearchRecipeSchema,
-    RandomRecipeSchema
+    RandomRecipeSchema,
+    SavedRecipeSchema,
+    UserSchema
 )
 
 
@@ -233,3 +237,24 @@ def get_one_recipe_db(id: int, db):
             detail="Recipe not found"
         )
     return result
+
+def save_recipe_db(recipe: SavedRecipeSchema, db):
+
+    saved_recipe = SavedRecipes(**recipe.model_dump())
+    db.add(saved_recipe)
+    db.commit()
+    return saved_recipe
+
+def get_saved_recipes_db(user: UserSchema, db):
+
+    
+    stmt = (
+        select(Recipes)
+        .join(SavedRecipes, Recipes.id == SavedRecipes.recipe_id)
+        .where(SavedRecipes.user_id == user.id)
+    )
+
+    saved_recipes = db.scalars(stmt).all()
+
+    return saved_recipes
+
