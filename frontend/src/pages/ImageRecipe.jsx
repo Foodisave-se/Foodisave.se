@@ -1,12 +1,15 @@
 import React, { useState } from "react";
 import UploadPicture from "../components/UploadPicture";
 import RecipeCard from "../components/RecipeCard";
+import authStore from "../store/authStore";
 
 export default function ImageRecipe() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
+  const token = authStore((state) => state.token);
+  const setUserData = authStore((state) => state.setUserData);
   const apiUrl = "http://localhost:8000/v1/suggest_recipe_from_image";
 
   // Callback från UploadPicture: spara filen och skapa en förhandsvisning
@@ -30,6 +33,9 @@ export default function ImageRecipe() {
       const response = await fetch(apiUrl, {
         method: "POST",
         body: formData,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       if (!response.ok) {
@@ -39,6 +45,20 @@ export default function ImageRecipe() {
       const data = await response.json();
       setResult(data);
       setError(null);
+       // Efter ett lyckat anrop, hämta den uppdaterade användardatan
+      const userResponse = await fetch(`${import.meta.env.VITE_API_URL}/me`, {
+      method: "GET",
+      credentials: "include",
+      headers: { 
+        "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+      },
+    });
+    if (userResponse.ok) {
+      const updatedUserData = await userResponse.json();
+      setUserData(updatedUserData);
+      localStorage.setItem("userData", JSON.stringify(updatedUserData));
+    }
     } catch (err) {
       console.error("Error:", err);
       setError(err.message);
@@ -76,7 +96,7 @@ export default function ImageRecipe() {
                 onClick={uploadImage}
                 className="w-full bg-black text-white px-4 py-2 rounded-md hover:bg-[#888383] transition cursor-pointer"
               >
-                Ladda upp bild
+                Hämta Recept
               </button>
             </div>
 

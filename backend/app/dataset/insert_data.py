@@ -13,7 +13,7 @@ db_params = {
 }
 
 # Read the CSV file
-df = pd.read_csv('app/dataset/merged_recipes.csv')
+df = pd.read_csv('app/dataset/arla_ica_merged.csv')
 
 # Connect to the PostgreSQL database
 conn = psycopg2.connect(**db_params)
@@ -37,11 +37,7 @@ for column in columns_to_clean:
 insert_query = """
 INSERT INTO recipes (
     name, 
-    descriptions, 
-    ingredients, 
-    steps, 
-    servings, 
-    tags, 
+    ingredients,  
     cook_time,
     calories,
     protein,
@@ -52,18 +48,18 @@ INSERT INTO recipes (
     ratings_count,
     recipe_url
     )
-VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
 """
 
 for index, row in df.iterrows():
-    cur.execute(insert_query, (row['Title'], row['Description'],
-                row['Ingredients'], row['Instructions'],
-                row['Servings'], row['Category'], row['Time to cook'],
+    cur.execute(insert_query, (row['Title'],
+                row['Ingredients'],
+                row['Time to cook'],
                 row['Energy'], row['Protein'], row['Carbohydrates'], row['Fat'],
                 row['Image'], row['Rating'], row['Ratings count'], row['Recipe URL']
                 ))
 
-cur.execute("DELETE FROM recipes WHERE LOWER(name::text) = 'nan' AND LOWER(descriptions::text) = 'nan';")
+cur.execute("DELETE FROM recipes WHERE LOWER(name::text) = 'nan';")
 
 # Commit the transaction
 

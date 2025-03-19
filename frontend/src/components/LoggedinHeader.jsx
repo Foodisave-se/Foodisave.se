@@ -10,12 +10,12 @@ export default function LoggedinHeader() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [hoveredDropdownLink, setHoveredDropdownLink] = useState(null);
   const dropdownTimeoutRef = useRef(null);
-
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const logout = authStore((state) => state.logout);
   const userData = authStore((state) => state.userData);
   const setUserData = authStore((state) => state.setUserData);
+  const token = authStore((state) => state.token);
 
   const toggleMenu = () => {
     setIsMenuOpen((prev) => !prev);
@@ -32,10 +32,35 @@ export default function LoggedinHeader() {
     setIsSidebarOpen(false);
   };
 
-  // Hämtar userData från localStorage (om det finns)
+  // Hämta användardata från localStorage och uppdatera med data från backend via fetch
   useEffect(() => {
+    // Försök först att läsa data från localStorage
     const storedUserData = JSON.parse(localStorage.getItem("userData")) || null;
-    setUserData(storedUserData);
+    if (storedUserData) {
+      setUserData(storedUserData);
+    }
+    // Hämta uppdaterad data från backend
+    fetch(`${import.meta.env.VITE_API_URL}/me`, {
+      method: "GET",
+      credentials: "include", // För att skicka med cookies om så används
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Nätverksfel vid hämtning av användardata");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setUserData(data);
+        localStorage.setItem("userData", JSON.stringify(data));
+      })
+      .catch((error) => {
+        console.error("Error fetching user data:", error);
+      });
   }, [setUserData]);
 
   // Hanterar öppning/stängning av mobilmenyn
@@ -169,58 +194,111 @@ export default function LoggedinHeader() {
               </Link>
             </div>
 
-            {/* Höger-del i Desktop: Avatar och knapp (Hej Användare) */}
-            <div className="hidden md:flex items-center justify-center">
-              <button
-                onClick={toggleSidebar}
-                className="flex items-center space-x-3 bg-transparent border-none focus:outline-none rounded hover:bg-[#888383] transition cursor-pointer"
-              >
-                <div className="w-9 h-9 rounded-sm bg-black text-white flex items-center justify-center font-bold uppercase">
-                  {userData?.first_name ? userData.first_name.charAt(0) : ""}
-                  {userData?.last_name ? userData.last_name.charAt(0) : ""}
-                </div>
-                <span className="text-black">Hej {userData?.first_name || "Användare"}!</span>
-              </button>
+            {/* Höger-del i Desktop: Avatar, Hej Användare & Credits */}
+            <div className="hidden md:flex items-center justify-center space-x-4">
+
+              <div className="flex items-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  className={`h-6 w-6
+                    ${
+                      isMenuOpen ? "text-white" : "text-black"
+                    }`}
+                >
+                  <path d="M21 6.375c0 2.692-4.03 4.875-9 4.875S3 9.067 3 6.375 7.03 1.5 12 1.5s9 2.183 9 4.875Z" />
+                  <path d="M12 12.75c2.685 0 5.19-.586 7.078-1.609a8.283 8.283 0 0 0 1.897-1.384c.016.121.025.244.025.368C21 12.817 16.97 15 12 15s-9-2.183-9-4.875c0-.124.009-.247.025-.368a8.285 8.285 0 0 0 1.897 1.384C6.809 12.164 9.315 12.75 12 12.75Z" />
+                  <path d="M12 16.5c2.685 0 5.19-.586 7.078-1.609a8.282 8.282 0 0 0 1.897-1.384c.016.121.025.244.025.368 0 2.692-4.03 4.875-9 4.875s-9-2.183-9-4.875c0-.124.009-.247.025-.368a8.284 8.284 0 0 0 1.897 1.384C6.809 15.914 9.315 16.5 12 16.5Z" />
+                  <path d="M12 20.25c2.685 0 5.19-.586 7.078-1.609a8.282 8.282 0 0 0 1.897-1.384c.016.121.025.244.025.368 0 2.692-4.03 4.875-9 4.875s-9-2.183-9-4.875c0-.124.009-.247.025-.368a8.284 8.284 0 0 0 1.897 1.384C6.809 19.664 9.315 20.25 12 20.25Z" />
+                </svg>
+                <span className={`
+                      ${
+                        isMenuOpen ? "text-white" : "text-black"
+                      }`}
+                
+                >{userData?.credits || 0}</span>
+              </div>
+
+              <div className="flex items-center">
+                <button
+                  onClick={toggleSidebar}
+                  className="flex items-center space-x-3 bg-transparent border-none focus:outline-none rounded hover:bg-[#888383] transition cursor-pointer"
+                >
+                  <div className="w-9 h-9 rounded-sm bg-black text-white flex items-center justify-center font-bold uppercase">
+                    {userData?.first_name ? userData.first_name.charAt(0) : ""}
+                    {userData?.last_name ? userData.last_name.charAt(0) : ""}
+                  </div>
+                  <span className="text-black">
+                    Hej {userData?.first_name || "Användare"}!
+                  </span>
+                </button>
+              </div>
             </div>
 
             {/* Mobilmeny-knapp */}
             <div className="md:hidden flex items-center gap-4">
-            <div className="w-10 h-10 sm:h-12 sm:w-12 rounded-sm bg-black text-white flex items-center justify-center font-bold uppercase"
-                  onClick={toggleMenu}>
+            <div className="flex items-center">
+              <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  className={`h-6 w-6
+                    ${
+                      isMenuOpen ? "text-white" : "text-black"
+                    }`}
+                >
+                  <path d="M21 6.375c0 2.692-4.03 4.875-9 4.875S3 9.067 3 6.375 7.03 1.5 12 1.5s9 2.183 9 4.875Z" />
+                  <path d="M12 12.75c2.685 0 5.19-.586 7.078-1.609a8.283 8.283 0 0 0 1.897-1.384c.016.121.025.244.025.368C21 12.817 16.97 15 12 15s-9-2.183-9-4.875c0-.124.009-.247.025-.368a8.285 8.285 0 0 0 1.897 1.384C6.809 12.164 9.315 12.75 12 12.75Z" />
+                  <path d="M12 16.5c2.685 0 5.19-.586 7.078-1.609a8.282 8.282 0 0 0 1.897-1.384c.016.121.025.244.025.368 0 2.692-4.03 4.875-9 4.875s-9-2.183-9-4.875c0-.124.009-.247.025-.368a8.284 8.284 0 0 0 1.897 1.384C6.809 15.914 9.315 16.5 12 16.5Z" />
+                  <path d="M12 20.25c2.685 0 5.19-.586 7.078-1.609a8.282 8.282 0 0 0 1.897-1.384c.016.121.025.244.025.368 0 2.692-4.03 4.875-9 4.875s-9-2.183-9-4.875c0-.124.009-.247.025-.368a8.284 8.284 0 0 0 1.897 1.384C6.809 19.664 9.315 20.25 12 20.25Z" />
+                </svg>
+                <span className={`
+                      ${
+                        isMenuOpen ? "text-white" : "text-black"
+                      }`}
+              
+                >{userData?.credits || 0}</span>
+            </div>
+              <div className="flex items-center gap-2">
+                <div
+                  className="w-10 h-10 sm:h-12 sm:w-12 rounded-sm bg-black text-white flex items-center justify-center font-bold uppercase"
+                  onClick={toggleMenu}
+                >
                   {userData?.first_name ? userData.first_name.charAt(0) : ""}
                   {userData?.last_name ? userData.last_name.charAt(0) : ""}
-
                 </div>
-              <button
-                id="menu-burger"
-                onClick={toggleMenu}
-                className="relative flex items-center justify-center h-10 w-10 sm:h-12 sm:w-12 shadow-lg bg-black text-white rounded-sm cursor-pointer transition-transform duration-300 hover:scale-95"
-              >
-                {isMenuOpen ? (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth="1.5"
-                    stroke="currentColor"
-                    className="h-5 w-5 sm:h-6 sm:w-6"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                ) : (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth="1.5"
-                    stroke="currentColor"
-                    className="h-5 w-5 sm:h-6 sm:w-6"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-                  </svg>
-                )}
-              </button>
-            </div>
+                <button
+                  id="menu-burger"
+                  onClick={toggleMenu}
+                  className="relative flex items-center justify-center h-10 w-10 sm:h-12 sm:w-12 shadow-lg bg-black text-white rounded-sm cursor-pointer transition-transform duration-300 hover:scale-95"
+                >
+                  {isMenuOpen ? (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth="1.5"
+                      stroke="currentColor"
+                      className="h-5 w-5 sm:h-6 sm:w-6"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  ) : (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth="1.5"
+                      stroke="currentColor"
+                      className="h-5 w-5 sm:h-6 sm:w-6"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                    </svg>
+                  )}
+                </button>
+                </div>
+              </div>
           </div>
         </div>
       </header>
@@ -231,19 +309,16 @@ export default function LoggedinHeader() {
           className="fixed inset-0 z-50 flex justify-end"
           onClick={() => setIsSidebarOpen(false)}
         >
-          {/* Klick på overlay (bakgrunden) stänger menyn */}
           <div
             className="h-full w-64 bg-[#888383] shadow-lg p-4 relative"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* X-knappen */}
             <button
               className="absolute top-4 right-4 text-black text-xl font-bold cursor-pointer"
               onClick={() => setIsSidebarOpen(false)}
             >
               &times;
             </button>
-            {/* Innehåll i sidbaren */}
             <div className="mt-10 flex flex-col space-y-4">
               <Link
                 to="/savedrecipes"
@@ -270,7 +345,7 @@ export default function LoggedinHeader() {
         </div>
       )}
 
-      {/* Övrig mobilmeny (samma som tidigare) */}
+      {/* Övrig mobilmeny */}
       {showMenu && (
         <div className="fixed inset-0 z-40">
           <div className="absolute inset-0 bg-black bg-opacity-90 transition-opacity duration-1000"></div>
@@ -282,42 +357,66 @@ export default function LoggedinHeader() {
           >
             <ul className="space-y-8 text-3xl font-bold text-white">
               <li>
-                <Link to="/about" onClick={toggleMenu} className="hover:underline">
+                <Link
+                  to="/about"
+                  onClick={toggleMenu}
+                  className="hover:underline"
+                >
                   Vad är foodisave
                 </Link>
               </li>
               <li>
-                <Link to="/search" onClick={toggleMenu} className="hover:underline">
+                <Link
+                  to="/search"
+                  onClick={toggleMenu}
+                  className="hover:underline"
+                >
                   Recept
                 </Link>
               </li>
               <li>
-                <Link to="/random" onClick={toggleMenu} className="hover:underline">
+                <Link
+                  to="/random"
+                  onClick={toggleMenu}
+                  className="hover:underline"
+                >
                   Recept Roulette
                 </Link>
               </li>
               <li>
-                <Link to="/imagerecipe" onClick={toggleMenu} className="hover:underline">
+                <Link
+                  to="/imagerecipe"
+                  onClick={toggleMenu}
+                  className="hover:underline"
+                >
                   Recept via Bild
                 </Link>
               </li>
               <li>
-                <Link to="/myrecipes" onClick={toggleMenu} className="hover:underline">
+                <Link
+                  to="/myrecipes"
+                  onClick={toggleMenu}
+                  className="hover:underline"
+                >
                   Mina Recept
                 </Link>
               </li>
               <li>
-                <Link to="/settings" onClick={toggleMenu} className="hover:underline">
+                <Link
+                  to="/settings"
+                  onClick={toggleMenu}
+                  className="hover:underline"
+                >
                   Inställningar
                 </Link>
               </li>
               <li>
-              <button
-                onClick={handleLogout}
-                className="space-y-8 text-3xl font-bold text-white"
-              >
-                Logga ut
-              </button>
+                <button
+                  onClick={handleLogout}
+                  className="space-y-8 text-3xl font-bold text-white"
+                >
+                  Logga ut
+                </button>
               </li>
             </ul>
           </div>

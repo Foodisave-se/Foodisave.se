@@ -26,6 +26,7 @@ from app.api.v1.core.recipe_endpoints.recipe_db import (
     get_one_recipe_db
 )
 
+from app.security import get_current_user
 
 from app.api.v1.core.recipe_endpoints.recipe_db import (
     get_recipe_db,
@@ -40,6 +41,7 @@ from app.api.v1.core.models import (
     Comments,
     Messages,
     Reviews,
+    SavedItems
     
 )
 
@@ -48,6 +50,8 @@ from app.api.v1.core.schemas import (
     RandomRecipeSchema,
     FileImageDetectionResponse,
     ChatRequest,
+    SavedItemsSchema,
+    UpdateItemSchema
 )
 
 from app.db_setup import get_db
@@ -415,11 +419,25 @@ def modify_recipes(recipe_id: int,
 
 
 @router.post("/suggest_recipe_from_image")
-async def suggest_recipe_from_image(file: UploadFile = File(...)):
+async def suggest_recipe_from_image(
+    file: UploadFile = File(...),
+    current_user: Users = Depends(get_current_user),  # Nytt: kräver inloggad användare
+    db: Session = Depends(get_db)                     # Nytt: för att hantera DB-uppdatering
+):
     """
-    Tar emot en bildfil, sparar den i images-mappen, 
-    öppnar bilden med PIL, och anropar Gemini API för att få receptförslag.
+    Tar emot en bildfil, sparar den, anropar Gemini API för receptförslag, och drar 5 credits från den inloggade användaren.
     """
+
+    # Kontrollera att användaren har tillräckligt med credits
+    if current_user.credits < 5:
+        raise HTTPException(
+            status_code=402,
+            detail="Du har inte tillräckligt med credits för att utföra denna förfrågan."
+        )
+
+    # Dra 5 credits och spara i databasen
+    current_user.credits -= 5
+    db.commit()
 
     response, restored_file = classify_image(file=file)
 
@@ -715,3 +733,165 @@ async def chat_with_context(request: ChatRequest):
         return JSONResponse(content={"response": "Inget svar mottaget."})
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/save-bought-items")
+async def save_bought_ingredients(file: UploadFile = File(...), 
+                                  current_user: Users = Depends(get_current_user)):
+    """
+    Tar emot en bildfil, sparar den i images-mappen, 
+    öppnar bilden med PIL, och anropar Gemini API för att få receptförslag.
+    """
+
+    response, restored_file = classify_image(file=file)
+
+    # Check if the image is NSFW
+    if response.is_nsfw:
+        raise HTTPException(
+            status_code=400,
+            detail="Bilden innehåller innehåll som inte är lämpligt för arbete.",
+        )
+
+    try:
+        # Generera ett unikt filnamn
+        file_extension = restored_file.filename.split('.')[-1] if '.' in restored_file.filename else 'jpg'
+        unique_filename = f"{uuid.uuid4()}.{file_extension}"
+        file_path = os.path.join(os.path.dirname(__file__), "images", unique_filename)
+
+        # Spara bilden på disk
+        with open(file_path, "wb") as buffer:
+            buffer.write(await restored_file.read())
+
+        # Öppna bilden med PIL
+        pil_image = Image.open(file_path)
+
+        # Skapa prompt-texten
+        prompt_text = (
+            "Du är en AI-specialist på att identifiera livsmedelsprodukter. "
+            "Analysera bilden och identifiera alla matvaror som finns på bilden. "
+            "För varje identifierad vara, extrahera dess namn och storlek (vikt, volym eller antal beroende på kontext). "
+            "Om storleken inte är tydlig, gör en kvalificerad gissning baserat på standardstorlekar. "
+            "Svar endast i JSON-format, ingen extra text.\n\n"
+            "Använd exakt följande JSON-struktur:\n"
+            "{\n"
+            '  "items": [\n'
+            "    {\n"
+            '      "name": "Namn på matvaran",\n'
+            '      "size": "Storlek eller mängd (t.ex. 500g, 1L, 6-pack)"\n'
+            "    }\n"
+            "  ]\n"
+            "}"
+        )
+
+        
+
+        # Anropa Gemini API med bilden och prompten
+        model = genai.GenerativeModel("gemini-2.0-flash")
+
+        print(model.count_tokens([prompt_text, pil_image]))
+        
+        response = model.generate_content([prompt_text, pil_image])
+        
+
+        print("Gemini API Response for image analysis:", response)
+
+        if response and response.text:
+            cleaned_text = response.text.strip()
+            # Ta bort eventuell markdown (```json ... ```)
+            cleaned_text = re.sub(r"^```json\n|\n```$", "", cleaned_text)
+            cleaned_text = cleaned_text.strip().rstrip(",")
+
+            try:
+                result = json.loads(cleaned_text)
+                if "items" not in result:
+                    raise ValueError("JSON saknar 'items'-nyckeln.")
+                return JSONResponse(content={"items": result["items"]})
+            except json.JSONDecodeError as e:
+                print("JSON-dekodningsfel:", e)
+                raise HTTPException(
+                    status_code=500, detail="500: Misslyckades att tolka svaret från AI som JSON"
+                )
+
+        return JSONResponse(content={"items": []}, status_code=200)
+    except Exception as e:
+        print(f"Fel vid API-förfrågan: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Fel vid API-förfrågan: {str(e)}")
+    finally:
+        # Rensa upp bildfilen efter användning (valfritt)
+        if 'file_path' in locals() and os.path.exists(file_path):
+            os.remove(file_path)
+
+@router.post("/saved-items")
+def save_items(items: SavedItemsSchema,
+               current_user: Users = Depends(get_current_user),
+               db: Session = Depends(get_db)
+            ):
+
+    saved_items = SavedItems(
+        item = items.item,
+        size = items.size,
+        user_id = current_user.id
+    )
+
+    db.add(saved_items)
+    db.commit()
+    return saved_items
+
+@router.get("/saved-items")
+def get_saved_items(
+    current_user: Users = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    saved_items = db.scalars(
+        select(SavedItems).where(SavedItems.user_id == current_user.id)
+    ).all()
+
+    if not saved_items:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="couldnt find any saved items"
+        )
+    
+    return saved_items
+
+
+    
+@router.put("/saved-items/{item_id}")
+def update_saved_items(
+    item_id: int,
+    item: UpdateItemSchema,
+    current_user: Users = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    
+    saved_item = db.scalars(select(SavedItems).where(
+        SavedItems.user_id == current_user.id).where(
+            SavedItems.id == item_id)).first()
+
+    
+
+    for key, value in item.model_dump(exclude_unset=True).items():
+        if value != "":
+            setattr(saved_item, key, value)
+
+    db.commit()
+    return saved_item
+
+
+@router.delete("/saved-items/{item_id}")
+def delete_saved_item(
+    item_id: int,
+    current_user: Users = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    
+    item = db.scalars(select(SavedItems).where(SavedItems.user_id == current_user.id).where(SavedItems.id == item_id))
+    if not item:
+        return False
+
+    db.execute(delete(SavedItems).where(SavedItems.user_id == current_user.id).where(SavedItems.id == item_id))
+    
+    
+    db.commit()
+    return True

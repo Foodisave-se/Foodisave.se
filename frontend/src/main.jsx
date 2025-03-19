@@ -21,6 +21,7 @@ import PasswordResetRequestPage from "./pages/PasswordResetRequestPage.jsx";
 import ResetPasswordPage from "./pages/ResetPasswordPage.jsx";
 import ActivateAccountPage from "./pages/ActivateAccountPage.jsx";
 import SavedRecipesPage from "./pages/SavedRecipesPage.jsx";
+import GroceryItemsPage from "./pages/GroceryItemPage.jsx";
 
 const router = createBrowserRouter([
   {
@@ -42,6 +43,7 @@ const router = createBrowserRouter([
       { path: "/activate-account", element: <ActivateAccountPage />, errorElement: <NotFoundPage /> },
       { path: "/settings", element: <UserSettingsPage /> },
       { path: "/savedrecipes", element: <SavedRecipesPage /> },
+      { path: "/my-items", element: <GroceryItemsPage /> },
     ],
   },
   {

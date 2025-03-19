@@ -112,11 +112,7 @@ class UserUpdateRecipeSchema(BaseModel):
 class RecipeOutSchema(BaseModel):
     id: int
     name: str
-    descriptions: str
     ingredients: str
-    steps: str
-    servings: str
-    tags: str = None
     cook_time: str = None
     calories: float = None
     protein: float = None
@@ -160,3 +156,11 @@ class PasswordChangeSchema(BaseModel):
 class ChatRequest(BaseModel):
     context: str
     message: str
+
+class SavedItemsSchema(BaseModel):
+    item: str
+    size: str
+
+class UpdateItemSchema(BaseModel):
+    item: str | None = None
+    size: str | None = None

@@ -34,7 +34,6 @@ export default function UploadPicture({ onFileSelected }) {
   const isLoggedIn = () => {
     const token = localStorage.getItem("token");
     const userData = localStorage.getItem("userData");
-    console.log("Token:", token, "UserData:", userData);
     return token && token !== "null" && userData && userData !== "null";
   };
 
@@ -194,7 +193,7 @@ export default function UploadPicture({ onFileSelected }) {
                 />
               </svg>
               <span className="ml-2 text-white cursor-pointer">
-                Ladda upp bild
+                Välj bild
               </span>
             </button>
 

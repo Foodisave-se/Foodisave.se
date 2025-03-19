@@ -23,11 +23,7 @@ class Base(DeclarativeBase):
 class Recipes(Base):
     __tablename__ = "recipes"
     name: Mapped[str] = mapped_column(String(100))
-    descriptions: Mapped[str] = mapped_column(Text)
     ingredients: Mapped[str] = mapped_column(Text)
-    steps: Mapped[str] = mapped_column(Text)
-    servings: Mapped[str] = mapped_column(Text)
-    tags: Mapped[str] = mapped_column(Text, nullable=True)
     cook_time: Mapped[str] = mapped_column(Text, nullable=True)
     calories: Mapped[float] = mapped_column(Numeric, nullable=True)
     protein: Mapped[float] = mapped_column(Numeric, nullable=True)
@@ -76,7 +72,7 @@ class Users(Base):
         server_default=func.now() 
     )
     level: Mapped[int]
-    user_recipes: Mapped["UserRecipes"] = relationship(
+    user_recipes: Mapped[list["UserRecipes"]] = relationship(
         back_populates="user"
     )
     tokens: Mapped[list["Token"]] = relationship(
@@ -117,6 +113,9 @@ class Users(Base):
     )
     user_saving_recipes: Mapped[list["SavedRecipes"]] = relationship(
         "SavedRecipes",
+        back_populates="user"
+    )
+    saved_items: Mapped[list["SavedItems"]] = relationship(
         back_populates="user"
     )
     is_active: Mapped[bool] = mapped_column(Boolean, default=False)
@@ -344,3 +343,17 @@ class ActivationToken(Base):
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     user: Mapped["Users"] = relationship("Users", back_populates="activation_tokens")
     used: Mapped[bool] = mapped_column(Boolean, default=False)
+
+class SavedItems(Base):
+    __tablename__ = "saved_items"
+    item: Mapped[str] = mapped_column(String(100))
+    size: Mapped[str] = mapped_column(Text)
+
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"))
+    user: Mapped["Users"] = relationship(
+        back_populates="saved_items"
+    )
+
+    def __repr__(self):
+        return f"<item={self.item}>"

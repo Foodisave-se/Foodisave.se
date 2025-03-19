@@ -48,8 +48,7 @@ export default function ImageRecipe() {
   return (
     <div
       className="flex flex-col items-center justify-center min-h-screen bg-cover bg-center p-6"
-      style={{ backgroundImage: `url('/background_upload.jpg')` }}
-    >
+      >
       <div className="w-full max-w-2xl bg-white bg-opacity-90 p-8 rounded-2xl shadow-lg">
         <h1 className="text-2xl font-bold text-gray-800 text-center mb-4">
           Föreslå recept baserat på maten i din tallrik
