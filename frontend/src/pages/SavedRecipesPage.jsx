@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import authStore from '../store/authStore';
 import RecipeCard from '../components/RecipeCard';
+import AiRecipeCard from '../components/AiRecipeCard';
 
 const SavedRecipesPage = () => {
   const [savedRecipes, setSavedRecipes] = useState([]);
+  const [savedUserRecipes, setSavedUserRecipes] = useState([]);
+  const [allRecipes, setAllRecipes] = useState([]);
   const [filteredRecipes, setFilteredRecipes] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [error, setError] = useState(null);
@@ -14,19 +17,41 @@ const SavedRecipesPage = () => {
   const fetchSavedRecipes = async () => {
     setLoading(true);
     setError(null);
+    
     try {
-      const response = await fetch(`${BASE_API_URL}/saved/recipe`, {
+      // Fetch regular saved recipes
+      const recipeResponse = await fetch(`${BASE_API_URL}/saved/recipe`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || `Error: ${response.status}`);
+      if (!recipeResponse.ok) {
+        const errorData = await recipeResponse.json();
+        console.log(errorData)
+      }
+
+      const recipeData = await recipeResponse.json();
+      setSavedRecipes(recipeData);
+      
+      // Fetch saved user recipes (AI-generated recipes)
+      try {
+        const userRecipeResponse = await fetch(`${BASE_API_URL}/saved/user-recipe`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        
+        if (userRecipeResponse.ok) {
+          const userRecipeData = await userRecipeResponse.json();
+          // Add a flag to identify these as user recipes
+          const userRecipesWithFlag = userRecipeData.map(recipe => ({
+            ...recipe,
+            isUserRecipe: true
+          }));
+          setSavedUserRecipes(userRecipesWithFlag);
+        }
+      } catch (userRecipeError) {
+        console.error('Error fetching saved user recipes:', userRecipeError);
+        // We don't throw here, because we still want to show regular recipes even if user recipes fail
       }
       
-      const data = await response.json();
-      setSavedRecipes(data);
-      setFilteredRecipes(data);
     } catch (err) {
       console.error('Error fetching saved recipes:', err);
       setError(err.message || 'Network error. Please try again later.');
@@ -34,6 +59,12 @@ const SavedRecipesPage = () => {
       setLoading(false);
     }
   };
+
+  // Combine all recipes when either source updates
+  useEffect(() => {
+    const combined = [...savedRecipes, ...savedUserRecipes];
+    setAllRecipes(combined);
+  }, [savedRecipes, savedUserRecipes]);
 
   // Hämta sparade recept när sidan laddas
   useEffect(() => {
@@ -43,14 +74,14 @@ const SavedRecipesPage = () => {
   // Filtrera recepten baserat på söksträngen
   useEffect(() => {
     if (searchQuery.trim() === '') {
-      setFilteredRecipes(savedRecipes);
+      setFilteredRecipes(allRecipes);
     } else {
-      const filtered = savedRecipes.filter(recipe =>
+      const filtered = allRecipes.filter(recipe =>
         recipe.name.toLowerCase().includes(searchQuery.toLowerCase())
       );
       setFilteredRecipes(filtered);
     }
-  }, [searchQuery, savedRecipes]);
+  }, [searchQuery, allRecipes]);
 
   // Extra knapptryck om du vill exekvera något särskilt vid klick på "Sök"
   const handleSearch = () => {
@@ -94,11 +125,23 @@ const SavedRecipesPage = () => {
         </div>
       </div>
 
-      {/* Grid-lista med receptkort, samma upplägg som i SearchRecipeWords */}
+      {/* Grid-lista med receptkort */}
       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-7xl mx-auto m-4">
         {filteredRecipes.length > 0 ? (
           filteredRecipes.map(recipe => (
-            <RecipeCard key={recipe.id} recipe={recipe} />
+            <div key={recipe.id} className="relative">
+              {/* Optional badge for AI-generated recipes */}
+              {recipe.isUserRecipe && (
+                <div className="absolute top-2 right-2 bg-purple-500 text-white text-xs font-bold px-2 py-1 rounded-full z-10">
+                  AI
+                </div>
+              )}
+              {recipe.isUserRecipe ? (
+                <AiRecipeCard recipe={recipe}/>
+              ) : (
+                <RecipeCard recipe={recipe}/>
+              )}
+            </div>
           ))
         ) : (
           // Om inga recept hittas och vi inte laddar längre

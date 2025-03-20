@@ -429,14 +429,14 @@ async def suggest_recipe_from_image(
     """
 
     # Kontrollera att användaren har tillräckligt med credits
-    if current_user.credits < 5:
+    if current_user.credits < 2:
         raise HTTPException(
             status_code=402,
             detail="Du har inte tillräckligt med credits för att utföra denna förfrågan."
         )
 
     # Dra 5 credits och spara i databasen
-    current_user.credits -= 5
+    current_user.credits -= 2
     db.commit()
 
     response, restored_file = classify_image(file=file)
@@ -469,7 +469,7 @@ async def suggest_recipe_from_image(
             "Analysera bilden med ingredienser och identifiera de ingredienser som syns i bilden. "
             "Utöver de ingredienser du identifierar, anta att basvaror som salt, peppar, smör och olja redan finns hemma och inkludera dem i receptet om de är nödvändiga. "
             "Skapa en detaljerad lista på ett recept som kan lagas med de ingredienser du har identifierat samt de nödvändiga basvarorna. "
-            "Ge även näringsinformation per portion: energi (kcal), protein, kolhydrater och fett. \n\n"
+            "Ge även näringsinformation per portion med ENDAST siffran så det är en float: energi (kcal), protein, kolhydrater och fett. \n\n"
             "Svar endast i JSON-format, ingen extra text. \n"
             "Använd exakt följande JSON-struktur:\n"
             "{\n"
@@ -535,12 +535,22 @@ async def suggest_recipe_from_image(
         if 'file_path' in locals() and os.path.exists(file_path):
             os.remove(file_path)
 
-@router.post("/suggest_recipe_from_plateimage")
-async def suggest_recipe_from_plateimage(file: UploadFile = File(...)):
+@router.post("/suggest-recipe-from-plateimage")
+async def suggest_recipe_from_plateimage(file: UploadFile = File(...), current_user: Users = Depends(get_current_user), db: Session = Depends(get_db)):
     """
     Tar emot en bildfil, sparar den i images-mappen, 
     öppnar bilden med PIL, och anropar Gemini API för att få receptförslag.
     """
+    # Kontrollera att användaren har tillräckligt med credits
+    if current_user.credits < 2:
+        raise HTTPException(
+            status_code=402,
+            detail="Du har inte tillräckligt med credits för att utföra denna förfrågan."
+        )
+
+    # Dra 5 credits och spara i databasen
+    current_user.credits -= 2
+    db.commit()
 
     response, restored_file = classify_image(file=file)
 
@@ -705,7 +715,7 @@ def classify_image(file: UploadFile = File(None)):
         ) from e
     
 @router.post("/chat", response_model=dict)
-async def chat_with_context(request: ChatRequest):
+async def chat_with_context(request: ChatRequest, current_user: Users = Depends(get_current_user), db: Session = Depends(get_db)):
     """
     Tar emot en JSON-body med 'context' (exempelvis en HTML-sida eller text från den aktuella sidan)
     och 'message' (användarens fråga). Dessa kombineras till en prompt som skickas till Gemini‑API:t,
@@ -717,10 +727,22 @@ async def chat_with_context(request: ChatRequest):
       "message": "Hur lagar jag detta recept?"
     }
     """
+    # Kontrollera att användaren har tillräckligt med credits
+    if current_user.credits < 1:
+        raise HTTPException(
+            status_code=402,
+            detail="Du har inte tillräckligt med credits för att utföra denna förfrågan."
+        )
+
+    # Dra 5 credits och spara i databasen
+    current_user.credits -= 1
+    db.commit()
+
     prompt_text = (
         "Du är en hjälpsam och kreativ kockassistent. "
         "Använd följande kontext från användarens webbsida som bakgrundsinformation:\n"
         f"{request.context}\n\n"
+        "Svara endast på användarens fråga om den är relaterad till kontexten fått innan"
         "Användarens fråga: " + request.message + "\n\n"
         "Svara tydligt och koncist på användarens fråga, ENDAST i ren text."
     )

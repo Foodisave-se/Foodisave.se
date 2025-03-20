@@ -28,7 +28,7 @@ function Layout() {
   const overlayStyle = {
     background: `linear-gradient(
       to bottom, 
-      rgba(200,200,200,${1 * fadeValue}) 0%, 
+      rgba(200,200,200,${5 * fadeValue}) 0%, 
       transparent 100%
     )`,
   };

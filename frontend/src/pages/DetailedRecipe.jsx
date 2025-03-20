@@ -1,9 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import authStore from "../store/authStore"; // Import authStore to access token
 
 export default function DetailedRecipe() {
   const navigate = useNavigate();
   const location = useLocation();
+  const [saveStatus, setSaveStatus] = useState({ saved: false, error: null, loading: false });
+  const token = authStore((state) => state.token);
+  const BASE_API_URL = import.meta.env.VITE_API_URL;
 
   // Hämta ut receptet från "state"
   const { recipe } = location.state || {};
@@ -19,7 +23,7 @@ export default function DetailedRecipe() {
   // Anta att AI-svaret har fält som 'instructions' (array) och 'ingredients' (array)
   // Om det skiljer sig åt, anpassa nedan
   const {
-    name,
+    title,
     images,
     description,
     category,
@@ -32,6 +36,88 @@ export default function DetailedRecipe() {
     carbohydrates,
     fat,
   } = recipe;
+
+// Function to save the recipe
+const saveRecipe = async () => {
+  setSaveStatus({ saved: false, error: null, loading: true });
+  
+  try {
+    // Ensure servings is an integer
+    const servingsValue = typeof recipe.servings === 'string' 
+      ? parseInt(recipe.servings, 10) 
+      : recipe.servings;
+      
+    // First, create the AI recipe in the database
+    const aiRecipePayload = {
+      name: recipe.title,
+      descriptions: recipe.description, 
+      ingredients: Array.isArray(recipe.ingredients) 
+          ? recipe.ingredients.join(", ") 
+          : String(recipe.ingredients),
+      instructions: Array.isArray(recipe.instructions) 
+          ? recipe.instructions.join(", ") 
+          : String(recipe.instructions),
+      tags: recipe.category,
+      cook_time: recipe.cook_time,
+      calories: recipe.energy,
+      protein: recipe.protein,
+      carbohydrates: recipe.carbohydrates,
+      fat: recipe.fat,
+      is_ai: true,
+      servings: servingsValue || 4 // Provide a default if missing
+    };
+    
+    console.log('Sending payload:', aiRecipePayload);
+    
+    const response_1 = await fetch(`${BASE_API_URL}/ai/recipe`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(aiRecipePayload)
+    });
+
+    
+    if (!response_1.ok) {
+      const errorData = await response_1.json();
+      throw new Error(errorData.detail || `Error: ${response_1.status}`);
+    }
+    
+    // Get the created recipe with its new ID
+    const createdRecipe = await response_1.json();
+
+    console.log('Created recipe:', createdRecipe);
+    
+    // Now save the recipe to the user's saved recipes using the new ID
+    const response_2 = await fetch(`${BASE_API_URL}/user-recipe/saved`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ user_recipe_id: createdRecipe.id })
+    });
+    
+    if (!response_2.ok) {
+      const errorData = await response_2.json();
+      throw new Error(errorData.detail || `Error: ${response_2.status}`);
+    }
+    
+    setSaveStatus({ saved: true, error: null, loading: false });
+    setTimeout(() => {
+      setSaveStatus(prev => ({ ...prev, saved: false }));
+    }, 3000); // Reset the success message after 3 seconds
+    
+  } catch (err) {
+    console.error('Error saving recipe:', err);
+    setSaveStatus({ 
+      saved: false, 
+      error: err.message || 'Det gick inte att spara receptet.', 
+      loading: false 
+    });
+  }
+};
 
   return (
     <div className="pt-24 container max-w-7xl mx-auto px-4">
@@ -50,7 +136,44 @@ export default function DetailedRecipe() {
       <div className="flex flex-col md:flex-row gap-8">
         {/* Vänstra kolumnen (Titel + info) */}
         <div className="flex-1 order-2 md:order-1">
-          <h1 className="text-4xl font-bold mb-3 text-black">{name}</h1>
+          <div className="flex justify-between items-start">
+            <h1 className="text-4xl font-bold mb-3 text-black">{title}</h1>
+            
+            {/* Save Recipe Button */}
+            <button
+              onClick={saveRecipe}
+              disabled={saveStatus.loading || saveStatus.saved}
+              className={`flex items-center px-4 py-2 rounded-lg transition ${
+                saveStatus.saved 
+                  ? 'bg-green-500 text-white' 
+                  : 'bg-black text-white hover:bg-gray-800'
+              }`}
+            >
+              {saveStatus.loading ? (
+                "Sparar..."
+              ) : saveStatus.saved ? (
+                <>
+                  <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                  Sparat!
+                </>
+              ) : (
+                <>
+                  <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                  </svg>
+                  Spara recept
+                </>
+              )}
+            </button>
+          </div>
+          
+          {/* Error message */}
+          {saveStatus.error && (
+            <p className="text-red-500 mb-2">{saveStatus.error}</p>
+          )}
+          
           <p className="text-gray-600 mb-4">{description || "Ingen beskrivning"}</p>
 
           {/* Kort info-rad: portioner, tid, kategori */}
@@ -64,10 +187,10 @@ export default function DetailedRecipe() {
 
           {/* Näringsinformation */}
           <div className="mt-4 flex flex-wrap gap-4 text-sm text-gray-600">
-            <div>Energi: {energy || "?"} kcal</div>
-            <div>Protein: {protein || "?"} g</div>
-            <div>Kolhydrater: {carbohydrates || "?"} g</div>
-            <div>Fett: {fat || "?"} g</div>
+            <div>Energi: {energy || "?"}</div>
+            <div>Protein: {protein || "?"} </div>
+            <div>Kolhydrater: {carbohydrates || "?"} </div>
+            <div>Fett: {fat || "?"} </div>
           </div>
         </div>
 
@@ -114,7 +237,7 @@ export default function DetailedRecipe() {
             <p className="text-gray-800">{instructions}</p>
           )}
 
-          {/* Exempel: “Klart!”-sektion med betyg */}
+          {/* Exempel: "Klart!"-sektion med betyg */}
           <div className="mt-8">
             <h3 className="text-xl font-semibold mb-2 text-black">Klart!</h3>
             <p className="text-gray-700">Hur blev resultatet? Sätt betyg!</p>

@@ -1,12 +1,12 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
-
-function RecipeCard({ recipe }) {
+function AiRecipeCard({ recipe }) {
   return (
     <div className="w-full bg-white rounded-md shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition-transform transform hover:scale-105 flex flex-col h-full">
       {/* Skicka med recipe-objektet i state */}
-      <a
-        href={recipe.recipe_url} target="_blank"
+      <Link
+        to="/detailedrecipe"
         state={{ recipe }}
         className="flex flex-col h-full"
       >
@@ -30,9 +30,9 @@ function RecipeCard({ recipe }) {
             </span>
           </div>
         </div>
-      </a>
+      </Link>
     </div>
   );
 }
 
-export default RecipeCard;
+export default AiRecipeCard;

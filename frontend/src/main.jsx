@@ -35,7 +35,7 @@ const router = createBrowserRouter([
       { path: "/receptforslag", element: <ReceptFörslag />, errorElement: <NotFoundPage /> },
       { path: "/login", element: <LoginPage /> },
       { path: "/register", element: <RegisterPage /> },
-      { path: "/ImageFoodRecipe", element: <ImageFoodRecipe /> },
+      { path: "/imagerecipeplate", element: <ImageFoodRecipe /> },
       { path: "/imagerecipe", element: <ImageRecipe />, errorElement: <NotFoundPage /> },
       // Nya routes
       { path: "/passwordreset", element: <PasswordResetRequestPage />, errorElement: <NotFoundPage /> },

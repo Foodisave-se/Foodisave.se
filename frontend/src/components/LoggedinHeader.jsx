@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import black_logo from "/black_logo.png";
 import white_logo from "/white_logo.png";
 import authStore from "../store/authStore";
@@ -8,14 +8,27 @@ export default function LoggedinHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [hoveredDropdownLink, setHoveredDropdownLink] = useState(null);
   const dropdownTimeoutRef = useRef(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const navigate = useNavigate();
 
   const logout = authStore((state) => state.logout);
   const userData = authStore((state) => state.userData);
   const setUserData = authStore((state) => state.setUserData);
   const token = authStore((state) => state.token);
+
+  // Separata states för de två dropdown-menyerna
+  const [isDropdownOpenRecept, setIsDropdownOpenRecept] = useState(false);
+  const [isDropdownOpenReceptBild, setIsDropdownOpenReceptBild] = useState(false);
+
+  // Deklarera timeout-refs för dropdown-hantering
+  const dropdownTimeoutRefRecept = useRef(null);
+  const dropdownTimeoutRefReceptBild = useRef(null);
+
+  // Deklarera hover-states för dropdown-länkarna
+  const [hoveredLinkRecept, setHoveredLinkRecept] = useState(null);
+  const [hoveredLinkReceptBild, setHoveredLinkReceptBild] = useState(null);
+
 
   const toggleMenu = () => {
     setIsMenuOpen((prev) => !prev);
@@ -30,6 +43,7 @@ export default function LoggedinHeader() {
     localStorage.removeItem("userData");
     window.dispatchEvent(new Event("userStatusChanged"));
     setIsSidebarOpen(false);
+    navigate("/");
   };
 
   // Hämta användardata från localStorage och uppdatera med data från backend via fetch
@@ -83,117 +97,190 @@ export default function LoggedinHeader() {
     setIsDropdownOpen(true);
   };
 
+  
+  // Hantering av dropdown för "Recept"
+  const handleReceptMouseEnter = () => {
+    if (dropdownTimeoutRefRecept.current) {
+      clearTimeout(dropdownTimeoutRefRecept.current);
+    }
+    setIsDropdownOpenRecept(true);
+  };
+  const handleReceptMouseLeave = () => {
+    dropdownTimeoutRefRecept.current = setTimeout(() => {
+      setIsDropdownOpenRecept(false);
+    }, 300);
+  };
+
   const handleDropdownMouseLeave = () => {
     dropdownTimeoutRef.current = setTimeout(() => {
       setIsDropdownOpen(false);
     }, 300);
   };
 
+  // Hantering av dropdown för "Recept via Bild"
+  const handleReceptBildMouseEnter = () => {
+    if (dropdownTimeoutRefReceptBild.current) {
+      clearTimeout(dropdownTimeoutRefReceptBild.current);
+    }
+    setIsDropdownOpenReceptBild(true);
+  };
+  const handleReceptBildMouseLeave = () => {
+    dropdownTimeoutRefReceptBild.current = setTimeout(() => {
+      setIsDropdownOpenReceptBild(false);
+    }, 300);
+  };
+
+  
+
+
+
+  
+
   return (
-    <>
-      <header className="fixed top-0 left-0 w-full z-50 bg-transparent h-20">
-        <div id="header-container" className="relative mx-auto max-w-7xl px-4 py-2">
-          <div className="flex items-center justify-between h-20">
+  <>
+  <header className="fixed top-0 left-0 w-full z-50 bg-transparent h-20">
+    <div id="header-container" className="relative mx-auto max-w-7xl px-4 py-2">
+      <div className="flex items-center justify-between h-20">
             {/* Logo */}
-            <div className="flex items-center">
-              <div className="text-m sm:text-l md:text-xl font-bold">
-                <div
-                  className={`flex items-center gap-1 transition-colors duration-300 ${
-                    isMenuOpen ? "text-white" : "text-black"
-                  }`}
-                >
-                  <Link to="/">
-                    <img
-                      src={isMenuOpen ? white_logo : black_logo}
-                      alt="foodisave logo"
-                      className="w-8 h-8 ml-2"
-                    />
+        <div className="flex items-center">
+          <div className="text-m sm:text-l md:text-xl font-bold">
+            <div
+              className={`flex items-center gap-1 transition-colors duration-300 ${
+                isMenuOpen ? "text-white" : "text-black"
+              }`}
+            >
+              <Link to="/">
+                <img
+                  src={isMenuOpen ? white_logo : black_logo}
+                  alt="foodisave logo"
+                  className="w-8 h-8 ml-2"
+                />
+              </Link>
+              <Link to="/">foodisave</Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Desktop Navigation */}
+        <div className="hidden md:flex items-center justify-center space-x-6">
+          <Link
+            to="/about"
+            className="curtain-link relative inline-block overflow-hidden px-4 py-2 rounded-sm bg-transparent"
+          >
+            <span className="normal-text block rounded-sm transition-transform duration-200 ease-in-out">
+              Vad är foodisave
+            </span>
+            <span className="hover-text absolute inset-0 flex items-center justify-center bg-black text-white w-full h-full rounded-sm transition-transform duration-500 ease-in-out">
+              Vad är foodisave
+            </span>
+          </Link>
+          {/* Dropdown för "Recept" */}
+          <div
+            className="relative pt-2"
+            onMouseEnter={handleReceptMouseEnter}
+            onMouseLeave={handleReceptMouseLeave}
+          >
+            <Link
+              to="/search"
+              className="curtain-link relative inline-block overflow-hidden px-4 py-2 rounded-sm bg-transparent"
+            >
+              <span className="normal-text block transition-transform duration-200 ease-in-out">
+                Recept
+              </span>
+              <span className="hover-text absolute inset-0 flex items-center justify-center rounded-sm bg-black text-white w-full h-full transition-transform duration-500 ease-in-out">
+                Recept
+              </span>
+            </Link>
+            {isDropdownOpenRecept && (
+              <div className="absolute top-full left-[95%] transform -translate-x-1/2 mt-2 flex flex-col items-center z-40">
+              <div className="w-0 h-0 border-l-4 border-r-4 border-b-4 border-b-black border-l-transparent border-r-transparent -ml-25" />
+              <div className="bg-black w-40 rounded-sm shadow-lg animate-slide-up">
+                    <Link
+                    to="/random"
+                    onMouseEnter={() => setHoveredLinkRecept("random")}
+                    onMouseLeave={() => setHoveredLinkRecept(null)}
+                    onClick={() => setIsDropdownOpenRecept(false)}
+                    className={`block px-4 py-2 rounded-sm ${
+                      hoveredLinkRecept === null ||
+                      hoveredLinkRecept === "random"
+                        ? "text-white"
+                        : "text-gray-500"
+                    }`}
+                  >
+                    Recept Roulette
                   </Link>
-                  <Link to="/">foodisave</Link>
+                  <Link
+                    to="/search"
+                    onMouseEnter={() => setHoveredLinkRecept("search")}
+                    onMouseLeave={() => setHoveredLinkRecept(null)}
+                    onClick={() => setIsDropdownOpenRecept(false)}
+                    className={`block px-4 py-2 rounded-sm ${
+                      hoveredLinkRecept === null ||
+                      hoveredLinkRecept === "search"
+                        ? "text-white"
+                        : "text-gray-500"
+                    }`}
+                  >
+                    Recept Sök
+                  </Link>
                 </div>
               </div>
-            </div>
-
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center justify-center space-x-6">
-              <Link
-                to="/about"
-                className="curtain-link relative inline-block overflow-hidden px-4 py-2 rounded-sm bg-transparent"
-              >
-                <span className="normal-text block rounded-sm transition-transform duration-200 ease-in-out">
-                  Vad är foodisave
-                </span>
-                <span className="hover-text absolute inset-0 flex items-center justify-center bg-black text-white w-full h-full rounded-sm transition-transform duration-500 ease-in-out">
-                  Vad är foodisave
-                </span>
-              </Link>
-
-              <div
-                className="relative pt-2"
-                onMouseEnter={handleDropdownMouseEnter}
-                onMouseLeave={handleDropdownMouseLeave}
-              >
-                <Link
-                  to="/search"
-                  className="curtain-link relative inline-block overflow-hidden px-4 py-2 rounded-sm bg-transparent"
-                >
-                  <span className="normal-text block transition-transform duration-200 ease-in-out">
-                    Recept
-                  </span>
-                  <span className="hover-text absolute inset-0 flex items-center justify-center rounded-sm bg-black text-white w-full h-full transition-transform duration-500 ease-in-out">
-                    Recept
-                  </span>
-                </Link>
-                {isDropdownOpen && (
-                  <div className="absolute top-full left-[95%] transform -translate-x-1/2 mt-2 flex flex-col items-center z-40">
-                    <div className="w-0 h-0 border-l-4 border-r-4 border-b-4 border-b-black border-l-transparent border-r-transparent -ml-25" />
-                    <div className="bg-black w-40 rounded-sm shadow-lg animate-slide-up">
-                      <Link
-                        to="/random"
-                        onMouseEnter={() => setHoveredDropdownLink("random")}
-                        onMouseLeave={() => setHoveredDropdownLink(null)}
-                        onClick={() => setIsDropdownOpen(false)}
-                        className={`block px-4 py-2 rounded-sm ${
-                          hoveredDropdownLink === null ||
-                          hoveredDropdownLink === "random"
-                            ? "text-white"
-                            : "text-gray-500"
-                        }`}
-                      >
-                        Recept Roulette
-                      </Link>
-                      <Link
-                        to="/imagerecipe"
-                        onMouseEnter={() => setHoveredDropdownLink("search")}
-                        onMouseLeave={() => setHoveredDropdownLink(null)}
-                        onClick={() => setIsDropdownOpen(false)}
-                        className={`block px-4 py-2 rounded-sm ${
-                          hoveredDropdownLink === null ||
-                          hoveredDropdownLink === "search"
-                            ? "text-white"
-                            : "text-gray-500"
-                        }`}
-                      >
-                        Recept via Bild
-                      </Link>
-                    </div>
-                  </div>
-                )}
+            )}
+          </div>
+          {/* Dropdown för "Recept via Bild" */}
+          <div
+            className="relative pt-2"
+            onMouseEnter={handleReceptBildMouseEnter}
+            onMouseLeave={handleReceptBildMouseLeave}
+          >
+            <Link
+              to="/se"
+              className="curtain-link relative inline-block overflow-hidden px-4 py-2 rounded-sm bg-transparent"
+            >
+              <span className="normal-text block transition-transform duration-200 ease-in-out">
+                Recept via Bild
+              </span>
+              <span className="hover-text absolute inset-0 flex items-center justify-center rounded-sm bg-black text-white w-full h-full transition-transform duration-500 ease-in-out">
+                Recept via Bild
+              </span>
+            </Link>
+            {isDropdownOpenReceptBild && (
+              <div className="absolute top-full left-[58%] transform -translate-x-1/2 mt-2 flex flex-col items-center z-40">
+              <div className="w-0 h-0 border-l-4 border-r-4 border-b-4 border-b-black border-l-transparent border-r-transparent -ml-25" />
+              <div className="bg-black w-40 rounded-sm shadow-lg animate-slide-up">
+                    <Link
+                    to="/imagerecipe"
+                    onMouseEnter={() => setHoveredLinkReceptBild("viaIngredienser")}
+                    onMouseLeave={() => setHoveredLinkReceptBild(null)}
+                    onClick={() => setIsDropdownOpenReceptBild(false)}
+                    className={`block px-4 py-2 rounded-sm ${
+                      hoveredLinkReceptBild === null ||
+                      hoveredLinkReceptBild === "viaIngredienser"
+                        ? "text-white"
+                        : "text-gray-500"
+                    }`}
+                  >
+                    via Ingredienser
+                  </Link>
+                  <Link
+                    to="/imagerecipeplate"
+                    onMouseEnter={() => setHoveredLinkReceptBild("viaMatratt")}
+                    onMouseLeave={() => setHoveredLinkReceptBild(null)}
+                    onClick={() => setIsDropdownOpenReceptBild(false)}
+                    className={`block px-4 py-2 rounded-sm ${
+                      hoveredLinkReceptBild === null ||
+                      hoveredLinkReceptBild === "viaMatratt"
+                        ? "text-white"
+                        : "text-gray-500"
+                    }`}
+                  >
+                    via Maträtt
+                  </Link>
+                </div>
               </div>
-
-              <Link
-                to="/random"
-                className="curtain-link relative inline-block overflow-hidden px-4 py-2 rounded-sm bg-transparent"
-              >
-                <span className="normal-text block transition-transform duration-200 ease-in-out">
-                  Recept Roulette
-                </span>
-                <span className="hover-text absolute inset-0 flex items-center justify-center bg-black text-white w-full h-full transition-transform duration-500 ease-in-out">
-                  Recept Roulette
-                </span>
-              </Link>
-            </div>
-
+            )}
+          </div>
+        </div>
             {/* Höger-del i Desktop: Avatar, Hej Användare & Credits */}
             <div className="hidden md:flex items-center justify-center space-x-4">
 

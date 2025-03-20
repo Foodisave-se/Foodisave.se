@@ -1,6 +1,7 @@
 from datetime import datetime
 from enum import Enum
 from typing import List
+from fastapi import Query
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
@@ -10,11 +11,16 @@ class SearchRecipeSchema(BaseModel):
     carbohydrates: int | None = None
     calories: int | None = None
     protein: int | None = None
-    recipe_type: str | None = None
+    ingredients: str | None = None  # Add ingredients parameter
+    page: int = Query(0, ge=0)  # Change default to 0 to match frontend
+    page_size: int = Query(20, ge=1, le=100)
 
 class SavedRecipeSchema(BaseModel):
     user_id: int
     recipe_id: int
+
+class SavedUserRecipeSchema(BaseModel):
+    user_recipe_id: int
 
 
 class RandomRecipeSchema(BaseModel):
@@ -95,6 +101,36 @@ class UserRecipeSchema(BaseModel):
     is_ai: bool = False
     servings: int
     user_id: int
+
+class AiRecipeSchema(BaseModel):
+    name: str
+    descriptions: str
+    ingredients: str
+    instructions: str
+    tags: str | None = None
+    cook_time: str | None = None
+    calories: float | None = None
+    protein: float | None = None
+    carbohydrates: float | None = None
+    fat: float | None = None
+    is_ai: bool = True
+    servings: int
+
+class AiRecipeOutSchema(BaseModel):
+    id: int
+    name: str
+    descriptions: str
+    ingredients: str
+    instructions: str
+    tags: str | None = None
+    cook_time: str | None = None
+    calories: float | None = None
+    protein: float | None = None
+    carbohydrates: float | None = None
+    fat: float | None = None
+    is_ai: bool = True
+    servings: int
+    
 
 class UserUpdateRecipeSchema(BaseModel):
     name: str | None = None

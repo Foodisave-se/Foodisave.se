@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session, joinedload, selectinload
 from typing import Optional
 from random import randint
 
+
 from app.api.v1.core.models import (
     Users,
     Recipes,
@@ -12,24 +13,48 @@ from app.api.v1.core.models import (
     Images,
     Comments,
     Messages,
-    Reviews
+    Reviews,
+    SavedUserRecipes
 )
 
 from app.api.v1.core.schemas import (
     SearchRecipeSchema,
     RandomRecipeSchema,
     UserRecipeSchema,
-    UserUpdateRecipeSchema
+    UserUpdateRecipeSchema,
+    AiRecipeSchema,
+    SavedUserRecipeSchema
 )
 
 
 
-def create_user_recipe_db(user_recipe: UserRecipeSchema, db):
+def create_user_recipe_db(user_recipe: UserRecipeSchema, db, current_user):
+
+    user_recipe.user_id = current_user.id
 
     recipe = UserRecipes(**user_recipe.model_dump())
     db.add(recipe)
     db.commit()
     return recipe
+
+def create_ai_recipe_db(ai_recipe: AiRecipeSchema, db, current_user):
+
+    recipe = UserRecipes(**ai_recipe.model_dump(), user_id = current_user.id)
+    db.add(recipe)
+    db.commit()
+    db.refresh(recipe)
+    return recipe
+
+def save_user_recipe_db(user_recipe: SavedUserRecipeSchema, db, current_user):
+
+
+    saved_recipe = SavedUserRecipes(
+        user_recipe_id = user_recipe.user_recipe_id,
+        user_id = current_user.id
+    )
+    db.add(saved_recipe)
+    db.commit()
+    return saved_recipe
 
 
 
@@ -67,3 +92,5 @@ def update_user_recipe_db(user_update_recipe: UserUpdateRecipeSchema, user_recip
 
     db.commit()
     return db_user_recipe
+
+

@@ -2,11 +2,10 @@ import { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import authStore from "../store/authStore";
 
-export default function LoginForm() {
+export default function LoginForm( { redirectTo } ) {
   const API_URL = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
-  const location = useLocation();
-
+  
   const { setToken } = authStore();
 
   const [email, setEmail] = useState("");
@@ -81,7 +80,7 @@ export default function LoginForm() {
             console.error("Failed to fetch user data");
           }
       
-          navigate(-1);
+          navigate(redirectTo);
         } else if (response.status === 400 || response.status === 401) {
           const data = await response.json();
           setServerError(data.detail);

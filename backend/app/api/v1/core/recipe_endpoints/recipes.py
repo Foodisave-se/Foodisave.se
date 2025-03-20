@@ -1,10 +1,9 @@
-from fastapi import APIRouter, Depends, FastAPI, HTTPException, Request, status
+from fastapi import APIRouter, Depends, FastAPI, HTTPException, Request, status, Query
 from sqlalchemy import delete, insert, select, update, and_, or_
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, joinedload, selectinload
 from typing import Optional, Annotated
 from random import randint
-import logging
 
 
 from app.security import get_current_user
@@ -38,17 +37,31 @@ from app.db_setup import get_db
 
 router = APIRouter()
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
 @router.get("/search/recipe", status_code=200)
-def search_recipe(recipe_type: SearchRecipeSchema = Depends(),
-                  db: Session = Depends(get_db)):
+def search_recipe(
+    query: str = Query(..., description="Search term for recipes"),
+    carbohydrates: int = Query(None, description="Maximum carbohydrates"),
+    calories: int = Query(None, description="Maximum calories"),
+    protein: int = Query(None, description="Minimum protein"),
+    ingredients: str = Query(None, description="Ingredients to filter by"),
+    page: int = Query(0, ge=0, description="Page number, starting from 0"),
+    page_size: int = Query(20, ge=1, le=100, description="Number of recipes per page"),
+    db: Session = Depends(get_db)
+):
+    # Create a SearchRecipeSchema instance with the parameters
+    recipe_params = SearchRecipeSchema(
+        query=query,
+        carbohydrates=carbohydrates,
+        calories=calories,
+        protein=protein,
+        ingredients=ingredients,
+        page=page,
+        page_size=page_size
+    )
     
-    result = get_recipe_db(recipe=recipe_type, db=db)
+    result = get_recipe_db(recipe=recipe_params, page=page, page_size=page_size, db=db)
     
-
-    if not result:
+    if not result and page == 0:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="No recipes found"
