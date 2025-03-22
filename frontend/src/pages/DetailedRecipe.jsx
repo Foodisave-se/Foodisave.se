@@ -5,7 +5,10 @@ import authStore from "../store/authStore";
 export default function DetailedRecipe() {
   const navigate = useNavigate();
   const location = useLocation();
+  const [imageSrc, setImageSrc] = useState(null);
   const [saveStatus, setSaveStatus] = useState({ saved: false, error: null, loading: false });
+  const [imageUploadStatus, setImageUploadStatus] = useState({ uploading: false, error: null });
+  const [error, setError] = useState(null);
   const token = authStore((state) => state.token);
   const BASE_API_URL = import.meta.env.VITE_API_URL;
 
@@ -13,6 +16,29 @@ export default function DetailedRecipe() {
   const { recipe } = location.state || {};
 
   // Check if the recipe is already saved when component mounts
+  useEffect(() => {
+      const fetchImage = async () => {
+        if (!recipe.id) return;
+  
+        try {
+          const response = await fetch(`${BASE_API_URL}/images/${recipe.id}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+  
+          if (!response.ok) {
+            throw new Error("Failed to fetch image");
+          }
+  
+          const blob = await response.blob();
+          setImageSrc(URL.createObjectURL(blob));
+        } catch (err) {
+          setError(err.message);
+        }
+      };
+  
+      fetchImage();
+    }, [recipe.id, token]);
+
   useEffect(() => {
     const checkIfSaved = async () => {
       if (!recipe.id) return; // If recipe has no ID yet, it's not saved
@@ -54,7 +80,7 @@ export default function DetailedRecipe() {
   // Extract recipe data
   const {
     title,
-    images,
+    originalFile, // This will contain the actual file object to upload to S3
     description,
     category,
     ingredients,
@@ -67,6 +93,40 @@ export default function DetailedRecipe() {
     fat,
     id: recipeId
   } = recipe;
+
+  // Function to upload image to S3 after recipe creation
+  const uploadImageToS3 = async (recipeId) => {
+    if (!originalFile) return null;
+    
+    setImageUploadStatus({ uploading: true, error: null });
+    
+    try {
+      const formData = new FormData();
+      formData.append("file", originalFile);
+      formData.append("user_recipe_id", recipeId);
+      
+      const response = await fetch(`${BASE_API_URL}/upload-image/`, {
+        method: "POST",
+        body: formData,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error("Kunde inte ladda upp bilden till S3");
+      }
+      
+      const data = await response.json();
+      setImageUploadStatus({ uploading: false, error: null });
+      
+      return data.image_url; // Return the URL for the image
+    } catch (error) {
+      console.error("Error uploading image to S3:", error);
+      setImageUploadStatus({ uploading: false, error: error.message });
+      return null;
+    }
+  };
 
   // Function to handle saving or unsaving the recipe
   const toggleSaveRecipe = async () => {
@@ -112,6 +172,11 @@ export default function DetailedRecipe() {
           });
           
           if (response.ok) {
+            // If we have an original file, upload it to S3 after saving the recipe
+            if (originalFile) {
+              await uploadImageToS3(recipeId);
+            }
+            
             setSaveStatus(prev => ({ ...prev, saved: true, loading: false }));
             console.log("Recept sparat!");
           } else {
@@ -195,6 +260,11 @@ export default function DetailedRecipe() {
         // Update recipe with the ID for future reference
         recipe.id = createdRecipe.id;
         
+        // Upload the image to S3 if we have one
+        if (originalFile) {
+          await uploadImageToS3(createdRecipe.id);
+        }
+        
         setSaveStatus({ saved: true, error: null, loading: false });
       } catch (err) {
         console.error('Error saving recipe:', err);
@@ -230,15 +300,15 @@ export default function DetailedRecipe() {
             {/* Save/Unsave Recipe Button */}
             <button
               onClick={toggleSaveRecipe}
-              disabled={saveStatus.loading}
+              disabled={saveStatus.loading || imageUploadStatus.uploading}
               className={`flex items-center px-4 py-2 rounded-lg transition ${
                 saveStatus.saved 
                   ? 'bg-green-500 text-white' 
                   : 'bg-black text-white hover:bg-gray-800'
               }`}
             >
-              {saveStatus.loading ? (
-                "Sparar..."
+              {saveStatus.loading || imageUploadStatus.uploading ? (
+                imageUploadStatus.uploading ? "Laddar upp bild..." : "Sparar..."
               ) : saveStatus.saved ? (
                 <>
                   <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
@@ -260,6 +330,13 @@ export default function DetailedRecipe() {
           {/* Error message */}
           {saveStatus.error && (
             <p className="text-red-500 mb-2">{saveStatus.error}</p>
+          )}
+          
+          {/* Image upload error message */}
+          {imageUploadStatus.error && (
+            <p className="text-orange-500 mb-2">
+              Receptet sparades men bilden kunde inte laddas upp: {imageUploadStatus.error}
+            </p>
           )}
           
           <p className="text-gray-600 mb-4">{description || "Ingen beskrivning"}</p>
@@ -284,9 +361,9 @@ export default function DetailedRecipe() {
 
         {/* Right column (Image) */}
         <div className="md:w-1/2 order-1 md:order-2">
-          {images && (
+          {imageSrc && (
             <img
-              src={images}
+              src={imageSrc}
               alt={title}
               className="w-full h-auto rounded-lg object-cover"
             />

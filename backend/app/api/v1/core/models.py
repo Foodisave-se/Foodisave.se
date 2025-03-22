@@ -178,7 +178,7 @@ class Images(Base):
     user_id: Mapped[int] = mapped_column(
         ForeignKey("users.id", ondelete="SET NULL"))
     user_recipes_id: Mapped[int] = mapped_column(
-        ForeignKey("user_recipes.id", ondelete="SET NULL"))
+        ForeignKey("user_recipes.id", ondelete="SET NULL"), unique=True)
     user: Mapped["Users"] = relationship(
         back_populates="images"
     )

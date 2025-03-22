@@ -51,6 +51,12 @@ export default function ImageRecipe() {
       }
 
       const data = await response.json();
+      
+      // Store the original file for later S3 upload when recipe is saved
+      if (data && data.recipes && data.recipes.length > 0) {
+        data.recipes[0].originalFile = selectedFile;
+      }
+      
       setResult(data);
       setError(null);
       
@@ -83,6 +89,7 @@ export default function ImageRecipe() {
       ...recipeFromApi,
       name: recipeFromApi.title, // Mappa titeln från API:t till RecipeCard's name
       images: preview,           // Använd den uppladdade bilden (preview)
+      originalFile: recipeFromApi.originalFile // Pass the original file to the recipe card
     };
   }
 
