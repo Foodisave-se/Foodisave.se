@@ -53,7 +53,7 @@ class Token(Base):
         server_default=func.now() 
     )
     token: Mapped[str] = mapped_column(unique=True, index=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
     user: Mapped["Users"] = relationship(back_populates="tokens")
 
 
@@ -331,7 +331,7 @@ class PasswordResetToken(Base):
     __tablename__ = "password_reset_tokens"
     created: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     token: Mapped[str] = mapped_column(String(255), unique=True, index=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
     user: Mapped["Users"] = relationship("Users", back_populates="reset_tokens")
     used: Mapped[bool] = mapped_column(Boolean, default=False)
 
@@ -340,7 +340,7 @@ class ActivationToken(Base):
     __tablename__ = "activation_tokens"
     created: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     token: Mapped[str] = mapped_column(String(255), unique=True, index=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
     user: Mapped["Users"] = relationship("Users", back_populates="activation_tokens")
     used: Mapped[bool] = mapped_column(Boolean, default=False)
 
