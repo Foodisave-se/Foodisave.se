@@ -185,9 +185,9 @@ def get_one_recipe_db(id: int, db):
         )
     return result
 
-def save_recipe_db(recipe: SavedRecipeSchema, db):
+def save_recipe_db(recipe: SavedRecipeSchema, db, current_user):
 
-    saved_recipe = SavedRecipes(**recipe.model_dump())
+    saved_recipe = SavedRecipes(**recipe.model_dump(), user_id = current_user.id)
     db.add(saved_recipe)
     db.commit()
     return saved_recipe

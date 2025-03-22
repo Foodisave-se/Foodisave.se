@@ -132,7 +132,7 @@ const SavedRecipesPage = () => {
             <div key={recipe.id} className="relative">
               {/* Optional badge for AI-generated recipes */}
               {recipe.isUserRecipe && (
-                <div className="absolute top-2 right-2 bg-purple-500 text-white text-xs font-bold px-2 py-1 rounded-full z-10">
+                <div className="absolute top-4 left-1 bg-green-300 text-black text-xs font-bold ml-2 px-2 py-1 rounded-full z-10">
                   AI
                 </div>
               )}

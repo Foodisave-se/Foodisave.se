@@ -58,11 +58,8 @@ def read_users_me(current_user: Users = Depends(get_current_user)):
     return current_user
 
 @router.get("/user", status_code=200)
-def search_user(
-    search: Annotated[UserSearchSchema, Depends(UserSearchSchema)],
-    db: Session = Depends(get_db)
-):
-    result = get_user_db(search=search, db=db)
+def search_user(db: Session = Depends(get_db)):
+    result = get_user_db(db)
     if not result:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

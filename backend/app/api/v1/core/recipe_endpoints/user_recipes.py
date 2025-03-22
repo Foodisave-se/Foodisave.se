@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, FastAPI, HTTPException, Request, status
-from sqlalchemy import delete, insert, select, update, and_, or_
+from sqlalchemy import delete, insert, select, update, and_, or_, exists
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, joinedload, selectinload
 from typing import Optional, Annotated
@@ -87,6 +87,38 @@ def get_saved_user_recipes(
             detail="couldnt find saved recipe"
         )
     return saved_user_recipes
+
+@router.delete("/user-recipe/saved", status_code=200)
+def delete_saved_recipe(recipe_id: SavedUserRecipeSchema, current_user: Users = Depends(get_current_user), db: Session = Depends(get_db)):
+    stmt = (
+        delete(SavedUserRecipes)
+        .where(SavedUserRecipes.user_recipe_id == recipe_id.user_recipe_id)
+        .where(SavedUserRecipes.user_id == current_user.id)
+    )
+    db.execute(stmt)
+    db.commit()
+    return {"message": "Recipe deleted successfully"}
+
+
+@router.post("/user-recipe/saved/check", status_code=200)
+def check_recipe_saved(
+    recipe: SavedUserRecipeSchema, 
+    current_user: Users = Depends(get_current_user), 
+    db: Session = Depends(get_db)
+):
+    # Create a query to check if the recipe is saved by this user
+    stmt = (
+        select(exists().where(
+            (SavedUserRecipes.user_recipe_id == recipe.user_recipe_id) & 
+            (SavedUserRecipes.user_id == current_user.id)
+        ))
+    )
+    
+    # Execute the query
+    result = db.execute(stmt).scalar()
+    
+    # Return a dictionary with the result
+    return {"isSaved": result}
 
 @router.post("/ai/recipe", response_model=AiRecipeOutSchema, status_code=200)
 def create_ai_recipe(ai_recipe: AiRecipeSchema, db: Session = Depends(get_db), current_user: Users = Depends(get_current_user)):
