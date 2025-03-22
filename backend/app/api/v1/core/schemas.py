@@ -42,7 +42,7 @@ class UserRegisterSchema(BaseModel):
     password: str
     is_active: bool = False
     is_admin: bool = False
-    credits: int = 2
+    credits: int = 100
     last_login_credit: datetime | None = None
     last_credit_refill: datetime| None = None
     model_config = ConfigDict(from_attributes=True)

@@ -80,6 +80,7 @@ export default function DetailedRecipe() {
   // Extract recipe data
   const {
     title,
+    images,
     originalFile, // This will contain the actual file object to upload to S3
     description,
     category,
@@ -361,13 +362,18 @@ export default function DetailedRecipe() {
 
         {/* Right column (Image) */}
         <div className="md:w-1/2 order-1 md:order-2">
-          {imageSrc && (
+          {imageSrc ? (
             <img
               src={imageSrc}
               alt={title}
               className="w-full h-auto rounded-lg object-cover"
             />
-          )}
+          ) : (
+            <img
+              src={images}
+              alt={title}
+              className="w-full h-auto rounded-lg object-cover"
+            />)}
         </div>
       </div>
 

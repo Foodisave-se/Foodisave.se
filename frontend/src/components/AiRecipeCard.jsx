@@ -153,7 +153,7 @@ function AiRecipeCard({ recipe }) {
           ) : imageSrc ? (
             <img className="w-full h-56 object-cover" src={imageSrc} alt={recipe.title || recipe.name} />
           ) : (
-            <div className="w-full h-56 bg-gray-200 animate-pulse"></div>
+            <img className="w-full h-56 object-cover" src={recipe.images} alt={recipe.title || recipe.name} />
           )}
         </div>
 
