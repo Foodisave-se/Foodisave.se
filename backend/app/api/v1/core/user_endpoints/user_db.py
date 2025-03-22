@@ -25,16 +25,7 @@ from app.api.v1.core.schemas import (
 
 def create_user_db(user: UserRegisterSchema, db):
 
-    user = Users(
-        first_name=user.first_name,
-        last_name=user.last_name,
-        email=user.email,
-        hashed_password=hash_password(user.password),
-        is_active=False,
-        is_admin=False,
-        credits=2,
-        level=1
-    )
+    user = Users(**user.model_dump(exclude="hashed_password"), hashed_password=hash_password(user.password))
 
     db.add(user)
     db.commit()
