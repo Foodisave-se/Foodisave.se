@@ -5,8 +5,10 @@ import authStore from "../store/authStore";
 export default function DetailedRecipe() {
   const navigate = useNavigate();
   const location = useLocation();
+  const [imageSrc, setImageSrc] = useState(null);
   const [saveStatus, setSaveStatus] = useState({ saved: false, error: null, loading: false });
   const [imageUploadStatus, setImageUploadStatus] = useState({ uploading: false, error: null });
+  const [error, setError] = useState(null);
   const token = authStore((state) => state.token);
   const BASE_API_URL = import.meta.env.VITE_API_URL;
 
@@ -14,6 +16,29 @@ export default function DetailedRecipe() {
   const { recipe } = location.state || {};
 
   // Check if the recipe is already saved when component mounts
+  useEffect(() => {
+      const fetchImage = async () => {
+        if (!recipe.id) return;
+  
+        try {
+          const response = await fetch(`${BASE_API_URL}/images/${recipe.id}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+  
+          if (!response.ok) {
+            throw new Error("Failed to fetch image");
+          }
+  
+          const blob = await response.blob();
+          setImageSrc(URL.createObjectURL(blob));
+        } catch (err) {
+          setError(err.message);
+        }
+      };
+  
+      fetchImage();
+    }, [recipe.id, token]);
+
   useEffect(() => {
     const checkIfSaved = async () => {
       if (!recipe.id) return; // If recipe has no ID yet, it's not saved
@@ -55,7 +80,6 @@ export default function DetailedRecipe() {
   // Extract recipe data
   const {
     title,
-    images,
     originalFile, // This will contain the actual file object to upload to S3
     description,
     category,
@@ -337,9 +361,9 @@ export default function DetailedRecipe() {
 
         {/* Right column (Image) */}
         <div className="md:w-1/2 order-1 md:order-2">
-          {images && (
+          {imageSrc && (
             <img
-              src={images}
+              src={imageSrc}
               alt={title}
               className="w-full h-auto rounded-lg object-cover"
             />

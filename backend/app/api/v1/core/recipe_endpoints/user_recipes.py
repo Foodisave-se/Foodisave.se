@@ -209,6 +209,8 @@ async def get_image(
     # Parse the S3 key from the full URL
     # Assuming the URL format is: https://{bucket}.s3.{region}.amazonaws.com/{key}
     s3_key = image.link.split(f"https://{settings.AWS_BUCKET_NAME}.s3.{settings.AWS_REGION}.amazonaws.com/")[1]
+
+    
     
     try:
         # Get the image file from S3

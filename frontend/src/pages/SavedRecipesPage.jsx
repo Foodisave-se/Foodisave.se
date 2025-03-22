@@ -31,6 +31,7 @@ const SavedRecipesPage = () => {
 
       const recipeData = await recipeResponse.json();
       setSavedRecipes(recipeData);
+      console.log(recipeData)
       
       // Fetch saved user recipes (AI-generated recipes)
       try {
@@ -46,6 +47,7 @@ const SavedRecipesPage = () => {
             isUserRecipe: true
           }));
           setSavedUserRecipes(userRecipesWithFlag);
+          console.log(userRecipesWithFlag);
         }
       } catch (userRecipeError) {
         console.error('Error fetching saved user recipes:', userRecipeError);
