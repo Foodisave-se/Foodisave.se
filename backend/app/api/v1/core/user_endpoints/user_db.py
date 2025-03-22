@@ -43,9 +43,8 @@ def create_user_db(user: UserRegisterSchema, db):
     return user
 
 
-def get_user_db(search: UserSearchSchema, db):
-    users = db.scalars(select(Users).where(
-        Users.username.ilike(f"%{search.username}%"))).all()
+def get_user_db(db):
+    users = db.scalars(select(Users)).all()
     if not users:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

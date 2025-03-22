@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, FastAPI, HTTPException, Request, status, Query
-from sqlalchemy import delete, insert, select, update, and_, or_
+from sqlalchemy import delete, insert, select, update, and_, or_, exists
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, joinedload, selectinload
 from typing import Optional, Annotated
@@ -30,7 +30,6 @@ from app.api.v1.core.schemas import (
     SearchRecipeSchema,
     RandomRecipeSchema,
     SavedRecipeSchema,
-    SavedRecipesResponse
 )
 
 from app.db_setup import get_db
@@ -93,9 +92,9 @@ def get_recipe(recipe_id: int, db: Session = Depends(get_db)):
         )
     return recipe
 
-@router.post("/recipe/saved", status_code=204)
-def save_recipe(recipe: SavedRecipeSchema, db: Session = Depends(get_db)):
-    recipe = save_recipe_db(recipe, db)
+@router.post("/recipe/saved", status_code=201)
+def save_recipe(recipe: SavedRecipeSchema, current_user: Users = Depends(get_current_user), db: Session = Depends(get_db)):
+    recipe = save_recipe_db(recipe, db, current_user)
 
     if not recipe:
         raise HTTPException(
@@ -125,3 +124,35 @@ def get_saved_recipes(
             detail="couldnt find saved recipe"
         )
     return saved_recipes
+
+@router.delete("/recipe/saved", status_code=200)
+def delete_saved_recipe(recipe_id: SavedRecipeSchema, current_user: Users = Depends(get_current_user), db: Session = Depends(get_db)):
+    stmt = (
+        delete(SavedRecipes)
+        .where(SavedRecipes.recipe_id == recipe_id.recipe_id)
+        .where(SavedRecipes.user_id == current_user.id)
+    )
+    db.execute(stmt)
+    db.commit()
+    return {"message": "Recipe deleted successfully"}
+
+
+@router.post("/recipe/saved/check", status_code=200)
+def check_recipe_saved(
+    recipe: SavedRecipeSchema, 
+    current_user: Users = Depends(get_current_user), 
+    db: Session = Depends(get_db)
+):
+    # Create a query to check if the recipe is saved by this user
+    stmt = (
+        select(exists().where(
+            (SavedRecipes.recipe_id == recipe.recipe_id) & 
+            (SavedRecipes.user_id == current_user.id)
+        ))
+    )
+    
+    # Execute the query
+    result = db.execute(stmt).scalar()
+    
+    # Return a dictionary with the result
+    return {"isSaved": result}

@@ -16,7 +16,6 @@ class SearchRecipeSchema(BaseModel):
     page_size: int = Query(20, ge=1, le=100)
 
 class SavedRecipeSchema(BaseModel):
-    user_id: int
     recipe_id: int
 
 class SavedUserRecipeSchema(BaseModel):
@@ -159,9 +158,6 @@ class RecipeOutSchema(BaseModel):
     recipe_url: str = None
     
     model_config = ConfigDict(from_attributes=True)
-
-class SavedRecipesResponse(BaseModel):
-    recipes: List[RecipeOutSchema]
 
 class ImageDetectionResponse(BaseModel):
     """

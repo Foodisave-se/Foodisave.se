@@ -1,13 +1,137 @@
-import React from "react";
-
+import React, { useState, useEffect } from "react";
+import authStore from "../store/authStore";
 
 function RecipeCard({ recipe }) {
+  const [isSaving, setIsSaving] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
+  const token = authStore((state) => state.token);
+  
+  // Check if the recipe is already saved when component mounts
+  useEffect(() => {
+    const checkIfSaved = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/recipe/saved/check`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            recipe_id: recipe.id,
+          }),
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          setIsSaved(data.isSaved);
+        }
+      } catch (error) {
+        console.error("Error checking if recipe is saved:", error);
+      }
+    };
+    
+    if (token) {
+      checkIfSaved();
+    }
+  }, [recipe.id, token]);
+
+  const handleSaveRecipe = async (e) => {
+    e.preventDefault(); // Prevent the click from navigating to the recipe URL
+    e.stopPropagation(); // Prevent event bubbling
+    
+    if (isSaving) return; // Prevent multiple clicks
+    
+    setIsSaving(true);
+    
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/recipe/saved`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          recipe_id: recipe.id,
+        }),
+      });
+      
+      if (response.ok) {
+        setIsSaved(true); // Update the saved state
+        console.log("Recept sparat!");
+      } else {
+        console.log("Kunde inte spara receptet. Försök igen senare.");
+      }
+    } catch (error) {
+      console.error("Error saving recipe:", error);
+      console.log("Ett fel uppstod. Försök igen senare.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  // Function to handle unsaving a recipe
+  const handleUnsaveRecipe = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (isSaving) return;
+    
+    setIsSaving(true);
+    
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/recipe/saved`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          recipe_id: recipe.id,
+        }),
+      });
+      
+      if (response.ok) {
+        setIsSaved(false);
+        console.log("Recept borttaget från sparade!");
+      } else {
+        console.log("Kunde inte ta bort receptet. Försök igen senare.");
+      }
+    } catch (error) {
+      console.error("Error unsaving recipe:", error);
+      console.log("Ett fel uppstod. Försök igen senare.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   return (
-    <div className="w-full bg-white rounded-md shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition-transform transform hover:scale-105 flex flex-col h-full">
-      {/* Skicka med recipe-objektet i state */}
+    <div className="w-full bg-white rounded-md shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition-transform transform hover:scale-105 flex flex-col h-full relative">
+      {/* Heart button for saving/unsaving */}
+      <button 
+        onClick={isSaved ? handleUnsaveRecipe : handleSaveRecipe}
+        className="absolute top-2 right-2 z-10 bg-white p-2 rounded-full shadow-md hover:bg-gray-100"
+        disabled={isSaving}
+      >
+        <svg 
+          xmlns="http://www.w3.org/2000/svg" 
+          className="h-6 w-6 text-red-500" 
+          fill={isSaved ? "currentColor" : "none"} 
+          viewBox="0 0 24 24" 
+          stroke="currentColor"
+        >
+          <path 
+            strokeLinecap="round" 
+            strokeLinejoin="round" 
+            strokeWidth={2} 
+            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" 
+          />
+        </svg>
+      </button>
+
+      {/* Recipe Card Link */}
       <a
-        href={recipe.recipe_url} target="_blank"
-        state={{ recipe }}
+        href={recipe.recipe_url} 
+        target="_blank"
         className="flex flex-col h-full"
       >
         <div>

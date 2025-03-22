@@ -234,7 +234,7 @@ export default function LoggedinHeader() {
             onMouseLeave={handleReceptBildMouseLeave}
           >
             <Link
-              to="/se"
+              to="/imagerecipe"
               className="curtain-link relative inline-block overflow-hidden px-4 py-2 rounded-sm bg-transparent"
             >
               <span className="normal-text block transition-transform duration-200 ease-in-out">
