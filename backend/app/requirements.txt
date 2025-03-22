@@ -13,3 +13,4 @@ tf-keras==2.16.0
 cachetools===5.3.3
 transformers==4.40.0
 aiohttp==3.9.5
+boto3

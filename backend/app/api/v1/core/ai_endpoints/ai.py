@@ -22,6 +22,8 @@ import PIL
 import uuid
 import io
 from app.db_setup import get_db
+from app.s3_utils import upload_image_to_s3
+
 from app.api.v1.core.recipe_endpoints.recipe_db import (
     get_one_recipe_db
 )

@@ -21,6 +21,8 @@ class SavedRecipeSchema(BaseModel):
 class SavedUserRecipeSchema(BaseModel):
     user_recipe_id: int
 
+class UploadImageSchema(BaseModel):
+    user_recipe_id: int
 
 class RandomRecipeSchema(BaseModel):
     recipe_type: str | None = None
