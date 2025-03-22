@@ -62,11 +62,12 @@ class Users(Base):
     first_name: Mapped[str] = mapped_column(String(255))
     last_name: Mapped[str] = mapped_column(String(255))
     email: Mapped[str] = mapped_column(String(150), unique=True)
-    is_superuser: Mapped[bool] = mapped_column(Boolean, default=False)
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
-    is_customer: Mapped[bool] = mapped_column(Boolean, default=True)
     credits: Mapped[int] = mapped_column(Integer, default=100)
     hashed_password: Mapped[str] = mapped_column(String(150))
+    last_credit_refill: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    last_login_credit: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         server_default=func.now() 

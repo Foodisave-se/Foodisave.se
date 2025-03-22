@@ -94,15 +94,30 @@ def verify_token_access(token_str: str, db: Session) -> Token:
 
 
 def get_current_user(
-    token: Annotated[str, Depends(oauth2_scheme)], db: Session = Depends(get_db)
-):
-    token = verify_token_access(token_str=token, db=db)
-    user = token.user
-    # Kontrollera att kontot är aktiverat
+    token: Annotated[str, Depends(oauth2_scheme)],
+    db: Session = Depends(get_db)
+) -> Users:
+    token_obj = verify_token_access(token_str=token, db=db)
+    user = token_obj.user
+    now = datetime.now(timezone.utc)
+
+    # Automatisk kreditåterställning om användaren har 0 credits och inte redan fått dagens 10 credits
+    if user.credits == 0 and (not user.last_credit_refill or user.last_credit_refill.date() != now.date()):
+        user.credits += 10
+        user.last_credit_refill = now
+
+    # Ge 1 credit vid inloggning om bonusen inte redan beviljats idag
+    if not user.last_login_credit or user.last_login_credit.date() != now.date():
+        user.credits += 1
+        user.last_login_credit = now
+
+    db.commit()
+    db.refresh(user)
+
     if not user.is_active:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Account not activated. Please activate your account before proceeding.",
+            detail="Kontot är inte aktiverat. Vänligen aktivera ditt konto.",
             headers={"WWW-Authenticate": "Bearer"},
         )
     return user
@@ -124,23 +139,6 @@ def get_current_admin(
             headers={"WWW-Authenticate": "Bearer"},
         )
     return current_user
-
-def get_current_superuser(
-    current_user: Annotated[Users, Depends(get_current_user)],
-) -> Users:
-    """
-    Dependency that verifies the current user is a superuser.
-    Returns the user object if the user is a superuser,
-    otherwise raises an HTTP 403 Forbidden exception.
-    """
-    if not current_user.is_superuser:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Not authorized. Superuser privileges required.",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    return current_user
-
 
 def get_current_token(
     token: Annotated[str, Depends(oauth2_scheme)], db: Session = Depends(get_db)

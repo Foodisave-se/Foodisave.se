@@ -13,7 +13,6 @@ from app.api.v1.core.user_endpoints.user_db import (
 )
 from app.api.v1.core.models import Users, Recipes, UserRecipes, Images, Comments, Messages, Reviews
 from app.api.v1.core.schemas import (
-    UserSchema,
     UserSearchSchema,
     UserUpdateSchema,
     UserOutSchema,
@@ -26,8 +25,7 @@ from app.security import (
     hash_password,
     verify_password,
     get_current_user,
-    get_current_admin,
-    get_current_superuser,
+    get_current_admin
 )
 from app.db_setup import get_db
 

@@ -20,8 +20,7 @@ from app.api.v1.core.models import (
 from app.api.v1.core.schemas import (
     SearchRecipeSchema,
     RandomRecipeSchema,
-    SavedRecipeSchema,
-    UserSchema
+    SavedRecipeSchema
 )
 
 
@@ -193,16 +192,4 @@ def save_recipe_db(recipe: SavedRecipeSchema, db):
     db.commit()
     return saved_recipe
 
-def get_saved_recipes_db(user: UserSchema, db):
-
-    
-    stmt = (
-        select(Recipes)
-        .join(SavedRecipes, Recipes.id == SavedRecipes.recipe_id)
-        .where(SavedRecipes.user_id == user.id)
-    )
-
-    saved_recipes = db.scalars(stmt).all()
-
-    return saved_recipes
 

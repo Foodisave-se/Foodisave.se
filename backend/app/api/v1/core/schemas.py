@@ -27,18 +27,6 @@ class RandomRecipeSchema(BaseModel):
     recipe_type: str | None = None
 
 
-class UserSchema(BaseModel):
-    first_name: str
-    last_name: str
-    email: EmailStr
-    password: str
-    is_superuser: bool = False
-    is_admin: bool = False
-    is_customer: bool = True
-    credits: int = 100
-    level: int = 1
-    is_active: bool = False
-
 class UserSearchSchema(BaseModel):
     username: str
 
@@ -51,8 +39,13 @@ class UserRegisterSchema(BaseModel):
     last_name: str
     first_name: str
     password: str
+    is_active: bool = False
+    is_admin: bool = False
+    credits: int = 2
+    last_login_credit: datetime | None = None
+    last_credit_refill: datetime| None = None
     model_config = ConfigDict(from_attributes=True)
-
+    
 
 class TokenSchema(BaseModel):
     access_token: str
@@ -80,9 +73,7 @@ class UserOutSchema(BaseModel):
     email: str
     last_name: str
     first_name: str
-    is_superuser: bool
     is_admin: bool
-    is_customer: bool
     credits: int
     level: int
     model_config = ConfigDict(from_attributes=True)

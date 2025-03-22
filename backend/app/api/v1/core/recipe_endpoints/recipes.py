@@ -11,8 +11,7 @@ from app.api.v1.core.recipe_endpoints.recipe_db import (
     get_recipe_db,
     get_random_recipe_db,
     get_one_recipe_db,
-    save_recipe_db,
-    get_saved_recipes_db
+    save_recipe_db
 )
 
 from app.api.v1.core.models import (

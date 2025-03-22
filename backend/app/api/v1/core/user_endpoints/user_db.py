@@ -18,7 +18,6 @@ from app.api.v1.core.models import (
 )
 
 from app.api.v1.core.schemas import (
-    UserSchema,
     UserSearchSchema,
     UserRegisterSchema,
     UserUpdateSchema
@@ -31,10 +30,9 @@ def create_user_db(user: UserRegisterSchema, db):
         last_name=user.last_name,
         email=user.email,
         hashed_password=hash_password(user.password),
-        is_superuser=False,
+        is_active=False,
         is_admin=False,
-        is_customer=True,
-        credits=100,
+        credits=2,
         level=1
     )
 
