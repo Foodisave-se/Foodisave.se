@@ -415,6 +415,13 @@ export default function LoggedinHeader() {
                 Mina Recept
               </Link>
               <Link
+                to="/my-items"
+                onClick={() => setIsSidebarOpen(false)}
+                className="text-black hover:underline"
+              >
+                Mitt Kök
+              </Link>
+              <Link
                 to="/settings"
                 onClick={() => setIsSidebarOpen(false)}
                 className="text-black hover:underline"

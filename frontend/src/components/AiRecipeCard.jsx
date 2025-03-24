@@ -5,9 +5,36 @@ import authStore from "../store/authStore";
 function AiRecipeCard({ recipe }) {
   const [isSaving, setIsSaving] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
+  const [imageSrc, setImageSrc] = useState(null);
+  const [error, setError] = useState(null);
+
   const token = authStore((state) => state.token);
   const BASE_API_URL = import.meta.env.VITE_API_URL;
-  
+
+  // Fetch the recipe image from FastAPI
+  useEffect(() => {
+    const fetchImage = async () => {
+      if (!recipe.id) return;
+
+      try {
+        const response = await fetch(`${BASE_API_URL}/images/${recipe.id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch image");
+        }
+
+        const blob = await response.blob();
+        setImageSrc(URL.createObjectURL(blob));
+      } catch (err) {
+        setError(err.message);
+      }
+    };
+
+    fetchImage();
+  }, [recipe.id, token]);
+
   // Check if the recipe is already saved when component mounts
   useEffect(() => {
     const checkIfSaved = async () => {
@@ -18,11 +45,9 @@ function AiRecipeCard({ recipe }) {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({
-            user_recipe_id: recipe.id,
-          }),
+          body: JSON.stringify({ user_recipe_id: recipe.id }),
         });
-        
+
         if (response.ok) {
           const data = await response.json();
           setIsSaved(data.isSaved);
@@ -31,20 +56,19 @@ function AiRecipeCard({ recipe }) {
         console.error("Error checking if AI recipe is saved:", error);
       }
     };
-    
+
     if (token && recipe.id) {
       checkIfSaved();
     }
-  }, [recipe.id, token, BASE_API_URL]);
+  }, [recipe.id, token]);
 
   const handleSaveRecipe = async (e) => {
-    e.preventDefault(); // Prevent the click from navigating to the recipe URL
-    e.stopPropagation(); // Prevent event bubbling
-    
-    if (isSaving) return; // Prevent multiple clicks
-    
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (isSaving) return;
     setIsSaving(true);
-    
+
     try {
       const response = await fetch(`${BASE_API_URL}/user-recipe/saved`, {
         method: "POST",
@@ -52,34 +76,27 @@ function AiRecipeCard({ recipe }) {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          user_recipe_id: recipe.id,
-        }),
+        body: JSON.stringify({ user_recipe_id: recipe.id }),
       });
-      
+
       if (response.ok) {
-        setIsSaved(true); // Update the saved state
+        setIsSaved(true);
         console.log("AI recept sparat!");
-      } else {
-        console.log("Kunde inte spara AI-receptet. Försök igen senare.");
       }
     } catch (error) {
       console.error("Error saving AI recipe:", error);
-      console.log("Ett fel uppstod. Försök igen senare.");
     } finally {
       setIsSaving(false);
     }
   };
 
-  // Function to handle unsaving a recipe
   const handleUnsaveRecipe = async (e) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     if (isSaving) return;
-    
     setIsSaving(true);
-    
+
     try {
       const response = await fetch(`${BASE_API_URL}/user-recipe/saved`, {
         method: "DELETE",
@@ -87,20 +104,15 @@ function AiRecipeCard({ recipe }) {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          user_recipe_id: recipe.id,
-        }),
+        body: JSON.stringify({ user_recipe_id: recipe.id }),
       });
-      
+
       if (response.ok) {
         setIsSaved(false);
         console.log("AI-recept borttaget från sparade!");
-      } else {
-        console.log("Kunde inte ta bort AI-receptet. Försök igen senare.");
       }
     } catch (error) {
       console.error("Error unsaving AI recipe:", error);
-      console.log("Ett fel uppstod. Försök igen senare.");
     } finally {
       setIsSaving(false);
     }
@@ -133,26 +145,25 @@ function AiRecipeCard({ recipe }) {
       )}
 
       {/* Recipe Card Link */}
-      <Link
-        to="/detailedrecipe"
-        state={{ recipe }}
-        className="flex flex-col h-full"
-      >
+      <Link to="/detailedrecipe" state={{ recipe }} className="flex flex-col h-full">
         <div>
-          <img
-            className="w-full h-56 object-cover"
-            src={recipe.images}
-            alt={recipe.title || recipe.name}
-          />
+          {/* Conditional rendering: show image or a placeholder */}
+          {error ? (
+            <p className="text-center text-red-500 mt-4">Kunde inte ladda bilden</p>
+          ) : imageSrc ? (
+            <img className="w-full h-56 object-cover" src={imageSrc} alt={recipe.title || recipe.name} />
+          ) : (
+            <img className="w-full h-56 object-cover" src={recipe.images} alt={recipe.title || recipe.name} />
+          )}
         </div>
 
         <div className="p-4 flex flex-col flex-grow">
           <h2 className="text-lg font-semibold text-black">{recipe.title || recipe.name}</h2>
 
           <div className="flex items-center justify-between bg-white rounded-lg px-4 py-2 text-sm text-black mt-auto">
-            <span
-            className="bg-black text-white px-3 py-1 rounded-sm text-xxs m-2">
-              {recipe.cook_time || "Över 30 min"}</span>
+            <span className="bg-black text-white px-3 py-1 rounded-sm text-xxs m-2">
+              {recipe.cook_time || "Över 30 min"}
+            </span>
             <span className="bg-green-300 text-black px-3 py-1 rounded-sm text-xxs m-2">
               {recipe.category || recipe.tags || "Enkel"}
             </span>

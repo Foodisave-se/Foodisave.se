@@ -152,7 +152,7 @@ class UserRecipes(Base):
         server_default=func.now()  # Uses database server time
     )
     user_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id", ondelete="SET NULL"))
+        ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     user: Mapped["Users"] = relationship(
         back_populates="user_recipes"
     )
@@ -177,9 +177,9 @@ class Images(Base):
     __tablename__ = "images"
     link: Mapped[str] = mapped_column(String(255))
     user_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id", ondelete="SET NULL"))
+        ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     user_recipes_id: Mapped[int] = mapped_column(
-        ForeignKey("user_recipes.id", ondelete="SET NULL"))
+        ForeignKey("user_recipes.id", ondelete="SET NULL"), nullable=True)
     user: Mapped["Users"] = relationship(
         back_populates="images"
     )
@@ -196,9 +196,9 @@ class Comments(Base):
         server_default=func.now()  # Uses database server time
     )
     user_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id", ondelete="SET NULL"))
+        ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     user_recipes_id: Mapped[int] = mapped_column(
-        ForeignKey("user_recipes.id", ondelete="SET NULL"))
+        ForeignKey("user_recipes.id", ondelete="SET NULL"), nullable=True)
     user: Mapped["Users"] = relationship(
         back_populates="comments"
     )
@@ -215,9 +215,9 @@ class Reviews(Base):
         server_default=func.now()
     )
     user_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id", ondelete="SET NULL"))
+        ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     recipes_id: Mapped[int] = mapped_column(
-        ForeignKey("recipes.id", ondelete="SET NULL"))
+        ForeignKey("recipes.id", ondelete="SET NULL"), nullable=True)
     user: Mapped["Users"] = relationship(
         back_populates="reviews"
     )
@@ -234,9 +234,9 @@ class Messages(Base):
         server_default=func.now()  # Uses database server time
     )
     sender_user_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id", ondelete="SET NULL"))
+        ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     receiver_user_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id", ondelete="SET NULL"))
+        ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     user_sender: Mapped["Users"] = relationship(
         "Users", foreign_keys=[sender_user_id],
         back_populates="messages_sender"
@@ -251,9 +251,9 @@ class UserFollows(Base):
     __tablename__ = "user_follows"
     # Primärnyckel bestående av båda kolumnerna
     follower_user_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id", ondelete="SET NULL"), primary_key=True)
+        ForeignKey("users.id", ondelete="SET NULL"), primary_key=True, nullable=True)
     followee_user_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id", ondelete="SET NULL"), primary_key=True)
+        ForeignKey("users.id", ondelete="SET NULL"), primary_key=True, nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
@@ -352,7 +352,7 @@ class SavedItems(Base):
     size: Mapped[str] = mapped_column(Text)
 
     user_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id", ondelete="SET NULL"))
+        ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     user: Mapped["Users"] = relationship(
         back_populates="saved_items"
     )

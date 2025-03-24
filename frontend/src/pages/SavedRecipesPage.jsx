@@ -24,15 +24,19 @@ const SavedRecipesPage = () => {
         headers: { Authorization: `Bearer ${token}` }
       });
       
-      if (!recipeResponse.ok) {
-        const errorData = await recipeResponse.json();
-        console.log(errorData)
+      let regularRecipes = [];
+      if (recipeResponse.ok) {
+        const recipeData = await recipeResponse.json();
+        regularRecipes = recipeData || [];
+        setSavedRecipes(regularRecipes);
+        console.log("Regular recipes:", regularRecipes);
+      } else {
+        console.log("Error fetching regular recipes:", await recipeResponse.json());
+        setSavedRecipes([]);
       }
-
-      const recipeData = await recipeResponse.json();
-      setSavedRecipes(recipeData);
       
       // Fetch saved user recipes (AI-generated recipes)
+      let userRecipes = [];
       try {
         const userRecipeResponse = await fetch(`${BASE_API_URL}/saved/user-recipe`, {
           headers: { Authorization: `Bearer ${token}` }
@@ -41,30 +45,35 @@ const SavedRecipesPage = () => {
         if (userRecipeResponse.ok) {
           const userRecipeData = await userRecipeResponse.json();
           // Add a flag to identify these as user recipes
-          const userRecipesWithFlag = userRecipeData.map(recipe => ({
+          userRecipes = (userRecipeData || []).map(recipe => ({
             ...recipe,
             isUserRecipe: true
           }));
-          setSavedUserRecipes(userRecipesWithFlag);
+          setSavedUserRecipes(userRecipes);
+          console.log("User recipes:", userRecipes);
+        } else {
+          console.log("Error fetching user recipes:", await userRecipeResponse.json());
+          setSavedUserRecipes([]);
         }
       } catch (userRecipeError) {
         console.error('Error fetching saved user recipes:', userRecipeError);
-        // We don't throw here, because we still want to show regular recipes even if user recipes fail
+        setSavedUserRecipes([]);
       }
+      
+      // Set the combined recipes directly here
+      const combined = [...regularRecipes, ...userRecipes].filter(Boolean);
+      setAllRecipes(combined);
+      setFilteredRecipes(combined);
       
     } catch (err) {
       console.error('Error fetching saved recipes:', err);
       setError(err.message || 'Network error. Please try again later.');
+      setAllRecipes([]);
+      setFilteredRecipes([]);
     } finally {
       setLoading(false);
     }
   };
-
-  // Combine all recipes when either source updates
-  useEffect(() => {
-    const combined = [...savedRecipes, ...savedUserRecipes];
-    setAllRecipes(combined);
-  }, [savedRecipes, savedUserRecipes]);
 
   // Hämta sparade recept när sidan laddas
   useEffect(() => {

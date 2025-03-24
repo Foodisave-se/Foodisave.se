@@ -21,6 +21,8 @@ class SavedRecipeSchema(BaseModel):
 class SavedUserRecipeSchema(BaseModel):
     user_recipe_id: int
 
+class UploadImageSchema(BaseModel):
+    user_recipe_id: int
 
 class RandomRecipeSchema(BaseModel):
     recipe_type: str | None = None
@@ -44,6 +46,8 @@ class UserRegisterSchema(BaseModel):
     last_login_credit: datetime | None = None
     last_credit_refill: datetime| None = None
     last_recipe_saved_credit: datetime | None = None
+    credits: int = 99
+    level:int = 1
     model_config = ConfigDict(from_attributes=True)
     
 
