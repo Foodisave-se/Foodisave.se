@@ -43,6 +43,7 @@ class UserRegisterSchema(BaseModel):
     credits: int = 2
     last_login_credit: datetime | None = None
     last_credit_refill: datetime| None = None
+    last_recipe_saved_credit: datetime | None = None
     model_config = ConfigDict(from_attributes=True)
     
 

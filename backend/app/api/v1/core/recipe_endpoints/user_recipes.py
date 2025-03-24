@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session, joinedload, selectinload
 from typing import Optional, Annotated
 from random import randint
 from app.security import get_current_user
+from datetime import datetime, timezone
 
 from app.api.v1.core.recipe_endpoints.user_recipe_db import (
     create_user_recipe_db,
@@ -63,6 +64,14 @@ def save_recipe(user_recipe: SavedUserRecipeSchema, db: Session = Depends(get_db
             status_code=status.HTTP_404_NOT_FOUND,
             detail="couldnt save recipe"
         )
+    
+    now = datetime.now(timezone.utc)
+    if not current_user.last_recipe_saved_credit or current_user.last_recipe_saved_credit.date() != now.date():
+        current_user.credits += 1
+        current_user.last_recipe_saved_credit = now
+        db.commit()  # Uppdatera användarens credit och tid
+        db.refresh(current_user)
+
 
     return user_recipe
 

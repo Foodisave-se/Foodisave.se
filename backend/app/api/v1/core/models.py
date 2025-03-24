@@ -67,6 +67,7 @@ class Users(Base):
     hashed_password: Mapped[str] = mapped_column(String(150))
     last_credit_refill: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     last_login_credit: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    last_recipe_saved_credit: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
