@@ -12,6 +12,10 @@ export default function GroceryItems() {
   const [editItem, setEditItem] = useState(null);
   const [editFormData, setEditFormData] = useState({ item: "", size: "" });
   
+  // New state for manual item entry
+  const [isManualEntryOpen, setIsManualEntryOpen] = useState(false);
+  const [manualItem, setManualItem] = useState({ item: "", size: "" });
+  
   const token = authStore((state) => state.token);
   const setUserData = authStore((state) => state.setUserData);
   const apiUrl = "http://localhost:8000/v1/save-bought-items";
@@ -138,6 +142,40 @@ export default function GroceryItems() {
     }
   };
 
+  // Save manually entered item
+  const saveManualItem = async () => {
+    // Validate input
+    if (!manualItem.item.trim()) {
+      setError("Varunamn kan inte vara tomt");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:8000/v1/saved-items", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(manualItem),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to save item");
+      }
+
+      const savedItem = await response.json();
+      setSavedItems([...savedItems, savedItem]);
+      
+      // Reset manual entry
+      setManualItem({ item: "", size: "" });
+      setIsManualEntryOpen(false);
+    } catch (err) {
+      console.error("Error saving manual item:", err);
+      setError(err.message);
+    }
+  };
+
   // Delete item from database
   const deleteItem = async (itemId) => {
     try {
@@ -255,6 +293,56 @@ export default function GroceryItems() {
                   <img src={preview} alt="Förhandsvisning" className="max-h-64" />
                 </div>
               )
+            )}
+          </div>
+
+          {/* Manual entry section */}
+          <div className="px-4 py-8 sm:rounded-lg sm:px-10 mb-8">
+            {/* Hide/show manual entry */}
+            {!isManualEntryOpen ? (
+              <div className="">
+                <button
+                  onClick={() => setIsManualEntryOpen(true)}
+                  className="bg-black text-white px-3 py-1 rounded-md hover:bg-[#888383] transition text-sm"
+                >
+                  Lägg till vara manuellt
+                </button>
+              </div>
+            ) : (
+              <div className="p-3 rounded-md space-y-3">
+                <div className="flex justify-between items-center mb-2">
+                  <h3 className="text-xl font-semibold">Lägg till vara manuellt</h3>
+                  <button
+                    onClick={() => setIsManualEntryOpen(false)}
+                    className="text-gray-500 hover:text-gray-700"
+                  >
+                    Avbryt
+                  </button>
+                </div>
+                
+                <input
+                  type="text"
+                  value={manualItem.item}
+                  onChange={(e) => setManualItem({...manualItem, item: e.target.value})}
+                  placeholder="Vara"
+                  className="w-full p-2 bg-white border rounded-md"
+                />
+                <input
+                  type="text"
+                  value={manualItem.size}
+                  onChange={(e) => setManualItem({...manualItem, size: e.target.value})}
+                  placeholder="Storlek (valfritt)"
+                  className="w-full p-2 bg-white border rounded-md"
+                />
+                <div className="flex justify-end">
+                  <button
+                    onClick={saveManualItem}
+                    className="bg-black text-white px-3 py-1 rounded-md hover:bg-[#888383] transition text-sm"
+                  >
+                    Spara
+                  </button>
+                </div>
+              </div>
             )}
           </div>
 
