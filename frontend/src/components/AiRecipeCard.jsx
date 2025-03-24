@@ -6,25 +6,24 @@ function AiRecipeCard({ recipe }) {
   const [isSaving, setIsSaving] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [imageSrc, setImageSrc] = useState(null);
+  const [isImageLoading, setIsImageLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const token = authStore((state) => state.token);
   const BASE_API_URL = import.meta.env.VITE_API_URL;
 
-  // Fetch the recipe image from FastAPI
+  // Hämta receptbilden från FastAPI
   useEffect(() => {
     const fetchImage = async () => {
       if (!recipe.id) return;
-
+      setIsImageLoading(true);
       try {
         const response = await fetch(`${BASE_API_URL}/images/${recipe.id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-
         if (!response.ok) {
           throw new Error("Failed to fetch image");
         }
-
         const blob = await response.blob();
         setImageSrc(URL.createObjectURL(blob));
       } catch (err) {
@@ -33,9 +32,9 @@ function AiRecipeCard({ recipe }) {
     };
 
     fetchImage();
-  }, [recipe.id, token]);
+  }, [recipe.id, token, BASE_API_URL]);
 
-  // Check if the recipe is already saved when component mounts
+  // Kontrollera om receptet redan är sparat
   useEffect(() => {
     const checkIfSaved = async () => {
       try {
@@ -60,7 +59,7 @@ function AiRecipeCard({ recipe }) {
     if (token && recipe.id) {
       checkIfSaved();
     }
-  }, [recipe.id, token]);
+  }, [recipe.id, token, BASE_API_URL]);
 
   const handleSaveRecipe = async (e) => {
     e.preventDefault();
@@ -120,7 +119,7 @@ function AiRecipeCard({ recipe }) {
 
   return (
     <div className="w-full bg-white rounded-md shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition-transform transform hover:scale-105 flex flex-col h-full relative">
-      {/* Heart button for saving/unsaving */}
+      {/* Hjärtknapp för spara/ta bort sparat */}
       {recipe.id && (
         <button 
           onClick={isSaved ? handleUnsaveRecipe : handleSaveRecipe}
@@ -144,21 +143,33 @@ function AiRecipeCard({ recipe }) {
         </button>
       )}
 
-      {/* Recipe Card Link */}
+      {/* Receptkortets länk */}
       <Link to="/detailedrecipe" state={{ recipe }} className="flex flex-col h-full">
-        <div>
-          {/* Conditional rendering: show image or a placeholder */}
+        <div className="relative w-full h-56">
           {error ? (
             <p className="text-center text-red-500 mt-4">Kunde inte ladda bilden</p>
-          ) : imageSrc ? (
-            <img className="w-full h-56 object-cover" src={imageSrc} alt={recipe.title || recipe.name} />
           ) : (
-            <img className="w-full h-56 object-cover" src={recipe.images} alt={recipe.title || recipe.name} />
+            <>
+              {isImageLoading && (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="loaderimage"></div>
+                </div>
+              )}
+              <img
+                className="w-full h-56 object-cover"
+                src={imageSrc || recipe.images}
+                alt={recipe.title || recipe.name}
+                onLoad={() => setIsImageLoading(false)}
+                style={{ visibility: isImageLoading ? "hidden" : "visible" }}
+              />
+            </>
           )}
         </div>
 
         <div className="p-4 flex flex-col flex-grow">
-          <h2 className="text-lg font-semibold text-black">{recipe.title || recipe.name}</h2>
+          <h2 className="text-lg font-semibold text-black">
+            {recipe.title || recipe.name}
+          </h2>
 
           <div className="flex items-center justify-between bg-white rounded-lg px-4 py-2 text-sm text-black mt-auto">
             <span className="bg-black text-white px-3 py-1 rounded-sm text-xxs m-2">

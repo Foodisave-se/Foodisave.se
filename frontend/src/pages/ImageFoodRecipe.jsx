@@ -4,21 +4,20 @@ import UploadPicture from "../components/UploadPicture";
 import AiRecipeCard from "../components/AiRecipeCard";
 import authStore from "../store/authStore";
 
-export default function ImageRecipe() {
+export default function ImageFoodRecipe() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false); // State för laddning
   const token = authStore((state) => state.token);
   const setUserData = authStore((state) => state.setUserData);
   const apiUrl = "http://localhost:8000/v1/suggest-recipe-from-plateimage";
   const navigate = useNavigate();
 
-  // Callback från UploadPicture: Om användaren inte är inloggad, omdirigera till login med state,
-  // annars spara filen och skapa en förhandsvisning.
+  // Callback: Spara filen och skapa en förhandsvisning.
   const handleFileSelected = (file) => {
     if (!token) {
-      // Användaren är inte inloggad – skicka till login med redirect tillbaka till ImageRecipe
       navigate("/login", { state: { redirectTo: "/imagerecipeplate" } });
       return;
     }
@@ -31,9 +30,10 @@ export default function ImageRecipe() {
     }
   };
 
-  // Funktion för att ladda upp bilden till backend (anropas från ImageRecipe-sidan)
+  // Funktion för att ladda upp bilden till backend.
   const uploadImage = async () => {
     if (!selectedFile) return;
+    setIsLoading(true); // Starta laddningsanimeringen
     const formData = new FormData();
     formData.append("file", selectedFile);
 
@@ -51,10 +51,16 @@ export default function ImageRecipe() {
       }
 
       const data = await response.json();
+
+      // Spara den ursprungliga filen för senare S3-uppladdning när receptet sparas
+      if (data && data.recipes && data.recipes.length > 0) {
+        data.recipes[0].originalFile = selectedFile;
+      }
+
       setResult(data);
       setError(null);
-      
-      // Efter ett lyckat anrop, hämta den uppdaterade användardatan
+
+      // Hämta uppdaterad användardata
       const userResponse = await fetch(`${import.meta.env.VITE_API_URL}/me`, {
         method: "GET",
         credentials: "include",
@@ -73,16 +79,18 @@ export default function ImageRecipe() {
       setError(err.message);
       setResult(null);
     }
+    setIsLoading(false); // Avsluta laddningsanimeringen
   };
 
-  // Om vi har ett API-svar, mappa det till ett receptobjekt som RecipeCard förstår
+  // Mappa API-svaret till ett receptobjekt som RecipeCard förstår
   let recipeToDisplay = null;
   if (result && result.recipes && result.recipes.length > 0) {
     const recipeFromApi = result.recipes[0];
     recipeToDisplay = {
       ...recipeFromApi,
-      name: recipeFromApi.title, // Mappa titeln från API:t till RecipeCard's name
-      images: preview,           // Använd den uppladdade bilden (preview)
+      name: recipeFromApi.title,
+      images: preview,
+      originalFile: recipeFromApi.originalFile
     };
   }
 
@@ -94,12 +102,12 @@ export default function ImageRecipe() {
             Recept via Maträtt
           </h2>
           <div className="px-4 py-8 sm:rounded-lg sm:px-10">
-            {/* Använd UploadPicture-komponenten */}
+            {/* UploadPicture-komponenten */}
             <div className="relative flex items-center">
               <UploadPicture onFileSelected={handleFileSelected} />
             </div>
 
-            {/* Knapp för att ladda upp bilden – den används endast om användaren klickar direkt i input-fältet */}
+            {/* Knapp för att ladda upp bilden */}
             <div className="mt-4 flex justify-center">
               <button
                 onClick={uploadImage}
@@ -109,21 +117,32 @@ export default function ImageRecipe() {
               </button>
             </div>
 
-            {/* Förhandsvisning av vald bild */}
-            {!recipeToDisplay && preview && (
-              <div className="mt-4 flex justify-center">
-                <img src={preview} alt="Förhandsvisning" className="max-h-64" />
+            {/* Visa spinner om isLoading är true, annars visa förhandsvisningsbilden */}
+            {isLoading ? (
+              <div className="mt-8 flex justify-center">
+                <div className="loader"></div>
               </div>
+            ) : (
+              !recipeToDisplay &&
+              preview && (
+                <div className="mt-4 flex justify-center">
+                  <img
+                    src={preview}
+                    alt="Förhandsvisning"
+                    className="max-h-64"
+                  />
+                </div>
+              )
             )}
 
-            {/* Om vi har ett recept, visa det som ett RecipeCard */}
+            {/* Visa receptet om det finns */}
             {recipeToDisplay && (
               <div className="mt-6">
                 <AiRecipeCard recipe={recipeToDisplay} />
               </div>
             )}
 
-            {/* Visar eventuella fel */}
+            {/* Visa eventuella fel */}
             {error && (
               <div className="mt-6 p-4 bg-red-100 rounded-lg shadow-md">
                 <h2 className="text-xl font-semibold text-red-900">Fel</h2>

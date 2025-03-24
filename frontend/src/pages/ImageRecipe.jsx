@@ -9,6 +9,7 @@ export default function ImageRecipe() {
   const [preview, setPreview] = useState(null);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false); // Lägg till isLoading
   const token = authStore((state) => state.token);
   const setUserData = authStore((state) => state.setUserData);
   const apiUrl = "http://localhost:8000/v1/suggest_recipe_from_image";
@@ -18,7 +19,6 @@ export default function ImageRecipe() {
   // annars spara filen och skapa en förhandsvisning.
   const handleFileSelected = (file) => {
     if (!token) {
-      // Användaren är inte inloggad – skicka till login med redirect tillbaka till ImageRecipe
       navigate("/login", { state: { redirectTo: "/imagerecipe" } });
       return;
     }
@@ -34,6 +34,7 @@ export default function ImageRecipe() {
   // Funktion för att ladda upp bilden till backend (anropas från ImageRecipe-sidan)
   const uploadImage = async () => {
     if (!selectedFile) return;
+    setIsLoading(true); // Starta loadern
     const formData = new FormData();
     formData.append("file", selectedFile);
 
@@ -52,7 +53,7 @@ export default function ImageRecipe() {
 
       const data = await response.json();
       
-      // Store the original file for later S3 upload when recipe is saved
+      // Spara den ursprungliga filen för senare S3-uppladdning när receptet sparas
       if (data && data.recipes && data.recipes.length > 0) {
         data.recipes[0].originalFile = selectedFile;
       }
@@ -79,6 +80,7 @@ export default function ImageRecipe() {
       setError(err.message);
       setResult(null);
     }
+    setIsLoading(false); // Avsluta loadern
   };
 
   // Om vi har ett API-svar, mappa det till ett receptobjekt som RecipeCard förstår
@@ -89,7 +91,7 @@ export default function ImageRecipe() {
       ...recipeFromApi,
       name: recipeFromApi.title, // Mappa titeln från API:t till RecipeCard's name
       images: preview,           // Använd den uppladdade bilden (preview)
-      originalFile: recipeFromApi.originalFile // Pass the original file to the recipe card
+      originalFile: recipeFromApi.originalFile // Skicka med originalfilen
     };
   }
 
@@ -106,7 +108,7 @@ export default function ImageRecipe() {
               <UploadPicture onFileSelected={handleFileSelected} />
             </div>
 
-            {/* Knapp för att ladda upp bilden – den används endast om användaren klickar direkt i input-fältet */}
+            {/* Knapp för att ladda upp bilden */}
             <div className="mt-4 flex justify-center">
               <button
                 onClick={uploadImage}
@@ -116,11 +118,18 @@ export default function ImageRecipe() {
               </button>
             </div>
 
-            {/* Förhandsvisning av vald bild */}
-            {!recipeToDisplay && preview && (
-              <div className="mt-4 flex justify-center">
-                <img src={preview} alt="Förhandsvisning" className="max-h-64" />
+            {/* Visa loader om isLoading är true, annars visa förhandsvisning */}
+            {isLoading ? (
+              <div className="mt-8 flex justify-center">
+                <div className="loader"></div>
               </div>
+            ) : (
+              !recipeToDisplay &&
+              preview && (
+                <div className="mt-4 flex justify-center">
+                  <img src={preview} alt="Förhandsvisning" className="max-h-64" />
+                </div>
+              )
             )}
 
             {/* Om vi har ett recept, visa det som ett RecipeCard */}

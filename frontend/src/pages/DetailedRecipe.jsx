@@ -15,6 +15,8 @@ export default function DetailedRecipe() {
   // Get the recipe from "state"
   const { recipe } = location.state || {};
 
+  console.log(recipe)
+
   // Check if the recipe is already saved when component mounts
   useEffect(() => {
       const fetchImage = async () => {
@@ -94,6 +96,8 @@ export default function DetailedRecipe() {
     fat,
     id: recipeId
   } = recipe;
+
+  console.log(recipe)
 
   // Function to upload image to S3 after recipe creation
   const uploadImageToS3 = async (recipeId) => {

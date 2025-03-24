@@ -102,7 +102,7 @@ def get_current_user(
     now = datetime.now(timezone.utc)
 
     # Automatisk kreditåterställning om användaren har 0 credits och inte redan fått dagens 10 credits
-    if user.credits == 0 and (not user.last_credit_refill or user.last_credit_refill.date() != now.date()):
+    if user.credits == 0 and user.last_credit_refill is not None and now.date() > user.last_credit_refill.date():
         user.credits += 10
         user.last_credit_refill = now
 

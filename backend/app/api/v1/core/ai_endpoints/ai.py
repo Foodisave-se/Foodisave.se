@@ -584,7 +584,7 @@ async def suggest_recipe_from_plateimage(file: UploadFile = File(...), current_u
             "Analysera och identifiera maträtten på bilden och föreslå ett recept med instruktioerna nedan som passar till den maten du ser på tallriken. "
             "Utöver de ingredienser du identifierar, anta att basvaror som salt, peppar, smör och olja redan finns hemma och inkludera dem i receptet om de är nödvändiga. "
             "Skapa en detaljerad lista på ett recept som kan lagas med de ingredienser du har identifierat samt de nödvändiga basvarorna. "
-            "Ge även näringsinformation per portion: energi (kcal), protein, kolhydrater och fett. \n\n"
+            "Ge även näringsinformation per portion med ENDAST siffran så det är en float: energi (kcal), protein, kolhydrater och fett. \n\n"
             "Svar endast i JSON-format, ingen extra text. \n"
             "Använd exakt följande JSON-struktur:\n"
             "{\n"
@@ -761,11 +761,21 @@ async def chat_with_context(request: ChatRequest, current_user: Users = Depends(
 
 @router.post("/save-bought-items")
 async def save_bought_ingredients(file: UploadFile = File(...), 
-                                  current_user: Users = Depends(get_current_user)):
+                                  current_user: Users = Depends(get_current_user), 
+                                  db: Session = Depends(get_db)):
     """
     Tar emot en bildfil, sparar den i images-mappen, 
     öppnar bilden med PIL, och anropar Gemini API för att få receptförslag.
     """
+    if current_user.credits < 1:
+        raise HTTPException(
+            status_code=402,
+            detail="Du har inte tillräckligt med credits för att utföra denna förfrågan."
+        )
+
+    # Dra 5 credits och spara i databasen
+    current_user.credits -= 1
+    db.commit()
 
     response, restored_file = classify_image(file=file)
 

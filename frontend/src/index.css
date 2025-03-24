@@ -214,4 +214,72 @@
   border-right: 6px solid transparent;
   border-bottom: 6px solid black;
 }
+.loader {
+  width: 48px;
+  height: 48px;
+  display: inline-block;
+  position: relative;
+  background: #000000;
+  box-sizing: border-box;
+  animation: flipX 1s linear infinite;
+}
 
+@keyframes flipX {
+  0% {
+    transform: perspective(200px) rotateX(0deg) rotateY(0deg);
+  }
+  50% {
+    transform: perspective(200px) rotateX(-180deg) rotateY(0deg);
+  }
+  100% {
+    transform: perspective(200px) rotateX(-180deg) rotateY(-180deg);
+  }
+}
+
+.loaderimage {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  background: currentColor;
+  display: block;
+  margin: 0 auto; /* Centrerar huvudblocket */
+  position: relative;
+  animation: animloader 2s ease infinite;
+}
+.loaderimage::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -16px; /* Placera vänster block 16px till vänster */
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  background: currentColor;
+  animation: animloader 2s 0.2s ease infinite;
+}
+.loaderimage::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: -16px; /* Placera höger block 16px till höger */
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  background: currentColor;
+  animation: animloader 2s 0.4s ease infinite;
+}
+
+@keyframes animloader {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(8px);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

@@ -34,7 +34,6 @@ export default function GroceryItems() {
 
       if (!response.ok) {
         if (response.status === 404) {
-          // It's okay if there are no saved items
           setSavedItems([]);
           return;
         }
@@ -153,7 +152,6 @@ export default function GroceryItems() {
         throw new Error("Failed to delete item");
       }
 
-      // Remove the item from the saved items list
       setSavedItems(savedItems.filter(item => item.id !== itemId));
     } catch (err) {
       console.error("Error deleting item:", err);
@@ -203,12 +201,10 @@ export default function GroceryItems() {
 
       const updatedItem = await response.json();
       
-      // Update the saved items list
       setSavedItems(savedItems.map(item => 
         item.id === itemId ? updatedItem : item
       ));
       
-      // Reset edit mode
       setEditItem(null);
       setEditFormData({ item: "", size: "" });
     } catch (err) {
@@ -233,7 +229,7 @@ export default function GroceryItems() {
           </h2>
           
           {/* Upload section */}
-          <div className="bg-white px-4 py-8 shadow sm:rounded-lg sm:px-10 mb-8">
+          <div className="px-4 py-8 sm:rounded-lg sm:px-10 mb-8">
             <h3 className="text-xl font-semibold mb-4">Lägg till nya varor</h3>
             <div className="relative flex items-center">
               <UploadPicture onFileSelected={handleFileSelected} />
@@ -242,24 +238,29 @@ export default function GroceryItems() {
             <div className="mt-4 flex justify-center">
               <button
                 onClick={uploadImage}
-                disabled={!selectedFile || isLoading}
-                className="w-full bg-black text-white px-4 py-2 rounded-md hover:bg-[#888383] transition cursor-pointer disabled:bg-gray-300 disabled:cursor-not-allowed"
+                className="w-full bg-black text-white px-4 py-2 rounded-md hover:bg-[#888383] transition cursor-pointer"
               >
                 {isLoading ? "Laddar..." : "Hämta Råvaror"}
               </button>
             </div>
 
-            {/* Preview of selected image */}
-            {preview && (
-              <div className="mt-4 flex justify-center">
-                <img src={preview} alt="Förhandsvisning" className="max-h-64" />
+            {/* Visa förhandsvisning med spinner-struktur */}
+            {isLoading ? (
+              <div className="mt-8 flex justify-center">
+                <div className="loader"></div>
               </div>
+            ) : (
+              preview && (
+                <div className="mt-4 flex justify-center">
+                  <img src={preview} alt="Förhandsvisning" className="max-h-64" />
+                </div>
+              )
             )}
           </div>
 
           {/* Detected items section */}
           {items.length > 0 && (
-            <div className="bg-white px-4 py-8 shadow sm:rounded-lg sm:px-10 mb-8">
+            <div className="px-4 py-8 sm:rounded-lg sm:px-10 mb-8">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-xl font-semibold">Identifierade varor</h3>
                 <button
@@ -289,7 +290,7 @@ export default function GroceryItems() {
           )}
 
           {/* Saved items section */}
-          <div className="bg-white px-4 py-8 shadow sm:rounded-lg sm:px-10">
+          <div className="px-4 py-8 sm:rounded-lg sm:px-10">
             <h3 className="text-xl font-semibold mb-4">Sparade varor</h3>
             
             {savedItems.length === 0 ? (
