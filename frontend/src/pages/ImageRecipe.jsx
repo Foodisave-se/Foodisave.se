@@ -89,7 +89,7 @@ export default function ImageRecipe() {
     const recipeFromApi = result.recipes[0];
     recipeToDisplay = {
       ...recipeFromApi,
-      name: recipeFromApi.title, // Mappa titeln från API:t till RecipeCard's name
+      name: recipeFromApi.name, // Mappa titeln från API:t till RecipeCard's name
       images: preview,           // Använd den uppladdade bilden (preview)
       originalFile: recipeFromApi.originalFile // Skicka med originalfilen
     };

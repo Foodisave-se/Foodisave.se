@@ -88,7 +88,7 @@ export default function ImageFoodRecipe() {
     const recipeFromApi = result.recipes[0];
     recipeToDisplay = {
       ...recipeFromApi,
-      name: recipeFromApi.title,
+      name: recipeFromApi.name,
       images: preview,
       originalFile: recipeFromApi.originalFile
     };

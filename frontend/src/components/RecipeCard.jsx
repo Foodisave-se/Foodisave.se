@@ -149,9 +149,6 @@ function RecipeCard({ recipe }) {
             <span
             className="bg-black text-white px-3 py-1 rounded-sm text-xxs m-2">
               {recipe.cook_time || "Över 30 min"}</span>
-            <span className="bg-green-300 text-black px-3 py-1 rounded-sm text-xxs m-2">
-              {recipe.tags || "Enkel"}
-            </span>
           </div>
         </div>
       </a>

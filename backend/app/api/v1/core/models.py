@@ -139,7 +139,7 @@ class UserRecipes(Base):
     descriptions: Mapped[str] = mapped_column(Text)
     ingredients: Mapped[str] = mapped_column(Text)
     instructions: Mapped[str] = mapped_column(Text)
-    tags: Mapped[str] = mapped_column(Text, nullable=True)
+    category: Mapped[str] = mapped_column(Text, nullable=True)
     cook_time: Mapped[str] = mapped_column(Text, nullable=True)
     calories: Mapped[float] = mapped_column(Numeric, nullable=True)
     protein: Mapped[float] = mapped_column(Numeric, nullable=True)

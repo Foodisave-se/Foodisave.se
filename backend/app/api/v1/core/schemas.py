@@ -87,7 +87,7 @@ class UserRecipeSchema(BaseModel):
     descriptions: str
     ingredients: str
     instructions: str
-    tags: str | None = None
+    category: str | None = None
     cook_time: str | None = None
     calories: float | None = None
     protein: float | None = None
@@ -102,7 +102,7 @@ class AiRecipeSchema(BaseModel):
     descriptions: str
     ingredients: str
     instructions: str
-    tags: str | None = None
+    category: str | None = None
     cook_time: str | None = None
     calories: float | None = None
     protein: float | None = None
@@ -117,7 +117,7 @@ class AiRecipeOutSchema(BaseModel):
     descriptions: str
     ingredients: str
     instructions: str
-    tags: str | None = None
+    category: str | None = None
     cook_time: str | None = None
     calories: float | None = None
     protein: float | None = None
@@ -132,7 +132,7 @@ class UserUpdateRecipeSchema(BaseModel):
     descriptions: str | None = None
     ingredients: str | None = None
     instructions: str | None = None
-    tags: str | None = None
+    category: str | None = None
     cook_time: str | None = None
     calories: float | None = None
     protein: float | None = None

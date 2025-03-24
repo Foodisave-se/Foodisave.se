@@ -47,7 +47,13 @@ const SavedRecipesPage = () => {
           // Add a flag to identify these as user recipes
           userRecipes = (userRecipeData || []).map(recipe => ({
             ...recipe,
-            isUserRecipe: true
+            isUserRecipe: true,
+            ingredients: recipe.ingredients 
+              ? recipe.ingredients.split(',').map(ingredient => ingredient.trim())
+              : [],
+            instructions: recipe.instructions 
+              ? recipe.instructions.split(',').map(instruction => instruction.trim())
+              : []
           }));
           setSavedUserRecipes(userRecipes);
           console.log("User recipes:", userRecipes);

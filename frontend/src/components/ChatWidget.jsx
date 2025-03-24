@@ -9,6 +9,7 @@ export default function ChatWidget() {
 
   const token = authStore((state) => state.token);
   const userData = authStore((state) => state.userData);
+  const setUserData = authStore((state) => state.setUserData); // Lägger till setUserData här
   const apiUrl = "http://localhost:8000/v1/chat"; // Din /chat-endpoint
 
   // Refs för att hantera klick utanför och automatisk scroll
@@ -98,6 +99,21 @@ export default function ChatWidget() {
         ...prev,
         { sender: "ai", text: data.response },
       ]);
+
+      // Uppdatera användardata (och därmed credits) efter chatt-anropet
+      const userResponse = await fetch(`${import.meta.env.VITE_API_URL}/me`, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (userResponse.ok) {
+        const updatedUserData = await userResponse.json();
+        setUserData(updatedUserData);
+        localStorage.setItem("userData", JSON.stringify(updatedUserData));
+      }
     } catch (err) {
       setError(err.message);
     }

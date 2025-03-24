@@ -477,8 +477,8 @@ async def suggest_recipe_from_image(
             "{\n"
             '  "recipes": [\n'
             "    {\n"
-            '      "title": "Titel på receptet",\n'
-            '      "description": "En kort beskrivning av rätten.",\n'
+            '      "name": "Titel på receptet",\n'
+            '      "descriptions": "En kort beskrivning av rätten.",\n'
             '      "category": "Ange kategori: Fågel, Kött, Fisk, Vegetarisk, Frukost, Bakning.",\n'
             '      "ingredients": [\n'
             '        "Ingrediensnamn mängd enhet"\n'
@@ -490,7 +490,7 @@ async def suggest_recipe_from_image(
             "      ],\n"
             '      "cook_time": "Total tillagningstid (t.ex. 30 min)",\n'
             '      "servings": "Antal portioner (t.ex. 4 portioner)",\n'
-            '      "energy": "Antal kcal per portion",\n'
+            '      "calories": "Antal kcal per portion",\n'
             '      "protein": "Gram protein per portion",\n'
             '      "carbohydrates": "Gram kolhydrater per portion",\n'
             '      "fat": "Gram fett per portion"\n'
@@ -590,8 +590,8 @@ async def suggest_recipe_from_plateimage(file: UploadFile = File(...), current_u
             "{\n"
             '  "recipes": [\n'
             "    {\n"
-            '      "title": "Titel på receptet",\n'
-            '      "description": "En kort beskrivning av rätten.",\n'
+            '      "name": "Titel på receptet",\n'
+            '      "descriptions": "En kort beskrivning av rätten.",\n'
             '      "category": "Ange kategori: Fågel, Kött, Fisk, Vegetarisk, Frukost, Bakning.",\n'
             '      "ingredients": [\n'
             '        "Ingrediensnamn mängd enhet"\n'
@@ -603,7 +603,7 @@ async def suggest_recipe_from_plateimage(file: UploadFile = File(...), current_u
             "      ],\n"
             '      "cook_time": "Total tillagningstid (t.ex. 30 min)",\n'
             '      "servings": "Antal portioner (t.ex. 4 portioner)",\n'
-            '      "energy": "Antal kcal per portion",\n'
+            '      "calories": "Antal kcal per portion",\n'
             '      "protein": "Gram protein per portion",\n'
             '      "carbohydrates": "Gram kolhydrater per portion",\n'
             '      "fat": "Gram fett per portion"\n'

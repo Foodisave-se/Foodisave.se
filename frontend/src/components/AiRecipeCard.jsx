@@ -151,7 +151,7 @@ function AiRecipeCard({ recipe }) {
           ) : (
             <>
               {isImageLoading && (
-                <div className="absolute inset-0 flex items-center justify-center">
+                <div className="absolute inset-0 flex items-center justify-center mr-2">
                   <div className="loaderimage"></div>
                 </div>
               )}
@@ -176,7 +176,7 @@ function AiRecipeCard({ recipe }) {
               {recipe.cook_time || "Över 30 min"}
             </span>
             <span className="bg-green-300 text-black px-3 py-1 rounded-sm text-xxs m-2">
-              {recipe.category || recipe.tags || "Enkel"}
+              {recipe.category || "Enkel"}
             </span>
           </div>
         </div>
