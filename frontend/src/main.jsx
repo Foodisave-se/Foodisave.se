@@ -22,6 +22,7 @@ import ResetPasswordPage from "./pages/ResetPasswordPage.jsx";
 import ActivateAccountPage from "./pages/ActivateAccountPage.jsx";
 import SavedRecipesPage from "./pages/SavedRecipesPage.jsx";
 import GroceryItemsPage from "./pages/GroceryItemPage.jsx";
+import AdminPage from "./pages/AdminPage.jsx";
 
 const router = createBrowserRouter([
   {
@@ -44,6 +45,7 @@ const router = createBrowserRouter([
       { path: "/settings", element: <UserSettingsPage /> },
       { path: "/savedrecipes", element: <SavedRecipesPage /> },
       { path: "/my-items", element: <GroceryItemsPage /> },
+      { path: "/admin", element: <AdminPage /> },
     ],
   },
   {

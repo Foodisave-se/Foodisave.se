@@ -3,9 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function RegisterForm() {
   const API_URL = import.meta.env.VITE_API_URL;
-
-  let navigate = useNavigate();
-
+  const navigate = useNavigate();
 
   const [userName, setUserName] = useState("");
   const [userNameError, setUserNameError] = useState([]);
@@ -86,6 +84,7 @@ export default function RegisterForm() {
 
   async function submitRegister(e) {
     e.preventDefault();
+    // Kör alla valideringsfunktioner
     validateUserName();
     validateEmail();
     validatePassword();
@@ -93,6 +92,7 @@ export default function RegisterForm() {
     validateLastName();
     validateTerms();
 
+    // Om inga fel (observera att state-uppdateringar kan vara asynkrona)
     if (
       emailError.length === 0 &&
       passwordError.length === 0 &&
@@ -104,9 +104,7 @@ export default function RegisterForm() {
       try {
         const response = await fetch(`${API_URL}/user`, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             username: userName,
             email,
@@ -119,10 +117,10 @@ export default function RegisterForm() {
 
         if (response.status === 201) {
           console.log("Success");
-          navigate("/login");
+          // Vid lyckad registrering, vidarebefordra meddelandet till login-sidan
+          navigate("/login", { state: { activationMessage: data.message } });
         } else {
           console.log("Something went wrong");
-          //   Log the response json to the console
           console.log(data);
           throw new Error("Error from the server");
         }
@@ -141,10 +139,7 @@ export default function RegisterForm() {
           <div className="px-4 py-8 bg-[#c8c8c8] sm:rounded-lg sm:px-10">
             <form className="space-y-6" onSubmit={submitRegister}>
               <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-gray-700"
-                >
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                   E-postadress
                 </label>
                 <div className="mt-1">
@@ -154,7 +149,7 @@ export default function RegisterForm() {
                     type="email"
                     autoComplete="email"
                     required
-                    className="block w-full px-3 py-2 placeholder-white border rounded-md shadow-sm appearance-none focus:outline-none bg-white sm:text-sm"
+                    className="block w-full px-3 py-2 placeholder-white border rounded-md shadow-sm focus:outline-none bg-white sm:text-sm"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     onBlur={validateEmail}
@@ -168,10 +163,7 @@ export default function RegisterForm() {
               </div>
 
               <div>
-                <label
-                  htmlFor="first_name"
-                  className="block text-sm font-medium text-gray-700"
-                >
+                <label htmlFor="first_name" className="block text-sm font-medium text-gray-700">
                   Namn
                 </label>
                 <div className="mt-1">
@@ -181,7 +173,7 @@ export default function RegisterForm() {
                     type="text"
                     autoComplete="given-name"
                     required
-                    className="block w-full px-3 py-2 placeholder-white border rounded-md shadow-sm appearance-none focus:outline-none bg-white sm:text-sm"
+                    className="block w-full px-3 py-2 placeholder-white border rounded-md shadow-sm focus:outline-none bg-white sm:text-sm"
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
                     onBlur={validateFirstName}
@@ -195,10 +187,7 @@ export default function RegisterForm() {
               </div>
 
               <div>
-                <label
-                  htmlFor="last_name"
-                  className="block text-sm font-medium text-gray-700"
-                >
+                <label htmlFor="last_name" className="block text-sm font-medium text-gray-700">
                   Efternamn
                 </label>
                 <div className="mt-1">
@@ -208,7 +197,7 @@ export default function RegisterForm() {
                     type="text"
                     autoComplete="family-name"
                     required
-                    className="block w-full px-3 py-2 placeholder-white border rounded-md shadow-sm appearance-none focus:outline-none bg-white sm:text-sm"
+                    className="block w-full px-3 py-2 placeholder-white border rounded-md shadow-sm focus:outline-none bg-white sm:text-sm"
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
                     onBlur={validateLastName}
@@ -222,10 +211,7 @@ export default function RegisterForm() {
               </div>
 
               <div>
-                <label
-                  htmlFor="password"
-                  className="block text-sm font-medium text-gray-700"
-                >
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                   Lösenord
                 </label>
                 <div className="mt-1">
@@ -235,7 +221,7 @@ export default function RegisterForm() {
                     type="password"
                     autoComplete="current-password"
                     required
-                    className="block w-full px-3 py-2 placeholder-white border rounded-md shadow-sm appearance-none focus:outline-none bg-white sm:text-sm"
+                    className="block w-full px-3 py-2 placeholder-white border rounded-md shadow-sm focus:outline-none bg-white sm:text-sm"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     onBlur={validatePassword}
@@ -257,10 +243,7 @@ export default function RegisterForm() {
                   checked={terms}
                   onChange={(e) => setTerms(e.target.checked)}
                 />
-                <label
-                  htmlFor="terms"
-                  className="block ml-2 text-sm text-gray-900 pl-2"
-                >
+                <label htmlFor="terms" className="block ml-2 text-sm text-gray-900 pl-2">
                   Jag accepterar foodisave:s användarvillkor och personuppgiftspolicy
                 </label>
               </div>

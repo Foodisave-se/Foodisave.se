@@ -32,10 +32,6 @@ export default function HomePage() {
             Ta vara på dina råvaror och laga hållbart, varje dag!
           </div>
           <div className="text-m sm:text-l md:text-xl text-gray-900 mt-4">
-          Foodisave hjälper dig att minska matsvinn genom att skapa AI-genererade <br /> recept 
-          baserade på det du redan har hemma.  
-          Fota dina ingredienser, få skräddarsydda recept och 
-          laga hållbart – enkelt, smart och inspirerande!
           </div>
           <button
            onClick={() => {

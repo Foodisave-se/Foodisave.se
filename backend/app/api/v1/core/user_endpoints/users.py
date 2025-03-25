@@ -18,6 +18,7 @@ from app.api.v1.core.schemas import (
     UserOutSchema,
     UserRegisterSchema,
     PasswordChangeSchema,
+    AdminUpdateSchema,
 )
 # Importera e-postfunktionerna
 from app.email import generate_activation_token, send_activation_email
@@ -50,7 +51,7 @@ def create_user(
     background_tasks.add_task(send_activation_email, new_user.email, token)
     
     return {
-        "message": "User created successfully. Please check your email to activate your account."
+        "message": "Välkommen till Foodisave! Ett mail har skickats med länk för att aktivera ditt kontot. Kontrollera din mail!"
     }
 
 @router.get("/me", response_model=UserOutSchema)
@@ -67,9 +68,9 @@ def search_user(db: Session = Depends(get_db)):
         )
     return result
 
-@router.delete("/user/{user_id}", status_code=200)
-def delete_user(user_id: int, db: Session = Depends(get_db)):
-    result = delete_user_db(user_id=user_id, db=db)
+@router.delete("/user", status_code=200)
+def delete_user(db: Session = Depends(get_db), current_user: Users = Depends(get_current_user)):
+    result = delete_user_db(user_id=current_user.id, db=db)
     if not result:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -88,6 +89,26 @@ def update_user_profile(
     db: Session = Depends(get_db),
 ):
     db_user = db.scalars(select(Users).where(Users.id == current_user.id)).first()
+    for key, value in user_update.model_dump(exclude_unset=True).items():
+        if value != "":
+            setattr(db_user, key, value)
+    db.commit()
+    return db_user
+
+@router.put("/admin/profile/{user_id}", response_model=UserOutSchema)
+def update_admin_profile(
+    user_update: AdminUpdateSchema,
+    user_id: int,
+    current_user: Users = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    if not current_user.is_admin:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not an admin",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    db_user = db.scalars(select(Users).where(Users.id == user_id)).first()
     for key, value in user_update.model_dump(exclude_unset=True).items():
         if value != "":
             setattr(db_user, key, value)

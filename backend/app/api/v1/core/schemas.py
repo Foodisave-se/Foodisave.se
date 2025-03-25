@@ -35,6 +35,13 @@ class UserUpdateSchema(BaseModel):
     first_name: str | None = None
     last_name: str | None = None
 
+class AdminUpdateSchema(BaseModel):
+    first_name: str | None = None
+    last_name: str | None = None
+    email: EmailStr | None = None
+    credits: int | None = None
+    is_admin: bool | None = None
+
 class UserRegisterSchema(BaseModel):
     email: str
     last_name: str
