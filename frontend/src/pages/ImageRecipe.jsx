@@ -120,8 +120,8 @@ export default function ImageRecipe() {
 
             {/* Visa loader om isLoading är true, annars visa förhandsvisning */}
             {isLoading ? (
-              <div className="mt-8 flex justify-center">
-                <div className="loader"></div>
+              <div className="mt-16 flex justify-center">
+                <div className="loaderimage"></div>
               </div>
             ) : (
               !recipeToDisplay &&
