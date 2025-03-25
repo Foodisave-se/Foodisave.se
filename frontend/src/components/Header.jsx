@@ -264,7 +264,7 @@ export default function Header() {
                       <span className="mr-2 transition-transform duration-300 ease-in-out group-hover:-translate-x-2">
                         Bli Medlem
                       </span>
-                      <span className="absolute right-0 inline-flex items-center justify-center w-8 h-8 bg-green-300 text-black rounded-full transform translate-x-[120%] group-hover:translate-x-0 transition-transform duration-300 mr-1">
+                      <span className="absolute right-0 inline-flex items-center justify-center w-8 h-8 bg-orange-500 text-black rounded-full transform translate-x-[120%] group-hover:translate-x-0 transition-transform duration-300 mr-1">
                         <svg
                           className="w-4 h-4"
                           fill="none"

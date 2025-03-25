@@ -154,7 +154,7 @@ export default function UploadPicture({ onFileSelected }) {
               border-l-transparent
               border-r-transparent
               mb-[-1px]
-              ml-32
+              ml-20
             "/>
           <div className="bg-black min-w-max rounded-md shadow-lg">
             {/* Dropdown-knapp för "Ladda upp bild" */}
