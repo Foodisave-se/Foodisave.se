@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 export default function RegisterForm() {
   const API_URL = import.meta.env.VITE_API_URL;
@@ -244,7 +244,7 @@ export default function RegisterForm() {
                   onChange={(e) => setTerms(e.target.checked)}
                 />
                 <label htmlFor="terms" className="block ml-2 text-sm text-gray-900 pl-2">
-                  Jag accepterar foodisave:s användarvillkor och personuppgiftspolicy
+                  Genom att bli medlem accepterar jag foodisave:s <Link className="underline" to="/terms-and-privacy">användarvillkor och personuppgiftspolicy</Link>
                 </label>
               </div>
               {termsError && (

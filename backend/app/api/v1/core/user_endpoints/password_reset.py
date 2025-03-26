@@ -30,10 +30,10 @@ def request_password_reset(
     user = get_user_by_email(db, reset_request.email)
     if not user:
         # Av säkerhetsskäl returnerar vi alltid samma meddelande
-        return {"message": "If the email exists in our system, a password reset link has been sent"}
+        return {"message": "Ett mail har skicakts med en länk för att återställa ditt lösenordet. Kontrollera att du angett rätt e-postadress, och att du har ett Foodisave konto om du inte mottagit något mail."}
     token = generate_password_reset_token(user_id=user.id, db=db)
     background_tasks.add_task(send_password_reset_email, reset_request.email, token)
-    return {"message": "If the email exists in our system, a password reset link has been sent"}
+    return {"message": "Ett mail har skicakts med en länk för att återställa ditt lösenordet. Kontrollera att du angett rätt e-postadress, och att du har ett Foodisave konto om du inte mottagit något mail."}
 
 @router.post("/password-reset/confirm", status_code=status.HTTP_200_OK)
 def confirm_password_reset(
@@ -48,7 +48,7 @@ def confirm_password_reset(
     user.hashed_password = hash_password(reset_confirm.new_password)
     invalidate_password_reset_token(reset_confirm.token, db)
     db.commit()
-    return {"message": "Password has been reset successfully"}
+    return {"message": "Vi har nu bytt ditt lösenord"}
 
 @router.post("/activate/confirm", status_code=status.HTTP_200_OK)
 def confirm_account_activation(
@@ -61,4 +61,4 @@ def confirm_account_activation(
     user.is_active = True
     invalidate_activation_token(activation_data.token, db)
     db.commit()
-    return {"message": "Account activated successfully"}
+    return {"message": "Ditt konto har nu aktiverats"}
