@@ -23,6 +23,8 @@ import ActivateAccountPage from "./pages/ActivateAccountPage.jsx";
 import SavedRecipesPage from "./pages/SavedRecipesPage.jsx";
 import GroceryItemsPage from "./pages/GroceryItemPage.jsx";
 import AdminPage from "./pages/AdminPage.jsx";
+import AboutPage from "./pages/AboutPage.jsx";
+import TermsAndPrivacy from "./pages/TermsAndPrivacy.jsx";
 
 const router = createBrowserRouter([
   {
@@ -46,6 +48,8 @@ const router = createBrowserRouter([
       { path: "/savedrecipes", element: <SavedRecipesPage /> },
       { path: "/my-items", element: <GroceryItemsPage /> },
       { path: "/admin", element: <AdminPage /> },
+      { path: "/about", element: <AboutPage /> },
+      { path: "/terms-and-privacy", element: <TermsAndPrivacy /> },
     ],
   },
   {

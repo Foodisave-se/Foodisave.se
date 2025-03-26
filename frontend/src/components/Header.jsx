@@ -130,10 +130,10 @@ export default function Header() {
                     className="curtain-link relative inline-block overflow-hidden px-4 py-2 rounded-sm bg-transparent"
                   >
                     <span className="normal-text block rounded-sm transition-transform duration-200 ease-in-out">
-                      Vad är foodisave
+                      Om foodisave
                     </span>
                     <span className="hover-text absolute inset-0 flex items-center justify-center bg-black text-white w-full h-full rounded-sm transition-transform duration-500 ease-in-out">
-                      Vad är foodisave
+                      Om foodisave
                     </span>
                   </Link>
                   {/* Dropdown för "Recept" */}
@@ -326,7 +326,7 @@ export default function Header() {
                 <ul className="space-y-8 text-3xl font-bold text-white">
                   <li>
                     <Link to="/about" onClick={toggleMenu} className="hover:underline">
-                      Vad är foodisave
+                      Om foodisave
                     </Link>
                   </li>
                   <li>

@@ -76,7 +76,7 @@ def delete_user(db: Session = Depends(get_db), current_user: Users = Depends(get
             status_code=status.HTTP_404_NOT_FOUND,
             detail="User not found or could not be deleted"
         )
-    return {"message": "User deleted successfully"}
+    return {"message": "Ditt kontot har nu raderats. Om du ändrar dig, är alltid välkommen tillbaka!"}
 
 @router.get("/profile", response_model=UserUpdateSchema)
 def get_user_profile(current_user: Users = Depends(get_current_user)):
