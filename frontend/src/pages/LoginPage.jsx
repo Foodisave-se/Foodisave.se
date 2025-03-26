@@ -41,7 +41,7 @@ function LoginPage() {
             {/* Stäng-knapp (X) */}
             <button
               onClick={closeModal}
-              className="absolute top-2 right-2 text-white hover:text-gray-300"
+              className="absolute top-2 right-2 text-white hover:text-gray-300 cursor-pointer"
               aria-label="Close"
             >
               X

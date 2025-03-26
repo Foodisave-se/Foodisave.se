@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom"; // NY import
 import authStore from "../store/authStore";
 
 function UserSettingsPage() {
@@ -7,6 +8,7 @@ function UserSettingsPage() {
   const userData = authStore((state) => state.userData);
   const fetchUser = authStore((state) => state.fetchUser);
   const setUserData = authStore((state) => state.setUserData);
+  const navigate = useNavigate(); // NY: useNavigate för omdirigering
 
   // Profile form state
   const [firstName, setFirstName] = useState("");
@@ -24,6 +26,9 @@ function UserSettingsPage() {
     text: "",
   });
   const [isPasswordLoading, setIsPasswordLoading] = useState(false);
+
+  // State för att styra modal för kontoradering
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   // Load user data
   useEffect(() => {
@@ -124,6 +129,46 @@ function UserSettingsPage() {
       });
     } finally {
       setIsPasswordLoading(false);
+    }
+  };
+
+  // Funktion för att öppna modalen
+  const openDeleteModal = () => {
+    setShowDeleteModal(true);
+  };
+
+  // Funktion för att stänga modalen
+  const closeDeleteModal = () => {
+    setShowDeleteModal(false);
+  };
+
+  // Funktion för att radera kontot
+  const handleDeleteAccount = async () => {
+    try {
+      const response = await fetch(`${BASE_API_URL}/user`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.ok) {
+        alert(
+          "Ditt konto har nu raderats. Om du ändrar dig är du alltid välkommen tillbaka!"
+        );
+        // Ta bort token och userData från localStorage
+        localStorage.removeItem("token");
+        localStorage.removeItem("userData");
+        // Omdirigera till Home ("/") och uppdatera sidan
+        navigate("/");
+        window.location.reload(); // Uppdatera sidan så att headern ändras till utloggat läge
+      } else {
+        const data = await response.json();
+        alert(data.detail || "Kunde inte radera kontot");
+      }
+    } catch (error) {
+      console.error("Error deleting account:", error);
+      alert("Ett oväntat fel uppstod vid radering av kontot");
     }
   };
 
@@ -288,6 +333,52 @@ function UserSettingsPage() {
               </button>
             </div>
           </form>
+
+          {/* Röd knapp för att öppna modal för kontoradering */}
+        <div className="mt-4 flex justify-end">
+          <button
+            onClick={openDeleteModal}
+            className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition cursor-pointer"
+          >
+            Radera Konto
+          </button>
+        </div>
+
+        {/* Modal för kontoradering */}
+        {showDeleteModal && (
+          <div
+            className="fixed inset-0 bg-black/70 flex items-center justify-center z-50"
+            onClick={closeDeleteModal} // Klick utanför stänger modalen
+          >
+            <div
+              className="relative bg-white rounded-md p-6 max-w-md w-full mx-4"
+              onClick={(e) => e.stopPropagation()} // Klick inuti modalen stänger inte den
+            >
+              <h3 className="text-xl font-bold text-black mb-4">
+                Tråkigt att du vill lämna oss!
+              </h3>
+              <p className="mb-6 text-black">
+                Om du väljer att radera ditt konto så kommer all din data med unika
+                recept att raderas. Om du ändrar dig är du alltid välkommen tillbaka.
+                Hälsningar from teamet bakom Foodisave!
+              </p>
+              <div className="flex justify-end space-x-4">
+                <button
+                  onClick={handleDeleteAccount}
+                  className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition cursor-pointer"
+                >
+                  Radera mitt konto
+                </button>
+                <button
+                  onClick={closeDeleteModal}
+                  className="px-4 py-2 bg-black text-white rounded-md hover:bg-gray-800 transition cursor-pointer"
+                >
+                  Tillbaka
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
         </div>
       </div>
     </div>

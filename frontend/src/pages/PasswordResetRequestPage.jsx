@@ -11,7 +11,7 @@ function PasswordResetRequestPage() {
             Återställ ditt Lösenord
           </h2>
           <p className="mt-2 text-sm text-center text-gray-600">
-          Ange din e-postadress så skickar vi en länk för att återställa ditt lösenord.
+            Ange din e-postadress så skickar vi en länk för att återställa ditt lösenord.
           </p>
         </div>
         <div className="mt-8">

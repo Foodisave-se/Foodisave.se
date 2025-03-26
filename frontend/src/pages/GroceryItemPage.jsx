@@ -284,8 +284,8 @@ export default function GroceryItems() {
 
             {/* Visa förhandsvisning med spinner-struktur */}
             {isLoading ? (
-              <div className="mt-8 flex justify-center">
-                <div className="loader"></div>
+              <div className="mt-16 flex justify-center">
+                <div className="loaderimage"></div>
               </div>
             ) : (
               preview && (
