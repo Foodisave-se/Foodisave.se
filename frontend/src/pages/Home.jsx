@@ -208,7 +208,7 @@ export default function HomePage() {
   <div className="flex items-center justify-center mt-4">
       <Link to="/register" >
         <button
-          className="mt-8 bg-orange-500 py-2 px-6 rounded-md
+          className="mt-8 bg-orange-500 py-2 px-6 rounded-md shadow-lg
                      hover:bg-orange-700 transition-all duration-300 text-lg cursor-pointer"
         >
           Prova Gratis

@@ -1,10 +1,20 @@
 import React, { useState, useEffect } from "react";
 import authStore from "../store/authStore";
+import StarRating from "./StarRating";
+import { useNavigate } from "react-router-dom";
 
 function RecipeCard({ recipe }) {
   const [isSaving, setIsSaving] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const token = authStore((state) => state.token);
+  const navigate = useNavigate();
+
+
+  const isLoggedIn = () => {
+    const token = localStorage.getItem("token");
+    const userData = localStorage.getItem("userData");
+    return token && token !== "null" && userData && userData !== "null";
+  };
   
   // Check if the recipe is already saved when component mounts
   useEffect(() => {
@@ -34,6 +44,20 @@ function RecipeCard({ recipe }) {
       checkIfSaved();
     }
   }, [recipe.id, token]);
+
+  const handleButtonClick = (event) => {
+    // Prevent default button behavior
+    event?.preventDefault();
+  
+    // Check login status first
+    if (!isLoggedIn()) {
+      navigate("/login");
+      return;
+    }
+    
+    // Then perform save/unsave action
+    isSaved ? handleUnsaveRecipe(event) : handleSaveRecipe(event);
+  };
 
   const handleSaveRecipe = async (e) => {
     e.preventDefault(); // Prevent the click from navigating to the recipe URL
@@ -108,8 +132,8 @@ function RecipeCard({ recipe }) {
     <div className="w-full bg-white rounded-md shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition-transform transform hover:scale-105 flex flex-col h-full relative">
       {/* Heart button for saving/unsaving */}
       <button 
-        onClick={isSaved ? handleUnsaveRecipe : handleSaveRecipe}
-        className="absolute top-2 right-2 z-10 bg-white p-2 rounded-full shadow-md hover:bg-gray-100"
+        onClick={handleButtonClick}
+        className="absolute top-2 right-2 z-10 bg-white p-2 rounded-full shadow-md hover:bg-gray-100 cursor-pointer transition"
         disabled={isSaving}
       >
         <svg 
@@ -147,8 +171,10 @@ function RecipeCard({ recipe }) {
 
           <div className="flex items-center justify-between bg-white rounded-lg px-4 py-2 text-sm text-black mt-auto">
             <span
-            className="bg-black text-white px-3 py-1 rounded-sm text-xxs m-2">
-              {recipe.cook_time || "Över 30 min"}</span>
+              className="bg-black text-white px-3 py-1 rounded-sm text-xxs m-2">
+              {recipe.cook_time || "Över 30 min"}
+            </span>
+            <StarRating rating={recipe.rating / 100 * 5} count={recipe.ratings_count} />
           </div>
         </div>
       </a>
