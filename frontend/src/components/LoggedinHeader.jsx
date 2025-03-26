@@ -428,6 +428,13 @@ export default function LoggedinHeader() {
               >
                 Inställningar
               </Link>
+              {userData?.is_admin && ( <Link
+                to="/admin"
+                onClick={() => setIsSidebarOpen(false)}
+                className="text-black hover:underline"
+              >
+                Admin
+              </Link>)}
               <button
                 onClick={handleLogout}
                 className="text-black hover:underline text-left cursor-pointer"

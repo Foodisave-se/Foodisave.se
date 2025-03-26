@@ -114,7 +114,7 @@ export default function AdminPage() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 mt-40">
       <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
 
       {/* Error Handling */}
@@ -176,7 +176,7 @@ export default function AdminPage() {
                     name="first_name"
                     value={formData.first_name}
                     onChange={handleInputChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200"
+                    className="mt-1 block w-full bg-white p-2 rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200"
                   />
                 </div>
                 <div>
@@ -189,7 +189,7 @@ export default function AdminPage() {
                     name="last_name"
                     value={formData.last_name}
                     onChange={handleInputChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200"
+                    className="mt-1 block w-full bg-white p-2 rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200"
                   />
                 </div>
               </div>
@@ -204,7 +204,7 @@ export default function AdminPage() {
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200"
+                  className="mt-1 block w-full bg-white p-2 rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200"
                 />
               </div>
 
@@ -218,7 +218,7 @@ export default function AdminPage() {
                   name="credits"
                   value={formData.credits}
                   onChange={handleInputChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200"
+                  className="mt-1 block w-full bg-white p-2 rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200"
                 />
               </div>
 
