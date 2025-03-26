@@ -12,7 +12,7 @@ export default function ImageRecipe() {
   const [isLoading, setIsLoading] = useState(false); // Lägg till isLoading
   const token = authStore((state) => state.token);
   const setUserData = authStore((state) => state.setUserData);
-  const apiUrl = "http://localhost:8000/v1/suggest_recipe_from_image";
+  const apiUrl = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
 
   // Callback från UploadPicture: Om användaren inte är inloggad, omdirigera till login med state,
@@ -39,7 +39,7 @@ export default function ImageRecipe() {
     formData.append("file", selectedFile);
 
     try {
-      const response = await fetch(apiUrl, {
+      const response = await fetch(`${apiUrl}/suggest-recipe-from-plateimage`, {
         method: "POST",
         body: formData,
         headers: {

@@ -37,7 +37,7 @@ export default function HomePage() {
            onClick={() => {
             document.getElementById("readmore").scrollIntoView({ behavior: "smooth" });
           }}
-            className="mt-8 bg-black text-white py-2 px-6 rounded-md
+            className="mt-8 bg-black text-white py-2 px-6 rounded-md shadow-lg
                       hover:bg-[#888383] transition-all duration-300 text-lg cursor-pointer"
           >
             Läs mer
@@ -220,7 +220,7 @@ export default function HomePage() {
         
         <div className="text-center mx-auto">
           <h3 className="text-4xl sm:text-5xl md:text-6xl font-bold text-black pt-6">Credits</h3>
-           <p className="text-gray-900 text-m text-center sm:text-l md:text-xl mt-2">När man blir medlem så startar man med 100 credits. <br/> Alla Ai-funktioner kommer dra av en bestämd mängd credits från ditt konto varje gång de används. När man når 0 credits ger vi er 10 efter 24 timmar</p>
+           <p className="text-gray-900 text-m text-center sm:text-l md:text-xl mt-2">När man blir medlem så startar man med 100 credits. <br/> Alla Ai-funktioner kommer dra av en bestämd mängd credits från ditt konto varje gång de används.</p>
           
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 items-center pt-6 gap-8 max-w-7xl mx-auto px-4 pb-10">

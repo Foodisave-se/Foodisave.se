@@ -8,7 +8,7 @@ export default function RecipeRoulette() {
   const [recipes, setRecipes] = useState([]);
   const [selectedRecipe, setSelectedRecipe] = useState(null);
   const [spinning, setSpinning] = useState(false);
-  const apiUrl = "http://localhost:8000/v1";
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   /**
    * Hämtar recept från backend med hjälp av eventuella filter.

@@ -12,7 +12,7 @@ export default function SearchRecipeWords() {
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const observer = useRef();
-  const apiUrl = "http://localhost:8000/v1";
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   // Current filters state
   const [currentFilters, setCurrentFilters] = useState({

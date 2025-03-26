@@ -10,7 +10,7 @@ export default function ChatWidget() {
   const token = authStore((state) => state.token);
   const userData = authStore((state) => state.userData);
   const setUserData = authStore((state) => state.setUserData); // Lägger till setUserData här
-  const apiUrl = "http://localhost:8000/v1/chat"; // Din /chat-endpoint
+  const apiUrl = import.meta.env.VITE_API_URL; // Din /chat-endpoint
 
   // Refs för att hantera klick utanför och automatisk scroll
   const chatRef = useRef(null);
@@ -83,7 +83,7 @@ export default function ChatWidget() {
     setMessage("");
 
     try {
-      const response = await fetch(apiUrl, {
+      const response = await fetch(`${apiUrl}/chat`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -6,7 +6,7 @@ export default function ReceptFörslag() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const apiUrl = "http://localhost:8000/v1/suggest_recipes";
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   // Funktion för att hämta receptförslag
   const fetchRecipes = async () => {
@@ -16,7 +16,7 @@ export default function ReceptFörslag() {
     setError(null);
 
     try {
-      const response = await fetch(`${apiUrl}?ingredients=${encodeURIComponent(ingredients)}`);
+      const response = await fetch(`${apiUrl}/suggest_recipes?ingredients=${encodeURIComponent(ingredients)}`);
       if (!response.ok) {
         throw new Error("Något gick fel vid hämtning av receptförslag");
       }

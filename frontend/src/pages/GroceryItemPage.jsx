@@ -18,7 +18,7 @@ export default function GroceryItems() {
   
   const token = authStore((state) => state.token);
   const setUserData = authStore((state) => state.setUserData);
-  const apiUrl = "http://localhost:8000/v1/save-bought-items";
+  const apiUrl = import.meta.env.VITE_API_URL;
   
   // Fetch saved items on component mount
   useEffect(() => {
@@ -28,7 +28,7 @@ export default function GroceryItems() {
   // Fetch saved items from the API
   const fetchSavedItems = async () => {
     try {
-      const response = await fetch("http://localhost:8000/v1/saved-items", {
+      const response = await fetch(`${apiUrl}/saved-items`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -115,7 +115,7 @@ export default function GroceryItems() {
   // Save item to database
   const saveItem = async (item) => {
     try {
-      const response = await fetch("http://localhost:8000/v1/saved-items", {
+      const response = await fetch(`${apiUrl}/saved-items`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -151,7 +151,7 @@ export default function GroceryItems() {
     }
 
     try {
-      const response = await fetch("http://localhost:8000/v1/saved-items", {
+      const response = await fetch(`${apiUrl}/saved-items`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -179,7 +179,7 @@ export default function GroceryItems() {
   // Delete item from database
   const deleteItem = async (itemId) => {
     try {
-      const response = await fetch(`http://localhost:8000/v1/saved-items/${itemId}`, {
+      const response = await fetch(`${apiUrl}/saved-items/${itemId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -224,7 +224,7 @@ export default function GroceryItems() {
   // Update item in database
   const updateItem = async (itemId) => {
     try {
-      const response = await fetch(`http://localhost:8000/v1/saved-items/${itemId}`, {
+      const response = await fetch(`${apiUrl}/saved-items/${itemId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

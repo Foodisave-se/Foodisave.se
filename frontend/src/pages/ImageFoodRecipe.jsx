@@ -12,7 +12,7 @@ export default function ImageFoodRecipe() {
   const [isLoading, setIsLoading] = useState(false); // State för laddning
   const token = authStore((state) => state.token);
   const setUserData = authStore((state) => state.setUserData);
-  const apiUrl = "http://localhost:8000/v1/suggest-recipe-from-plateimage";
+  const apiUrl = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
 
   // Callback: Spara filen och skapa en förhandsvisning.
@@ -38,7 +38,7 @@ export default function ImageFoodRecipe() {
     formData.append("file", selectedFile);
 
     try {
-      const response = await fetch(apiUrl, {
+      const response = await fetch(`${apiUrl}/suggest-recipe-from-plateimage`, {
         method: "POST",
         body: formData,
         headers: {
