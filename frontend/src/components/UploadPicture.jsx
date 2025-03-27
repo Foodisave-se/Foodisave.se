@@ -89,6 +89,7 @@ export default function UploadPicture({ onFileSelected }) {
           onChange={handleDirectFileChange}
           className="
             flex-1 
+            w-full
             cursor-pointer 
             block 
             px-3 

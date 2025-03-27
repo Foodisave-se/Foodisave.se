@@ -158,7 +158,7 @@ export default function SearchRecipeWords() {
               <div className="relative flex items-center">
                 <input
                   type="text"
-                  placeholder="Sök på recept eller ingredienser..."
+                  placeholder="Sök på recept..."
                   className="flex-1 block px-3 py-2 placeholder-black border border-black rounded-md appearance-none focus:outline-none bg-white sm:text-sm"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
