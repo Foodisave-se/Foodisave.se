@@ -27,10 +27,10 @@ export default function RegisterForm() {
     let emailErrors = [];
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!regex.test(email)) {
-      emailErrors.push("It must be a correct email");
+      emailErrors.push("Måste vara en giltig e-postadress");
     }
     if (!email) {
-      emailErrors.push("Email is required");
+      emailErrors.push("E-postadress krävs");
     }
     setEmailError(emailErrors);
   }
@@ -39,13 +39,13 @@ export default function RegisterForm() {
     let passwordErrors = [];
     const regex = /[^a-zA-Z0-9]/;
     if (password.length <= 8) {
-      passwordErrors.push("Password length must be greater than 8");
+      passwordErrors.push("Lösenorder måste vara minst 8 tecken lång");
     }
     if (!regex.test(password)) {
-      passwordErrors.push("Your password must contain a unique character");
+      passwordErrors.push("Ditt lösenord måste innehålla minst en siffra eller specialtecken");
     }
     if (!password) {
-      passwordErrors.push("Password is required");
+      passwordErrors.push("Lösenord krävs");
     }
     setPasswordError(passwordErrors);
   }
@@ -61,7 +61,7 @@ export default function RegisterForm() {
   function validateFirstName() {
     let errors = [];
     if (!firstName) {
-      errors.push("First name is required");
+      errors.push("Ange ditt förnamn");
     }
     setFirstNameError(errors);
   }
@@ -69,14 +69,14 @@ export default function RegisterForm() {
   function validateLastName() {
     let errors = [];
     if (!lastName) {
-      errors.push("Last name is required");
+      errors.push("Ange ditt efternamn");
     }
     setLastNameError(errors);
   }
 
   function validateTerms() {
     if (!terms) {
-      setTermsError("You must accept our terms, OR ELSE!");
+      setTermsError("Acceptera användarvillkor och personuppgiftspolicy");
     } else {
       setTermsError("");
     }
@@ -122,7 +122,7 @@ export default function RegisterForm() {
         } else {
           console.log("Something went wrong");
           console.log(data);
-          throw new Error("Error from the server");
+          throw new Error("Ett oväntat fel uppstod. Försök igen senare.");
         }
       } catch (error) {
         console.log(error);

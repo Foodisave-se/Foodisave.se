@@ -83,13 +83,13 @@ export default function LoginForm( { redirectTo } ) {
           navigate(redirectTo);
         } else if (response.status === 400 || response.status === 401) {
           const data = await response.json();
-          setServerError(data.detail);
+          setServerError("Fel användarnamn eller lösenord. Försök igen.");
         } else {
-          setServerError("Ett oväntat fel uppstod. Vänligen försök igen senare.");
+          setServerError("Ej aktiverat konto. Kolla din E-mail och aktivera ditt konto.");
         }
       } catch (error) {
         console.error("Error:", error);
-        setServerError("Ett oväntat fel uppstod. Vänligen försök igen senare.");
+        setServerError("Ett oväntat fel uppstod. Försök igen senare.");
       }
     } else {
       console.log("Validation errors");
