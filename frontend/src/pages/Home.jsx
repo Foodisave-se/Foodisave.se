@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useOutletContext } from "react-router-dom";
 import React from "react";
 import black_logo from "/black_logo.png";
 import bagare_bild from "/bagare_bild.jpg";
@@ -13,7 +13,7 @@ import empty from "/empty.svg"
 import plusUser from "/plus_user.svg"
 
 export default function HomePage() {
-  
+
   const { setChatOpen } = useOutletContext();
 
   return (
@@ -132,7 +132,7 @@ export default function HomePage() {
         <h3 className="text-xl font-bold text-black text-center mb-2">Recept via Ingredienser</h3>
       
         <div className="mt-4">
-          <p className="text-center">
+          <p className="text-center pb-5">
             Ta en bild på dina ingredienser som du önskar att använda och få ett recept på nolltid.
           </p>
       
@@ -179,7 +179,8 @@ export default function HomePage() {
       <h3 className="text-xl font-bold text-black text-center mb-2">Digitala Kocken</h3>
       <div className="mt-4">
         <p className="text-center">
-          Använd din personliga assistent i köket för att få tips och idéer!
+        Använd dig utav din helt personliga assistent i köket och lista ut vad man ska dricka 
+        till maten eller hur vilken ingrediens som kan bytas ut till något annat.
         </p>
       </div>
     </div>
