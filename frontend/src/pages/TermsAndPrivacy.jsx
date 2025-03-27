@@ -175,7 +175,7 @@ export default function TermsAndPrivacy() {
       <section className="mb-6">
         <h2 className="text-2xl font-semibold text-black mb-2">7. Cookies och spårning</h2>
         <p>
-          Vi använder för tillfället inte cookies och liknande tekniker för att förbättra din upplevelse på vår webbplats. Om vi börjar använda det kommer du vid första besöket får du möjlighet att acceptera eller neka cookies.
+          Vi använder för tillfället inte cookies och liknande tekniker för att förbättra din upplevelse på vår webbplats. Om vi börjar använda det kommer du vid ditt besök på hemsidan få möjlighet att acceptera eller neka cookies.
         </p>
       </section>
 
