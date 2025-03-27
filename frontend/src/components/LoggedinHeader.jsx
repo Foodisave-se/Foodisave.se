@@ -448,15 +448,15 @@ export default function LoggedinHeader() {
 
       {/* Övrig mobilmeny */}
       {showMenu && (
-        <div className="fixed inset-0 z-40">
+        <div className="fixed inset-0 z-40 overflow-hidden">
           <div className="absolute inset-0 bg-black bg-opacity-90 transition-opacity duration-1000"></div>
           <div
             id="sideMenu"
-            className={`absolute inset-x-0 top-20 mx-auto w-4/5 sm:w-1/2 rounded-sm shadow-lg text-center p-6 ${
+            className={`absolute inset-x-0 top-20 mx-auto w-4/5 sm:w-1/2 rounded-sm shadow-lg text-center p-6 max-h-[calc(100vh-5rem)] overflow-y-auto ${
               isMenuOpen ? "animate-slide-in-curtain" : "animate-slide-out-curtain"
             }`}
           >
-            <ul className="space-y-8 text-3xl font-bold text-white">
+            <ul className="space-y-6 text-xl font-bold text-white">
               <li>
                 <Link
                   to="/about"
@@ -468,11 +468,47 @@ export default function LoggedinHeader() {
               </li>
               <li>
                 <Link
+                  to="/savedrecipes"
+                  onClick={toggleMenu}
+                  className="hover:underline"
+                >
+                  Mina Recept
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/my-items"
+                  onClick={toggleMenu}
+                  className="hover:underline"
+                >
+                  Mitt Kök
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/imagerecipe"
+                  onClick={toggleMenu}
+                  className="hover:underline"
+                >
+                  Recept via Ingredienser
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/imagerecipeplate"
+                  onClick={toggleMenu}
+                  className="hover:underline"
+                >
+                  Recept via Maträtt
+                </Link>
+              </li>
+              <li>
+                <Link
                   to="/search"
                   onClick={toggleMenu}
                   className="hover:underline"
                 >
-                  Recept
+                  Recept Sök
                 </Link>
               </li>
               <li>
@@ -486,24 +522,6 @@ export default function LoggedinHeader() {
               </li>
               <li>
                 <Link
-                  to="/imagerecipe"
-                  onClick={toggleMenu}
-                  className="hover:underline"
-                >
-                  Recept via Bild
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/myrecipes"
-                  onClick={toggleMenu}
-                  className="hover:underline"
-                >
-                  Mina Recept
-                </Link>
-              </li>
-              <li>
-                <Link
                   to="/settings"
                   onClick={toggleMenu}
                   className="hover:underline"
@@ -511,10 +529,21 @@ export default function LoggedinHeader() {
                   Inställningar
                 </Link>
               </li>
+              {userData?.is_admin && (
+                <li>
+                  <Link
+                    to="/admin"
+                    onClick={toggleMenu}
+                    className="hover:underline"
+                  >
+                    Admin
+                  </Link>
+                </li>
+              )}
               <li>
                 <button
                   onClick={handleLogout}
-                  className="space-y-8 text-3xl font-bold text-white"
+                  className="hover:underline"
                 >
                   Logga ut
                 </button>

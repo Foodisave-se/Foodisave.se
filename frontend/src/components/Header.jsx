@@ -315,43 +315,85 @@ export default function Header() {
           </header>
           {/* Overlay och mobilmeny */}
           {showMenu && (
-            <div className="fixed inset-0 z-40">
+            <div className="fixed inset-0 z-40 overflow-hidden">
               <div className="absolute inset-0 bg-black bg-opacity-90 transition-opacity duration-1000"></div>
               <div
                 id="sideMenu"
-                className={`absolute inset-x-0 top-20 mx-auto w-4/5 sm:w-1/2 rounded-sm shadow-lg text-center p-6 ${
+                className={`absolute inset-x-0 top-20 mx-auto w-4/5 sm:w-1/2 rounded-sm shadow-lg text-center p-6 max-h-[calc(100vh-5rem)] overflow-y-auto ${
                   isMenuOpen ? "animate-slide-in-curtain" : "animate-slide-out-curtain"
                 }`}
               >
-                <ul className="space-y-8 text-3xl font-bold text-white">
+                <ul className="space-y-6 text-xl font-bold text-white">
                   <li>
-                    <Link to="/about" onClick={toggleMenu} className="hover:underline">
+                    <Link
+                      to="/register"
+                      onClick={toggleMenu}
+                      className="hover:underline"
+                    >
+                      Bli Medlem
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/login"
+                      onClick={toggleMenu}
+                      className="hover:underline"
+                    >
+                      Logga In
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/about"
+                      onClick={toggleMenu}
+                      className="hover:underline"
+                    >
                       Om foodisave
                     </Link>
                   </li>
                   <li>
-                    <Link to="/search" onClick={toggleMenu} className="hover:underline">
-                      Recept
+                    <Link
+                      to="/search"
+                      onClick={toggleMenu}
+                      className="hover:underline"
+                    >
+                      Recept Sök
                     </Link>
                   </li>
                   <li>
-                    <Link to="/random" onClick={toggleMenu} className="hover:underline">
+                    <Link
+                      to="/random"
+                      onClick={toggleMenu}
+                      className="hover:underline"
+                    >
                       Recept Roulette
                     </Link>
                   </li>
                   <li>
-                    <Link to="/imagerecipe" onClick={toggleMenu} className="hover:underline">
-                      Recept via Bild
+                    <Link
+                      to="/imagerecipe"
+                      onClick={toggleMenu}
+                      className="hover:underline"
+                    >
+                      Recept via Ingredienser
                     </Link>
                   </li>
                   <li>
-                    <Link to="/login" onClick={toggleMenu} className="hover:underline">
-                      Inställningar
+                    <Link
+                      to="/imagerecipeplate"
+                      onClick={toggleMenu}
+                      className="hover:underline"
+                    >
+                      Recept via Maträtt
                     </Link>
                   </li>
                   <li>
-                    <Link to="/login" onClick={toggleMenu} className="hover:underline">
-                      Mina Recept
+                    <Link
+                      to="/my-items"
+                      onClick={toggleMenu}
+                      className="hover:underline"
+                    >
+                      Mitt Kök
                     </Link>
                   </li>
                 </ul>

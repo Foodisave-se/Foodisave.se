@@ -158,7 +158,7 @@ export default function SearchRecipeWords() {
               <div className="relative flex items-center">
                 <input
                   type="text"
-                  placeholder="Sök på recept eller ingredienser..."
+                  placeholder="Sök på recept..."
                   className="flex-1 block px-3 py-2 placeholder-black border border-black rounded-md appearance-none focus:outline-none bg-white sm:text-sm"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
@@ -182,7 +182,7 @@ export default function SearchRecipeWords() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-7xl mx-auto m-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-7xl mx-auto m-4">
         {recipes.map((recipe, index) => {
           if (recipes.length === index + 1) {
             // Add ref to last element for intersection observer
