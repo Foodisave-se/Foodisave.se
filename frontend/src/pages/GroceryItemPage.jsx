@@ -27,6 +27,9 @@ export default function GroceryItems() {
 
   // Fetch saved items from the API
   const fetchSavedItems = async () => {
+
+    if (!token) return;
+
     try {
       const response = await fetch(`${apiUrl}/saved-items`, {
         method: "GET",
@@ -41,7 +44,7 @@ export default function GroceryItems() {
           setSavedItems([]);
           return;
         }
-        throw new Error("Failed to fetch saved items");
+        throw new Error("Gick ej att hämta sparade varor");
       }
 
       const data = await response.json();
@@ -83,7 +86,7 @@ export default function GroceryItems() {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to upload image");
+        throw new Error("Kunde inte ladda upp bild");
       }
 
       const data = await response.json();
