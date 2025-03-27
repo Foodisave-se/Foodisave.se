@@ -74,9 +74,9 @@ const ResetPasswordForm = () => {
           navigate("/login");
         }, 3000);
       } else {
-        const errorData = await response.json();
+        
         setServerError(
-          errorData.detail || "Misslyckades återställa ditt Lösenord. Länken du har kan vara förbrukad."
+          "Misslyckades återställa ditt Lösenord. Länken du har kan vara förbrukad."
         );
       }
     } catch (error) {
@@ -88,46 +88,38 @@ const ResetPasswordForm = () => {
   };
 
   return (
-    <div className="flex flex-col justify-center">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="px-4 py-8 sm:rounded-lg sm:px-10">
+    <div className="flex items-center justify-center px-4 py-8">
+      <div className="w-full max-w-md">
+        <div className="rounded-lg px-8 pt-6 pb-8">
           {!token ? (
-            <div className="p-4 rounded-md bg-white">
-              <div className="flex">
-                <div className="ml-3">
-                  <h3 className="text-sm font-medium text-red-800">Ogiltig återställningslänk</h3>
-                  <div className="mt-2 text-sm text-red-700">
-                    <p>Denna länk för att återställa ditt lösenord är ogiltig eller har gått ut.</p>
-                  </div>
-                  <div className="mt-4">
-                    <Link to="/passwordreset" className="text-sm font-medium text-indigo-600 hover:text-indigo-500">
-                    Begär en ny länk för att återställa ditt lösenord.
-                    </Link>
-                  </div>
-                </div>
-              </div>
+            <div className="p-6 text-center">
+              <h3 className="text-lg font-semibold text-red-800 mb-4">Ogiltig återställningslänk</h3>
+              <p className="text-red-700 mb-6">
+                Denna länk för att återställa ditt lösenord är ogiltig eller har gått ut.
+              </p>
+              <Link 
+                to="/passwordreset" 
+                className="inline-block w-full px-4 py-2 bg-black text-white rounded-md hover:bg-[#888383] transition-colors duration-300"
+              >
+                Begär en ny återställningslänk
+              </Link>
             </div>
           ) : success ? (
-            <div className="p-4 rounded-md bg-green-50">
-              <div className="flex">
-                <div className="ml-3">
-                  <h3 className="text-sm font-medium text-green-800">Lyckades!</h3>
-                  <div className="mt-2 text-sm text-green-700">
-                    <p>{success}</p>
-                    <p>Du kommer att omdirigeras till inloggningssidan inom kort.</p>
-                  </div>
-                  <div className="mt-4">
-                    <Link to="/login" className="text-sm font-medium text-indigo-600 hover:text-indigo-500">
-                      Tryck för att Logga in
-                    </Link>
-                  </div>
-                </div>
-              </div>
+            <div className="p-6 text-center">
+              <h3 className="text-lg font-semibold text-green-800 mb-4">Lyckades!</h3>
+              <p className="text-green-700 mb-4">{success}</p>
+              <p className="text-green-700 mb-6">Du kommer att omdirigeras till inloggningssidan inom kort.</p>
+              <Link 
+                to="/login" 
+                className="inline-block w-full px-4 py-2 bg-black text-white rounded-md hover:bg-[#888383] transition-colors duration-300"
+              >
+                Tryck för att Logga in
+              </Link>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="space-y-6" noValidate>
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
                   Nytt Lösenord
                 </label>
                 <input
@@ -136,13 +128,13 @@ const ResetPasswordForm = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   onBlur={validatePassword}
-                  className={`block w-full px-3 py-2 placeholder-gray-400 border ${passwordError ? "border-red-300" : "border-gray-300"} rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
+                  className="block w-full px-3 py-2 border border-black rounded-md focus:outline-none bg-white sm:text-sm"
                   disabled={isSubmitting}
                 />
                 {passwordError && <p className="mt-2 text-sm text-red-600">{passwordError}</p>}
               </div>
               <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
                   Bekräfta Nytt Lösenord
                 </label>
                 <input
@@ -151,21 +143,19 @@ const ResetPasswordForm = () => {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   onBlur={validateConfirmPassword}
-                  className={`block w-full px-3 py-2 placeholder-gray-400 border ${confirmPasswordError ? "border-red-300" : "border-gray-300"} rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
+                  className="block w-full px-3 py-2 border border-black rounded-md focus:outline-none bg-white sm:text-sm"
                   disabled={isSubmitting}
                 />
                 {confirmPasswordError && <p className="mt-2 text-sm text-red-600">{confirmPasswordError}</p>}
               </div>
-              <div className="my-2">
-                {serverError && <p className="mt-2 text-sm text-red-600">{serverError}</p>}
-              </div>
               <div>
+                {serverError && <p className="text-sm text-red-600 mb-4">{serverError}</p>}
                 <button
                   type="submit"
-                  className="flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  className="w-full px-4 py-2 bg-black text-white rounded-md hover:bg-[#888383] transition-colors duration-300 cursor-pointer"
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? "Återställer..." : "Återställer Lösenord"}
+                  {isSubmitting ? "Återställer..." : "Återställt Lösenord"}
                 </button>
               </div>
             </form>
