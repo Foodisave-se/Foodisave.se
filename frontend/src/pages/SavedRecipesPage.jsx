@@ -141,7 +141,7 @@ const SavedRecipesPage = () => {
       </div>
 
       {/* Grid-lista med receptkort */}
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-7xl mx-auto m-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-7xl mx-auto m-4">
         {filteredRecipes.length > 0 ? (
           filteredRecipes.map(recipe => (
             <div key={recipe.id} className="relative">
