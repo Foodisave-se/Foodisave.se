@@ -1,31 +1,24 @@
 import React, { useState, useEffect, useRef } from "react";
 import authStore from "../store/authStore";
 
-export default function ChatWidget() {
-  const [isOpen, setIsOpen] = useState(false);
+export default function ChatWidget({ isOpen, toggleChat }) {
   const [message, setMessage] = useState("");
   const [chatHistory, setChatHistory] = useState([]);
   const [error, setError] = useState(null);
 
   const token = authStore((state) => state.token);
   const userData = authStore((state) => state.userData);
-  const setUserData = authStore((state) => state.setUserData); // Lägger till setUserData här
-  const apiUrl = import.meta.env.VITE_API_URL; // Din /chat-endpoint
+  const setUserData = authStore((state) => state.setUserData);
+  const apiUrl = import.meta.env.VITE_API_URL;
 
-  // Refs för att hantera klick utanför och automatisk scroll
   const chatRef = useRef(null);
   const chatHistoryRef = useRef(null);
 
-  const toggleChat = () => {
-    setIsOpen(!isOpen);
-  };
-
-  // Uppdatera välkomstmeddelandet när chatten är öppen samt när token/userData ändras
+  // Uppdatera välkomstmeddelandet när chatten öppnas
   useEffect(() => {
     if (isOpen) {
       let newWelcome = "";
       if (token && userData) {
-        // Använd first_name och last_name från userData, annars fallback till username
         const fullName =
           userData.first_name && userData.last_name
             ? `${userData.first_name} ${userData.last_name}`
@@ -37,7 +30,6 @@ export default function ChatWidget() {
       }
       setChatHistory((prev) => {
         if (prev.length > 0 && prev[0].sender === "ai") {
-          // Uppdatera det första meddelandet med rätt välkomsttext
           return [{ ...prev[0], text: newWelcome }, ...prev.slice(1)];
         }
         return [{ sender: "ai", text: newWelcome }, ...prev];
@@ -49,7 +41,7 @@ export default function ChatWidget() {
   useEffect(() => {
     function handleClickOutside(e) {
       if (chatRef.current && !chatRef.current.contains(e.target)) {
-        setIsOpen(false);
+        if (isOpen) toggleChat();
       }
     }
     if (isOpen) {
@@ -60,9 +52,9 @@ export default function ChatWidget() {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isOpen]);
+  }, [isOpen, toggleChat]);
 
-  // Scrolla automatiskt till botten när chatHistory uppdateras
+  // Scrolla automatiskt till botten när chatHistoriken uppdateras
   useEffect(() => {
     if (chatHistoryRef.current) {
       chatHistoryRef.current.scrollTop = chatHistoryRef.current.scrollHeight;
@@ -131,7 +123,7 @@ export default function ChatWidget() {
       {isOpen ? (
         <div ref={chatRef} className="w-80 h-96 bg-white rounded-lg shadow-lg flex flex-col">
           <div className="bg-black text-white p-3 flex justify-between items-center rounded-t-lg">
-            <span className="font-bold">Chat</span>
+            <span className="font-bold">Digitala Kocken</span>
             <button onClick={toggleChat} className="text-xl leading-none focus:outline-none cursor-pointer">
               &minus;
             </button>
